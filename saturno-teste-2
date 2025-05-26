@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Orçamento - Saturno</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /*
+          Para usar a fonte "Francy", você precisará hospedá-la e adicionar
+          as regras @font-face aqui. Exemplo:
+
+          @font-face {
+            font-family: 'Francy';
+            src: url('caminho/para/francy.woff2') format('woff2'),
+                 url('caminho/para/francy.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+          }
+
+          Depois, descomente a linha abaixo e comente a de 'Inter':
+          font-family: 'Francy', sans-serif;
+        */
+        body {
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.05em; /* Aumentado o espaçamento entre letras - 0.1em pode ser muito */
+            background-color: #2C3E50; /* Azul escuro/índigo para o fundo principal */
+            color: #ECF0F1; /* Branco suave para texto principal */
+        }
+        .saturno-gradient-text {
+            background: linear-gradient(to right, #86E3CE, #A0E6CD); /* Degradê verde-água */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .saturno-bg-dark { background-color: #2C3E50; } /* Azul escuro/índigo */
+        .saturno-bg-elements { background-color: #34495E; } /* Azul acinzentado para elementos */
+        .saturno-text-highlight { color: #A0E6CD; } /* Verde-água claro */
+        .saturno-text-main { color: #ECF0F1; } /* Branco suave */
+        .saturno-border-accent { border-color: #A0E6CD; } /* Verde-água para bordas de destaque */
+        .saturno-border-subtle { border-color: #7F8C8D; } /* Cinza claro para bordas sutis */
+        .saturno-button-primary {
+            background-color: #A0E6CD; /* Verde-água */
+            color: #2C3E50; /* Texto escuro para contraste */
+        }
+        .saturno-button-primary:hover {
+            background-color: #86E3CE; /* Verde-água mais claro no hover */
+        }
+        .saturno-button-secondary {
+            background-color: #7F8C8D; /* Cinza */
+            color: #ECF0F1;
+        }
+        .saturno-button-secondary:hover {
+            background-color: #95A5A6; /* Cinza mais claro no hover */
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 220px;
+            background-color: #34495E; /* Cor de fundo dos elementos */
+            color: #ECF0F1; /* Cor do texto principal */
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px; /* Aumentado padding */
+            position: absolute;
+            z-index: 10;
+            bottom: 130%;
+            left: 50%;
+            margin-left: -110px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #2C3E50; }
+        ::-webkit-scrollbar-thumb { background: #7F8C8D; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #95A5A6; }
+
+        /* Ajustes para inputs e selects com as novas cores */
+        .form-input, .form-select {
+            background-color: #34495E; /* saturno-bg-elements */
+            border-color: #7F8C8D; /* saturno-border-subtle */
+            color: #ECF0F1; /* saturno-text-main */
+        }
+        .form-input:focus, .form-select:focus {
+            border-color: #A0E6CD; /* saturno-border-accent */
+            box-shadow: 0 0 0 2px rgba(160, 230, 205, 0.5); /* Sombra com cor de destaque */
+            outline: none;
+        }
+        /* Placeholder color */
+        .form-input::placeholder {
+            color: #bdc3c7; /* Cinza mais claro para placeholder */
+        }
+        /* Checkbox color */
+        input[type="checkbox"]:checked {
+            background-color: #A0E6CD; /* saturno-text-highlight */
+            border-color: #A0E6CD;
+        }
+        input[type="checkbox"]:checked:hover {
+            background-color: #86E3CE;
+        }
+        input[type="checkbox"] {
+            border-color: #7F8C8D;
+        }
+         /* Estilo para campos desabilitados */
+        .form-input:disabled, .form-select:disabled {
+            background-color: #566573; /* Um pouco mais claro que o fundo do elemento */
+            color: #95A5A6; /* Texto mais apagado */
+            cursor: not-allowed;
+            border-color: #566573;
+        }
+    </style>
+</head>
+<body class="saturno-bg-dark saturno-text-main flex flex-col items-center min-h-screen p-4 md:p-8 selection:bg-teal-300 selection:text-slate-900">
+
+    <main class="w-full max-w-3xl bg-slate-800 saturno-bg-elements p-6 md:p-10 rounded-xl shadow-2xl">
+        <header class="text-center mb-8">
+            <h1 class="text-5xl font-bold saturno-gradient-text">SATURNO</h1>
+            <p class="text-xl saturno-text-main mt-2">Calculadora de Orçamento Base para Projetos Audiovisuais</p>
+        </header>
+
+        <form id="budgetForm" class="space-y-6">
+            <div>
+                <label for="projectType" class="block text-sm font-medium saturno-text-main mb-1">Tipo de Projeto <span class="text-red-400">*</span></label>
+                <select id="projectType" name="projectType" class="form-select w-full p-3 rounded-md shadow-sm transition duration-150">
+                    <option value="custom" selected>Personalizado / Outro</option>
+                    <option value="institucional">Vídeo Institucional</option>
+                    <option value="promocional">Vídeo Promocional (Produto/Serviço)</option>
+                    <option value="socialMedia">Vídeo para Redes Sociais (Curto)</option>
+                    <option value="stockVideo">Vídeo com Banco de Imagens (sem captação)</option>
+                    <option value="clipeMusical">Clipe Musical (Simples)</option>
+                    <option value="evento">Cobertura de Evento (Pequeno Porte)</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="videoDuration" class="block text-sm font-medium saturno-text-main mb-1">Duração Estimada do Vídeo (minutos) <span class="text-red-400">*</span></label>
+                    <input type="number" id="videoDuration" name="videoDuration" value="1" min="0.1" step="0.1" class="form-input w-full p-3 rounded-md shadow-sm transition duration-150" required>
+                </div>
+                <div>
+                    <label for="filmingDays" class="block text-sm font-medium saturno-text-main mb-1">Dias de Filmagem (0.5 = 1/2 dia) <span class="text-red-400">*</span></label>
+                    <input type="number" id="filmingDays" name="filmingDays" value="1" min="0" step="0.5" class="form-input w-full p-3 rounded-md shadow-sm transition duration-150" required>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="locations" class="block text-sm font-medium saturno-text-main mb-1">Número de Locações Distintas <span class="text-red-400">*</span></label>
+                    <input type="number" id="locations" name="locations" value="1" min="0" step="1" class="form-input w-full p-3 rounded-md shadow-sm transition duration-150" required>
+                </div>
+                <div>
+                    <label for="actors" class="block text-sm font-medium saturno-text-main mb-1">Elenco/Atores <span class="text-red-400">*</span></label>
+                    <select id="actors" name="actors" class="form-select w-full p-3 rounded-md shadow-sm transition duration-150">
+                        <option value="none" selected>Sem elenco profissional</option>
+                        <option value="basic">1-2 Atores (básico/figurantes com fala)</option>
+                        <option value="featured">3+ Atores ou Destaque</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label for="postProduction" class="block text-sm font-medium saturno-text-main mb-1">Complexidade da Pós-Produção <span class="text-red-400">*</span>
+                    <span class="tooltip text-xs text-slate-400 cursor-help">(?)
+                        <span class="tooltiptext">Básica: Edição, cor simples, música de livraria. Intermediária: Edição elaborada, motion graphics simples, tratamento de cor, sound design. Avançada: VFX, motion complexo, trilha/mixagem avançada.</span>
+                    </span>
+                </label>
+                <select id="postProduction" name="postProduction" class="form-select w-full p-3 rounded-md shadow-sm transition duration-150">
+                    <option value="basic">Básica</option>
+                    <option value="intermediate" selected>Intermediária</option>
+                    <option value="advanced">Avançada</option>
+                </select>
+            </div>
+
+            <fieldset class="border saturno-border-subtle p-4 rounded-md">
+                <legend class="text-sm font-medium saturno-text-main px-2">Serviços Adicionais (Opcional)</legend>
+                <div class="space-y-3 mt-2">
+                    <div class="flex items-center">
+                        <input id="script" name="script" type="checkbox" class="h-4 w-4 text-teal-500 border-slate-500 rounded focus:ring-teal-600">
+                        <label for="script" class="ml-2 block text-sm saturno-text-main">Roteiro Profissional</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input id="motionGraphics" name="motionGraphics" type="checkbox" class="h-4 w-4 text-teal-500 border-slate-500 rounded focus:ring-teal-600">
+                        <label for="motionGraphics" class="ml-2 block text-sm saturno-text-main">Motion Graphics Dedicado (básico)</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input id="originalSoundtrack" name="originalSoundtrack" type="checkbox" class="h-4 w-4 text-teal-500 border-slate-500 rounded focus:ring-teal-600">
+                        <label for="originalSoundtrack" class="ml-2 block text-sm saturno-text-main">Trilha Sonora Original (básica)</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input id="voiceOver" name="voiceOver" type="checkbox" class="h-4 w-4 text-teal-500 border-slate-500 rounded focus:ring-teal-600">
+                        <label for="voiceOver" class="ml-2 block text-sm saturno-text-main">Locução Profissional (básica)</label>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="flex flex-col sm:flex-row gap-4 pt-4">
+                <button type="submit" class="w-full sm:w-auto flex-grow saturno-button-primary font-semibold py-3 px-6 rounded-md shadow-md transition duration-150 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:ring-opacity-50">
+                    Calcular Estimativa
+                </button>
+                <button type="button" id="resetButton" class="w-full sm:w-auto flex-grow saturno-button-secondary font-semibold py-3 px-6 rounded-md shadow-md transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-opacity-50">
+                    Limpar
+                </button>
+            </div>
+        </form>
+
+        <div id="resultsSection" class="mt-10 p-6 bg-opacity-50 bg-black rounded-lg shadow-inner" style="display: none;"> <h2 class="text-2xl font-semibold saturno-text-highlight mb-4">Estimativa Base do Orçamento</h2>
+            <div class="space-y-2 text-lg">
+                <p class="flex justify-between">Subtotal dos Serviços: <span id="subtotalAmount" class="font-semibold">R$ 0,00</span></p>
+                <p class="flex justify-between">Contingência (10%): <span id="contingencyAmount" class="font-semibold">R$ 0,00</span></p>
+                <hr class="saturno-border-subtle my-2">
+                <p class="flex justify-between text-xl saturno-text-highlight">Total Estimado: <span id="totalAmount" class="font-bold">R$ 0,00</span></p>
+            </div>
+            <p class="mt-6 text-xs text-slate-400 saturno-text-main opacity-80">
+                <strong>Atenção:</strong> Esta é uma estimativa base e não um orçamento final. Os custos podem variar dependendo da complexidade específica do projeto, demandas de equipamentos, talentos, locações e outros fatores. Entre em contato com a <strong class="saturno-text-highlight">Saturno</strong> para uma cotação detalhada e personalizada.
+            </p>
+        </div>
+         <footer class="text-center mt-10 text-xs text-slate-500 saturno-text-main opacity-70">
+            <p>&copy; <span id="currentYear"></span> Saturno Audiovisual. Todos os direitos reservados.</p>
+        </footer>
+    </main>
+
+    <script>
+        // Constants for cost calculation (in BRL)
+        const COST_PER_FILMING_DAY_COMPLETE = 2500;
+        const COST_PER_EXTRA_LOCATION = 300;
+        const COST_STOCK_FOOTAGE_PACKAGE = 800; // Custo base para pacote de banco de imagens
+        const COST_ACTORS = {
+            none: 0,
+            basic: 800,
+            featured: 2000
+        };
+        const COST_POST_PRODUCTION_PER_MINUTE = {
+            basic: 200,
+            intermediate: 500,
+            advanced: 1200
+        };
+        const COST_SCRIPT = 700;
+        const COST_MOTION_GRAPHICS_DEDICATED = 1000;
+        const COST_ORIGINAL_SOUNDTRACK_BASIC = 1500;
+        const COST_PROFESSIONAL_VOICEOVER_BASIC = 600;
+        const CONTINGENCY_RATE = 0.10;
+
+        // Default values for project types
+        const projectDefaults = {
+            custom: {
+                videoDuration: 1, filmingDays: 1, locations: 1, actors: 'none', postProduction: 'intermediate',
+                script: false, motionGraphics: false, originalSoundtrack: false, voiceOver: false, isStockVideo: false
+            },
+            institucional: {
+                videoDuration: 2, filmingDays: 1, locations: 1, actors: 'basic', postProduction: 'intermediate',
+                script: true, motionGraphics: false, originalSoundtrack: false, voiceOver: true, isStockVideo: false
+            },
+            promocional: {
+                videoDuration: 1, filmingDays: 1, locations: 1, actors: 'none', postProduction: 'intermediate',
+                script: true, motionGraphics: true, originalSoundtrack: false, voiceOver: false, isStockVideo: false
+            },
+            socialMedia: {
+                videoDuration: 0.5, filmingDays: 0.5, locations: 1, actors: 'none', postProduction: 'basic',
+                script: false, motionGraphics: true, originalSoundtrack: false, voiceOver: false, isStockVideo: false
+            },
+            stockVideo: { // Novo tipo de projeto
+                videoDuration: 1, filmingDays: 0, locations: 0, actors: 'none', postProduction: 'basic',
+                script: false, motionGraphics: true, originalSoundtrack: false, voiceOver: true, isStockVideo: true
+            },
+            clipeMusical: {
+                videoDuration: 3, filmingDays: 1, locations: 1, actors: 'basic', postProduction: 'intermediate',
+                script: false, motionGraphics: false, originalSoundtrack: false, voiceOver: false, isStockVideo: false
+            },
+            evento: {
+                videoDuration: 5, filmingDays: 0.5, locations: 1, actors: 'none', postProduction: 'basic',
+                script: false, motionGraphics: false, originalSoundtrack: false, voiceOver: false, isStockVideo: false
+            }
+        };
+
+        // DOM Elements
+        const form = document.getElementById('budgetForm');
+        const projectTypeSelect = document.getElementById('projectType');
+        const videoDurationInput = document.getElementById('videoDuration');
+        const filmingDaysInput = document.getElementById('filmingDays');
+        const locationsInput = document.getElementById('locations');
+        const actorsSelect = document.getElementById('actors');
+        const postProductionSelect = document.getElementById('postProduction');
+        const scriptCheckbox = document.getElementById('script');
+        const motionGraphicsCheckbox = document.getElementById('motionGraphics');
+        const originalSoundtrackCheckbox = document.getElementById('originalSoundtrack');
+        const voiceOverCheckbox = document.getElementById('voiceOver');
+        
+        const resultsSection = document.getElementById('resultsSection');
+        const subtotalAmountSpan = document.getElementById('subtotalAmount');
+        const contingencyAmountSpan = document.getElementById('contingencyAmount');
+        const totalAmountSpan = document.getElementById('totalAmount');
+        const resetButton = document.getElementById('resetButton');
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Function to toggle field disabled state and style
+        function toggleFieldDisabled(field, isDisabled) {
+            field.disabled = isDisabled;
+            if (isDisabled) {
+                field.classList.add('form-input-disabled'); // You might need to define this class for better visual feedback
+                field.value = 0; // Reset value when disabled
+            } else {
+                field.classList.remove('form-input-disabled');
+            }
+        }
+
+        // Function to update form fields based on project type
+        function updateFormDefaults(type) {
+            const defaults = projectDefaults[type];
+            if (!defaults) return;
+
+            videoDurationInput.value = defaults.videoDuration;
+            filmingDaysInput.value = defaults.filmingDays;
+            locationsInput.value = defaults.locations;
+            actorsSelect.value = defaults.actors;
+            postProductionSelect.value = defaults.postProduction;
+            scriptCheckbox.checked = defaults.script;
+            motionGraphicsCheckbox.checked = defaults.motionGraphics;
+            originalSoundtrackCheckbox.checked = defaults.originalSoundtrack;
+            voiceOverCheckbox.checked = defaults.voiceOver;
+
+            // Enable/disable fields based on project type
+            const isStock = defaults.isStockVideo;
+            toggleFieldDisabled(filmingDaysInput, isStock);
+            toggleFieldDisabled(locationsInput, isStock);
+            // Actors might still be relevant if it's for voice-over talent, so not disabling by default for stock.
+        }
+
+        // Format currency
+        function formatCurrency(amount) {
+            return amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        // Event Listeners
+        projectTypeSelect.addEventListener('change', (e) => {
+            updateFormDefaults(e.target.value);
+            if (e.target.value !== 'custom') {
+                calculateAndDisplayBudget();
+            } else {
+                 resultsSection.style.display = 'none';
+            }
+        });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            calculateAndDisplayBudget();
+        });
+
+        resetButton.addEventListener('click', () => {
+            form.reset();
+            projectTypeSelect.value = 'custom';
+            updateFormDefaults('custom'); // Ensure custom defaults (fields enabled) are applied
+            resultsSection.style.display = 'none';
+        });
+        
+        // Function to calculate and display budget
+        function calculateAndDisplayBudget() {
+            const projectType = projectTypeSelect.value;
+            const defaults = projectDefaults[projectType] || projectDefaults.custom;
+
+            const videoDuration = parseFloat(videoDurationInput.value) || 0;
+            let filmingDays = parseFloat(filmingDaysInput.value) || 0;
+            let numLocations = parseInt(locationsInput.value) || 0; // Allow 0 for stock
+            const actorsValue = actorsSelect.value;
+            const postProductionValue = postProductionSelect.value;
+
+            const needsScript = scriptCheckbox.checked;
+            const needsMotionGraphics = motionGraphicsCheckbox.checked;
+            const needsOriginalSoundtrack = originalSoundtrackCheckbox.checked;
+            const needsVoiceOver = voiceOverCheckbox.checked;
+
+            let subtotal = 0;
+
+            if (defaults.isStockVideo) {
+                subtotal += COST_STOCK_FOOTAGE_PACKAGE;
+                // Ensure filmingDays and locations are not factored if they were somehow non-zero
+                filmingDays = 0;
+                numLocations = 0;
+            } else {
+                // Filming cost
+                subtotal += filmingDays * COST_PER_FILMING_DAY_COMPLETE;
+                // Location cost (extra locations)
+                if (numLocations > 1) { // Only charge for locations if more than 1 for non-stock
+                    subtotal += (numLocations - 1) * COST_PER_EXTRA_LOCATION;
+                } else if (numLocations === 1 && filmingDays > 0) {
+                    // Consider if a single location for a filming day has an inherent base cost
+                    // For this calculator, let's assume the COST_PER_FILMING_DAY_COMPLETE covers the first location setup.
+                }
+            }
+
+            // Actors cost (still relevant for voice-over in stock videos)
+            subtotal += COST_ACTORS[actorsValue] || 0;
+
+            // Post-production cost
+            subtotal += (COST_POST_PRODUCTION_PER_MINUTE[postProductionValue] || 0) * videoDuration;
+            
+            // Additional services
+            if (needsScript) subtotal += COST_SCRIPT;
+            if (needsMotionGraphics) subtotal += COST_MOTION_GRAPHICS_DEDICATED;
+            if (needsOriginalSoundtrack) subtotal += COST_ORIGINAL_SOUNDTRACK_BASIC;
+            if (needsVoiceOver) subtotal += COST_PROFESSIONAL_VOICEOVER_BASIC;
+
+            const contingencyAmount = subtotal * CONTINGENCY_RATE;
+            const totalAmount = subtotal + contingencyAmount;
+
+            subtotalAmountSpan.textContent = formatCurrency(subtotal);
+            contingencyAmountSpan.textContent = formatCurrency(contingencyAmount);
+            totalAmountSpan.textContent = formatCurrency(totalAmount);
+            resultsSection.style.display = 'block';
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Initialize form defaults based on the initially selected project type
+        updateFormDefaults(projectTypeSelect.value);
+    </script>
+
+</body>
+</html>
