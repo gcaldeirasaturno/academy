@@ -1,0 +1,315 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPA: Demanda por Agências de Marketing no Brasil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Visualization & Content Choices:
+        - Seção 1 (Cenário): Key stats displayed using HTML/Tailwind for clarity. Unicode icons. Goal: Inform.
+        - Seção 2 (Porquês): Card layout for factors using HTML/Tailwind, Unicode icons. Goal: Explain.
+        - Seção 3 (Serviços): Horizontal Bar Chart (Chart.js) for search volumes. Goal: Compare/Rank. Interaction: Tooltips. Justification: Ideal for comparing quantities. Chart container styled as per requirements.
+        - Seção 4 (Futuro): Card layout for trends using HTML/Tailwind, Unicode icons. Goal: Highlight.
+        - All text content directly from the report. Icons are Unicode to adhere to no SVG/image rule.
+    -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif; /* Tailwind uses a sans-serif stack that includes Inter by default if available */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px; /* max-w-2xl is 672px, max-w-3xl is 768px. 700px is a good intermediate. */
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px; /* Base height */
+            max-height: 450px;
+        }
+        @media (min-width: 640px) { /* sm breakpoint */
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .section-title {
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 600; /* semibold */
+            color: #0d9488; /* text-teal-600 */
+            margin-bottom: 1rem; /* mb-4 */
+            padding-bottom: 0.5rem; /* pb-2 */
+            border-bottom: 2px solid #14b8a6; /* border-b-2 border-teal-500 */
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.5rem; /* rounded-lg */
+            padding: 1.5rem; /* p-6 */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); /* shadow-md */
+            margin-bottom: 1rem; /* mb-4 */
+        }
+        .icon-placeholder {
+            font-size: 2rem; /* text-3xl */
+            margin-right: 0.75rem; /* mr-3 */
+            color: #14b8a6; /* text-teal-500 */
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+
+    <div class="container mx-auto max-w-5xl p-4 sm:p-6 lg:p-8">
+
+
+        <header class="text-center my-8 md:my-12">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-teal-700 mb-2">O Boom das Agências de Marketing no Brasil</h1>
+            <p class="text-lg sm:text-xl text-slate-600">Empresas Buscam Expertise para Navegar no Cenário Digital: Uma análise visual do crescimento da procura por serviços de marketing e as razões por trás dessa tendência.</p>
+        </header>
+
+
+        <main>
+            <section id="cenario-atual" class="my-10 md:my-16">
+                <h2 class="section-title">Brasil Digital: A Transformação Acelerada</h2>
+                <p class="text-slate-600 mb-6">Esta seção apresenta o panorama do crescimento do investimento em marketing digital e a expansão do mercado de agências no Brasil, fornecendo um contexto inicial sobre a magnitude dessa transformação.</p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="card">
+                        <div class="flex items-start">
+                            <span class="icon-placeholder">📈</span>
+                            <div>
+                                <h3 class="text-xl font-semibold text-teal-600 mb-1">Investimento em Publicidade Online</h3>
+                                <p class="text-2xl font-bold">R$ 37,9 Bilhões em 2024</p>
+                                <p class="text-slate-600">(+8% vs 2023 | +60% desde 2020)</p>
+                                <p class="text-xs text-slate-500 mt-2">Fonte: IAB Brasil & Kantar IBOPE Media (Digital Ad Spend 2025)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="flex items-start">
+                            <span class="icon-placeholder">🏢</span>
+                            <div>
+                                <h3 class="text-xl font-semibold text-teal-600 mb-1">Crescimento do Mercado Publicitário</h3>
+                                <p class="text-2xl font-bold">+23,1% no 1º Trimestre de 2024</p>
+                                <p class="text-slate-600">(Investimento em mídia via agências vs 1º Trim 2023)</p>
+                                <p class="mt-2"><strong>45%</strong> das agências relataram crescimento no 1º semestre de 2024.</p>
+                                <p class="text-xs text-slate-500 mt-2">Fonte: Cenp-Meios & Pesquisa VanPro (Sinapro/Fenapro)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 p-6 bg-teal-50 border-l-4 border-teal-500 rounded-r-lg">
+                    <p class="text-xl italic text-teal-700">"A digitalização não é mais uma opção, é uma necessidade. As empresas que não investem em presença online e estratégias de marketing eficazes estão ficando para trás."</p>
+                    <p class="text-right text-slate-600 mt-2">- Especialista em Marketing Digital</p>
+                </div>
+            </section>
+
+
+            <section id="razoes-demanda" class="my-10 md:my-16">
+                <h2 class="section-title">Motores do Crescimento: O Que Impulsiona a Demanda?</h2>
+                <p class="text-slate-600 mb-6">Explore os principais fatores que estão impulsionando a crescente procura por agências de marketing, desde a necessidade de conhecimento especializado até as mudanças no comportamento do consumidor.</p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="card">
+                        <div class="flex items-start">
+                            <span class="icon-placeholder">🛠️</span>
+                            <div>
+                                <h3 class="text-xl font-semibold text-teal-600 mb-1">Necessidade de Especialização</h3>
+                                <p>O marketing digital é complexo (SEO, Mídia Paga, Conteúdo, Redes Sociais, Automação, Análise de Dados). Empresas buscam know-how especializado que não possuem internamente.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="flex items-start">
+                            <span class="icon-placeholder">👤</span>
+                            <div>
+                                <h3 class="text-xl font-semibold text-teal-600 mb-1">Comportamento do Consumidor</h3>
+                                <p>Consumidores estão cada vez mais online. Em janeiro de 2024, o Brasil registrou <strong>181,8 milhões de usuários de internet</strong> (83,7% da população) e <strong>144 milhões de usuários de mídias sociais</strong> (66,3% da população).</p>
+                                <p class="mt-1"><strong>76,6%</strong> da base total de usuários de internet no Brasil utilizava pelo menos uma plataforma de mídia social em janeiro de 2024.</p>
+                                <p class="text-xs text-slate-500 mt-2">Fonte: DataReportal (Digital 2024: Brazil)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="flex items-start">
+                            <span class="icon-placeholder">💰</span>
+                            <div>
+                                <h3 class="text-xl font-semibold text-teal-600 mb-1">Retorno Sobre o Investimento (ROI)</h3>
+                                <p>Marketing digital, quando bem executado, oferece ROI mensurável e significativo. Agências ajudam a otimizar orçamentos e maximizar resultados.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="flex items-start">
+                            <span class="icon-placeholder">🎯</span>
+                            <div>
+                                <h3 class="text-xl font-semibold text-teal-600 mb-1">Concorrência Acirrada</h3>
+                                <p>Com mais empresas online, a competição por atenção é intensa. Estratégias de marketing diferenciadas são cruciais para se destacar.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <section id="servicos-procurados" class="my-10 md:my-16">
+                <h2 class="section-title">No Topo da Lista: Quais Tópicos de Marketing Digital Geram Mais Interesse?</h2>
+                <p class="text-slate-600 mb-6">Esta seção visualiza, através de um gráfico de barras, os serviços de marketing digital com maior volume de busca, indicando as áreas de maior interesse e potencial demanda no mercado brasileiro.</p>
+                <div class="card">
+                    <div class="chart-container">
+                        <canvas id="servicosChart"></canvas>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-4 text-center">Fonte: Baseado em dados de volume de busca do Planejador de Palavras-Chave do Google para 2024 (conforme análise de mercado, ex: Samilo). Volume mensal de buscas.</p>
+                </div>
+            </section>
+
+
+            <section id="futuro-promissor" class="my-10 md:my-16">
+                <h2 class="section-title">Próximos Passos: Tendências e Oportunidades</h2>
+                <p class="text-slate-600 mb-6">Descubra as tendências emergentes e as oportunidades futuras no setor de marketing digital, desde o impacto da Inteligência Artificial até a crescente importância da experiência do cliente.</p>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="card">
+                        <div class="flex items-start">
+                             <span class="icon-placeholder">🤖</span>
+                            <div>
+                                <h3 class="text-xl font-semibold text-teal-600 mb-1">Inteligência Artificial (IA)</h3>
+                                <p>Uso de IA para personalização, análise preditiva e otimização de campanhas.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="flex items-start">
+                            <span class="icon-placeholder">📢</span>
+                            <div>
+                                <h3 class="text-xl font-semibold text-teal-600 mb-1">Marketing de Influência</h3>
+                                <p>Foco em autenticidade, microinfluenciadores e profissionalização crescente.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="flex items-start">
+                            <span class="icon-placeholder">😊</span>
+                            <div>
+                                <h3 class="text-xl font-semibold text-teal-600 mb-1">Experiência do Cliente (CX)</h3>
+                                <p>CX como diferencial competitivo, otimizando toda a jornada do cliente.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 text-center p-6 bg-white rounded-lg shadow-md">
+                    <p class="text-lg text-slate-700">A parceria com agências de marketing continuará sendo vital para o crescimento e sustentabilidade dos negócios no Brasil, especialmente em um cenário digital cada vez mais complexo e competitivo.</p>
+                </div>
+            </section>
+        </main>
+
+
+        <footer class="text-center mt-12 md:mt-20 py-8 border-t border-slate-300">
+            <h3 class="text-lg font-semibold text-teal-700 mb-3">Fontes Principais Citadas:</h3>
+            <ul class="text-sm text-slate-600 space-y-1">
+                <li>IAB Brasil e Kantar IBOPE Media ("Digital Ad Spend 2025")</li>
+                <li>Cenp-Meios (Painel de Investimentos em Mídia)</li>
+                <li>Pesquisa VanPro (Sinapro/Fenapro)</li>
+                <li>DataReportal ("Digital 2024: Brazil")</li>
+                <li>Análises de mercado baseadas em dados do Planejador de Palavras-Chave do Google (Ex: Samilo)</li>
+            </ul>
+            <p class="text-xs text-slate-500 mt-6">© 2025 Análise Interativa de Mercado. Todos os direitos reservados (Exemplo).</p>
+        </footer>
+
+
+    </div>
+
+
+    <script>
+        const ctx = document.getElementById('servicosChart').getContext('2d');
+        const servicosChart = new Chart(ctx, {
+            type: 'bar', // Changed to 'bar' for horizontal bar chart effect by swapping axes in options
+            data: {
+                labels: ['Inbound Marketing', 'Marketing de Conteúdo', 'Redes Sociais', 'SEO', 'Mídia Paga'],
+                datasets: [{
+                    label: 'Volume Mensal de Buscas (Aproximado)',
+                    data: [1200000, 1000000, 800000, 600000, 500000],
+                    backgroundColor: [
+                        'rgba(13, 148, 136, 0.7)', // teal-600 with opacity
+                        'rgba(15, 118, 110, 0.7)', // darker teal shade
+                        'rgba(19, 78, 74, 0.7)',  // even darker teal
+                        'rgba(6, 78, 59, 0.7)',   // very dark teal/green
+                        'rgba(4, 56, 42, 0.7)'    // darkest teal/green
+                    ],
+                    borderColor: [
+                        'rgb(13, 148, 136)',
+                        'rgb(15, 118, 110)',
+                        'rgb(19, 78, 74)',
+                        'rgb(6, 78, 59)',
+                        'rgb(4, 56, 42)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y', // This makes the bar chart horizontal
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { // Was y, now x for horizontal
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Volume de Buscas'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                if (value >= 1000000) {
+                                    return (value / 1000000) + 'M';
+                                }
+                                if (value >= 1000) {
+                                    return (value / 1000) + 'k';
+                                }
+                                return value;
+                            }
+                        }
+                    },
+                    y: { // Was x, now y for horizontal
+                        ticks: {
+                            autoSkip: false, // Ensure all labels are shown
+                            callback: function(value, index, values) {
+                                const label = this.getLabelForValue(value);
+                                if (label.length > 16) { // Label wrapping logic
+                                    return label.substring(0, 16) + '...';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false // Hiding legend as it's a single dataset and self-explanatory
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.x !== null) {
+                                    label += new Intl.NumberFormat('pt-BR').format(context.parsed.x);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+
+        // Simple smooth scroll for potential future navigation links
+        // document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        //     anchor.addEventListener('click', function (e) {
+        //         e.preventDefault();
+        //         document.querySelector(this.getAttribute('href')).scrollIntoView({
+        //             behavior: 'smooth'
+        //         });
+        //     });
+        // });
+    </script>
+
+
+</body>
+</html>
