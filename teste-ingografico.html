@@ -1,0 +1,795 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infográfico: Reforma Tributária e o Futuro da Capacitação Profissional Online</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F0F4F8; /* Light Grayish Blue */
+            color: #4A5568; /* Slate Gray */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .section-title {
+            color: #2A3B4C; /* Dark Slate Blue */
+            border-bottom: 3px solid #4682B4; /* Steel Blue */
+            padding-bottom: 0.5rem;
+        }
+        .card {
+            background-color: #FFFFFF; /* White */
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-value {
+            color: #4682B4; /* Steel Blue */
+            font-weight: 700;
+        }
+        .stat-label {
+            color: #4A5568; /* Slate Gray */
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 2.5rem; 
+            padding-bottom: 1.5rem;
+            border-left: 2px solid #5F9EA0; /* Cadet Blue */
+        }
+        .timeline-item:last-child {
+            border-left: 2px solid transparent;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: -0.5rem;
+            top: 0.125rem;
+            height: 1rem;
+            width: 1rem;
+            background-color: #FF7F50; /* Coral */
+            border-radius: 9999px;
+            border: 2px solid #FFFFFF; /* White */
+        }
+        .flowchart-item {
+            background-color: #E0FFFF; /* Light Cyan */
+            border: 1px solid #5F9EA0; /* Cadet Blue */
+            color: #2A3B4C; /* Dark Slate Blue */
+        }
+        .flowchart-arrow {
+            color: #5F9EA0; /* Cadet Blue */
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+        .funnel-segment {
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.25rem;
+            color: white;
+            text-align: center;
+            clip-path: polygon(0% 0%, 100% 0%, 90% 100%, 10% 100%);
+        }
+        .modal {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal-content {
+            background-color: #FFFFFF;
+            color: #2A3B4C;
+        }
+        .gemini-button {
+            background-color: #FF7F50; /* Coral */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+        .gemini-button:hover {
+            background-color: #E57373; /* Lighter Coral for hover */
+        }
+        .loader {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #4682B4; /* Steel Blue */
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 1rem auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <header class="bg-[#2A3B4C] text-white py-8 shadow-lg">
+        <div class="container mx-auto px-6 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold">A Revolução Tributária e o Futuro da Capacitação Profissional Online no Brasil</h1>
+            <p class="mt-2 text-lg text-gray-300">Um panorama sobre o mercado de cursos online com foco em serviços tributários e a iminente Reforma Tributária, agora com insights de IA!</p>
+        </div>
+    </header>
+
+
+    <main class="container mx-auto px-6 py-12">
+        
+        <section id="section1" class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-center section-title">1. O Boom do E-learning e a Janela da Reforma Tributária</h2>
+            <p class="text-lg mb-8 text-center">O mercado de educação online está em franca expansão, e a Reforma Tributária brasileira surge como um catalisador para uma demanda sem precedentes por especialização. Profissionais e empresas buscam urgentemente se adaptar às novas realidades fiscais, abrindo um vasto campo para escolas online inovadoras.</p>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-3 text-[#2A3B4C]">Crescimento Expressivo do E-learning</h3>
+                    <div class="space-y-4">
+                        <div class="bg-gray-100 p-4 rounded-lg">
+                            <p class="text-3xl stat-value">&gt; $10 Bilhões</p>
+                            <p class="stat-label">Projeção para o mercado de e-learning na América Latina até 2025.</p>
+                        </div>
+                        <div class="bg-gray-100 p-4 rounded-lg">
+                            <p class="text-3xl stat-value">~8% CAGR</p>
+                            <p class="stat-label">Crescimento anual composto do e-learning corporativo no Brasil (2019-2025).</p>
+                        </div>
+                         <div class="bg-gray-100 p-4 rounded-lg">
+                            <p class="text-3xl stat-value">&gt; 1,5 Milhão</p>
+                            <p class="stat-label">De estudantes no setor de e-learning no Brasil, movimentando cifras bilionárias.</p>
+                        </div>
+                    </div>
+                    <p class="mt-4 text-sm">A pandemia acelerou a transição para o digital, e a Reforma Tributária (EC 132/2023, LC 214/2025) agora impulsiona a busca por conhecimento prático e especializado.</p>
+                </div>
+
+
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-4 text-[#2A3B4C]">Linha do Tempo da Reforma Tributária (Implementação Gradual)</h3>
+                    <p class="mb-4">A transição para o novo sistema tributário ocorrerá em fases, estendendo-se de 2026 a 2033, o que garante uma demanda contínua por capacitação.</p>
+                    <div class="relative">
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <h4 class="font-semibold text-[#4682B4]">2026</h4>
+                            <p class="text-sm">Início da transição com alíquota de teste para CBS e IBS (0,9% e 0,1% respectivamente).</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <h4 class="font-semibold text-[#4682B4]">2027</h4>
+                            <p class="text-sm">Entrada em vigor da CBS e extinção de PIS/COFINS. IPI zerado (exceto Zona Franca de Manaus).</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <h4 class="font-semibold text-[#4682B4]">2029 - 2032</h4>
+                            <p class="text-sm">Transição para o IBS: unificação de ICMS e ISS com redução progressiva das alíquotas atuais e aumento gradual do IBS.</p>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <h4 class="font-semibold text-[#4682B4]">2033</h4>
+                            <p class="text-sm">Plena vigência do novo sistema com IBS e CBS consolidados e extinção total dos tributos substituídos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="section2" class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-center section-title">2. Mercado Aquecido: Cursos Livres Online</h2>
+            <p class="text-lg mb-8 text-center">O cenário brasileiro de cursos online nas áreas contábil, jurídica, tecnológica e, especialmente, tributária é dinâmico e competitivo. A reforma intensifica a procura por especialização, abrindo portas para ofertas de nicho e focadas em TaxTech e empreendedorismo.</p>
+            <div class="grid md:grid-cols-2 gap-8 items-start">
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-3 text-[#2A3B4C]">Demanda Estimada por Segmento de Curso Livre Online</h3>
+                    <p class="mb-4">A área tributária desponta com uma demanda "Muito Alta", impulsionada pela necessidade de adaptação à reforma.</p>
+                    <div class="chart-container h-[350px] md:h-[400px]">
+                        <canvas id="demandaSegmentoChart"></canvas>
+                    </div>
+                    <p class="mt-4 text-sm text-center">Fonte: Análise baseada no relatório de pesquisa (Tabela 1).</p>
+                </div>
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-3 text-[#2A3B4C]">Principais Players e Oportunidades</h3>
+                    <p class="mb-4">Instituições renomadas já atuam no setor, mas a complexidade da reforma cria espaço para inovação, especialmente em:</p>
+                    <ul class="list-disc list-inside space-y-2 mb-4 text-[#4A5568]">
+                        <li>Micro-nichos e especializações profundas.</li>
+                        <li>Cursos que integram conhecimento tributário com tecnologia (TaxTech).</li>
+                        <li>Formação com foco em habilidades de gestão e empreendedorismo para consultores.</li>
+                        <li>Capacitação para não especialistas (empresários, gestores de PMEs) sobre os impactos da reforma.</li>
+                    </ul>
+                    <h4 class="font-semibold text-[#2A3B4C] mb-2">Alguns Players de Destaque:</h4>
+                    <div class="flex flex-wrap gap-2 text-sm">
+                        <span class="bg-[#E0FFFF] text-[#2A3B4C] px-3 py-1 rounded-full">CFC</span>
+                        <span class="bg-[#E0FFFF] text-[#2A3B4C] px-3 py-1 rounded-full">FGV</span>
+                        <span class="bg-[#E0FFFF] text-[#2A3B4C] px-3 py-1 rounded-full">FECAP</span>
+                        <span class="bg-[#E0FFFF] text-[#2A3B4C] px-3 py-1 rounded-full">Sebrae</span>
+                        <span class="bg-[#E0FFFF] text-[#2A3B4C] px-3 py-1 rounded-full">IBDT</span>
+                        <span class="bg-[#E0FFFF] text-[#2A3B4C] px-3 py-1 rounded-full">Contabilidade Facilitada</span>
+                        <span class="bg-[#E0FFFF] text-[#2A3B4C] px-3 py-1 rounded-full">EBRADI</span>
+                        <span class="bg-[#E0FFFF] text-[#2A3B4C] px-3 py-1 rounded-full">APET</span>
+                    </div>
+                     <p class="mt-4 text-xs">A lista de players é extensa, indicando um mercado maduro, mas com espaço para diferenciação através de propostas de valor focadas em resultados práticos.</p>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="section3" class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-center section-title">3. Decifrando a Reforma: Impacto na Necessidade de Especialização</h2>
+            <p class="text-lg mb-8 text-center">A Reforma Tributária (EC 132/2023 e LC 214/2025) é o principal motor da demanda. Entender suas mudanças é crucial para identificar as novas competências que os profissionais precisarão desenvolver.</p>
+            <div class="grid md:grid-cols-2 gap-8 items-start">
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-3 text-[#2A3B4C]">Principais Mudanças Introduzidas</h3>
+                     <p class="mb-4">A reforma simplifica o sistema com a criação do IVA Dual (IBS e CBS) e do Imposto Seletivo.</p>
+                    <div class="chart-container h-[300px] md:h-[350px]">
+                        <canvas id="mudancasReformaChart"></canvas>
+                    </div>
+                    <ul class="mt-4 text-sm space-y-1">
+                        <li><strong class="text-[#4682B4]">CBS (Federal):</strong> Unifica PIS e COFINS.</li>
+                        <li><strong class="text-[#FF7F50]">IBS (Subnacional):</strong> Unifica ICMS e ISS.</li>
+                        <li><strong class="text-[#FFD700]">IS (Seletivo):</strong> Extrafiscal, sobre bens/serviços prejudiciais à saúde/meio ambiente.</li>
+                    </ul>
+                    <p class="mt-2 text-sm">Este novo panorama impulsionará a procura por especialistas, podendo dobrar a demanda no setor de BPO fiscal/tributário.</p>
+                </div>
+                 <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-3 text-[#2A3B4C]">Novas Competências Exigidas dos Profissionais</h3>
+                    <p class="mb-4">A adaptação exige um novo conjunto de habilidades, indo além do conhecimento técnico das novas regras.</p>
+                    <div class="chart-container h-[350px] md:h-[420px]">
+                        <canvas id="competenciasReformaChart"></canvas>
+                    </div>
+                    <p class="mt-4 text-sm text-center">Fonte: Análise baseada no relatório de pesquisa (Tabela 2).</p>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="section4" class="mb-16">
+            <h2 class="text-3xl font-bold mb-8 text-center section-title">4. Construindo a Escola do Futuro: Estratégias para o Sucesso</h2>
+            <p class="text-lg mb-8 text-center">Para ter sucesso, uma nova escola online precisa de uma proposta de valor clara, currículos práticos, marketing inteligente e foco no aluno. A especialização é a chave, e a IA pode ser uma grande aliada!</p>
+
+
+            <div class="mb-12 card p-6">
+                <h3 class="text-2xl font-semibold mb-2 text-[#2A3B4C] text-center">4.1 Nichos de Ouro Pós-Reforma e Foco Empreendedor</h3>
+                <p class="mb-4 text-center">A especialização em subnichos gerados pela reforma e o desenvolvimento de habilidades empreendedoras são diferenciais cruciais.</p>
+                <div class="chart-container h-[400px] md:h-[450px] mx-auto">
+                    <canvas id="nichosPromissoresChart"></canvas>
+                </div>
+                <p class="mt-4 text-sm text-center">O tamanho das bolhas sugere o potencial de demanda. Cursos que combinem "hard skills" tributárias com "soft skills" e gestão de negócios para consultores terão grande apelo.</p>
+                <div class="mt-6 text-center">
+                    <label for="nicheInput" class="block text-sm font-medium text-[#4A5568] mb-1">Área de Interesse para Novas Ideias de Curso:</label>
+                    <input type="text" id="nicheInput" class="mt-1 block w-full md:w-1/2 mx-auto px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#4682B4] focus:border-[#4682B4] sm:text-sm" placeholder="Ex: Tributação de Serviços Digitais">
+                    <button id="generateNicheIdeasBtn" class="gemini-button mt-3">✨ Gerar Ideias de Cursos com IA</button>
+                </div>
+            </div>
+
+
+            <div class="grid md:grid-cols-2 gap-8 mb-12">
+                <div class="card p-6">
+                    <h3 class="text-2xl font-semibold mb-2 text-[#2A3B4C]">4.2 Conteúdo que Transforma</h3>
+                    <p class="mb-4">Currículos devem ser práticos, atualizados e focados na aplicação real, utilizando metodologias de ensino online eficazes.</p>
+                    <h4 class="font-semibold text-[#4682B4] mb-2">Estrutura Curricular Ideal (Simplificada):</h4>
+                    <div class="space-y-2">
+                        <div class="flowchart-item p-3 rounded-md text-center font-medium">Módulos Práticos e Aplicados</div>
+                        <div class="text-center flowchart-arrow">↓</div>
+                        <div class="flowchart-item p-3 rounded-md text-center font-medium">Estudos de Caso Reais/Simulados</div>
+                        <div class="text-center flowchart-arrow">↓</div>
+                        <div class="flowchart-item p-3 rounded-md text-center font-medium">Conteúdo Constantemente Atualizado (Pós-LCs)</div>
+                         <div class="text-center flowchart-arrow">↓</div>
+                        <div class="flowchart-item p-3 rounded-md text-center font-medium">Desenvolvimento de Soft Skills (Comunicação, Negociação)</div>
+                    </div>
+                    <p class="mt-4 text-sm">Metodologias: Aulas gravadas e ao vivo, materiais de apoio ricos (e-books, planilhas), fóruns de discussão, suporte de tutores e instrutores experientes.</p>
+                    <div class="mt-6">
+                        <label for="curriculumTopicInput" class="block text-sm font-medium text-[#4A5568] mb-1">Tema do Curso para Detalhamento de Módulos:</label>
+                        <input type="text" id="curriculumTopicInput" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#4682B4] focus:border-[#4682B4] sm:text-sm" placeholder="Ex: CBS e IBS para Pequenas Empresas">
+                        <button id="generateCurriculumBtn" class="gemini-button mt-3 w-full">✨ Detalhar Módulos com IA</button>
+                    </div>
+                </div>
+
+
+                <div class="card p-6">
+                    <h3 class="text-2xl font-semibold mb-2 text-[#2A3B4C]">4.3 Marketing Inteligente para um Público Exigente</h3>
+                    <p class="mb-4">Construir autoridade digital e utilizar um funil de vendas bem estruturado são essenciais.</p>
+                    <h4 class="font-semibold text-[#4682B4] mb-2">Funil de Vendas Típico:</h4>
+                    <div class="w-full max-w-xs mx-auto">
+                        <div class="funnel-segment" style="background-color: #4682B4; width: 100%;">Atração (Conteúdo Gratuito, SEO)</div>
+                        <div class="funnel-segment" style="background-color: #5F9EA0; width: 85%; margin-left: 7.5%;">Consideração (E-books, Webinars)</div>
+                        <div class="funnel-segment" style="background-color: #FF7F50; width: 70%; margin-left: 15%;">Decisão (Páginas de Vendas, Depoimentos)</div>
+                        <div class="funnel-segment" style="background-color: #FFD700; width: 55%; margin-left: 22.5%;">Conversão (Matrícula)</div>
+                    </div>
+                    <p class="mt-4 text-sm">Estratégias: Marketing de conteúdo (blog, materiais ricos), SEO focado, webinars, e-mail marketing segmentado, parcerias estratégicas. Taxa de conversão média de landing pages: ~13.8%.</p>
+                     <div class="mt-6">
+                        <label for="marketingTitleInput" class="block text-sm font-medium text-[#4A5568] mb-1">Seu Título de Curso/Marketing Atual:</label>
+                        <input type="text" id="marketingTitleInput" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#4682B4] focus:border-[#4682B4] sm:text-sm" placeholder="Ex: Curso Completo Reforma Tributária">
+                        <button id="optimizeTitleBtn" class="gemini-button mt-3 w-full">✨ Otimizar Título com IA</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="section5" class="mb-16 card p-8">
+            <h2 class="text-3xl font-bold mb-6 text-center section-title">5. Rumo ao Topo: Recomendações Estratégicas Finais</h2>
+            <p class="text-lg mb-6">O sucesso de uma escola online de nicho em serviços tributários, no contexto da reforma, depende de ser percebida como a "melhor" em um segmento específico. Isso exige profundidade técnica, praticidade, atualização constante e um compromisso genuíno com o desenvolvimento profissional dos alunos.</p>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-[#E0FFFF] p-4 rounded-lg shadow">
+                    <h4 class="font-semibold text-[#2A3B4C] mb-1">🎯 Foco no Nicho e Diferenciação</h4>
+                    <p class="text-sm">Evite ser generalista. Defina uma proposta de valor única e prática.</p>
+                </div>
+                <div class="bg-[#E0FFFF] p-4 rounded-lg shadow">
+                    <h4 class="font-semibold text-[#2A3B4C] mb-1">⭐ Priorização da Qualidade</h4>
+                    <p class="text-sm">Invista em instrutores experientes, conteúdo preciso e uma plataforma impecável.</p>
+                </div>
+                <div class="bg-[#E0FFFF] p-4 rounded-lg shadow">
+                    <h4 class="font-semibold text-[#2A3B4C] mb-1">🏗️ Construção de Autoridade</h4>
+                    <p class="text-sm">Marketing de conteúdo relevante para se tornar referência no tema.</p>
+                </div>
+                <div class="bg-[#E0FFFF] p-4 rounded-lg shadow">
+                    <h4 class="font-semibold text-[#2A3B4C] mb-1">🚀 Abordagem Prática e Empreendedora</h4>
+                    <p class="text-sm">Capacite para o mercado e para a consultoria, além da teoria.</p>
+                </div>
+                <div class="bg-[#E0FFFF] p-4 rounded-lg shadow">
+                    <h4 class="font-semibold text-[#2A3B4C] mb-1">🔄 Flexibilidade e Adaptação</h4>
+                    <p class="text-sm">Seja ágil para atualizar conteúdos e atender novas demandas do mercado.</p>
+                </div>
+                <div class="bg-[#E0FFFF] p-4 rounded-lg shadow">
+                    <h4 class="font-semibold text-[#2A3B4C] mb-1">⚖️ Compliance Legal Desde o Início</h4>
+                    <p class="text-sm">Garanta a conformidade com LGPD, direitos autorais e outras legislações.</p>
+                </div>
+                 <div class="bg-[#FFD700] p-4 rounded-lg shadow md:col-span-2 lg:col-span-3 text-center">
+                    <h4 class="font-semibold text-[#2A3B4C] mb-1">🤝 Foco Incansável no Aluno e na Comunidade</h4>
+                    <p class="text-sm text-[#2A3B4C]">Crie uma comunidade engajada. Alunos satisfeitos são seus melhores promotores.</p>
+                </div>
+            </div>
+            <p class="mt-8 text-xl text-center font-semibold text-[#4682B4]">A hora de se capacitar e de investir na capacitação tributária de qualidade é AGORA!</p>
+        </section>
+    </main>
+
+
+    <footer class="bg-[#2A3B4C] text-white py-6 mt-12">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-sm">&copy; <span id="currentYear"></span> Infográfico de Tendências. Baseado no Relatório de Pesquisa sobre Escolas Online de Serviços Tributários.</p>
+            <p class="text-xs mt-1">Este é um exemplo de infográfico gerado para fins demonstrativos.</p>
+        </div>
+    </footer>
+
+
+    <div id="geminiModal" class="fixed inset-0 z-50 modal items-center justify-center hidden overflow-auto">
+        <div class="modal-content p-6 rounded-lg shadow-xl w-11/12 md:w-1/2 max-h-[80vh] overflow-y-auto mx-auto my-8">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="geminiModalTitle" class="text-xl font-semibold">Sugestões da IA</h3>
+                <button id="closeGeminiModal" class="text-2xl font-bold">&times;</button>
+            </div>
+            <div id="geminiModalBody">
+                <div id="geminiLoadingIndicator" class="loader hidden"></div>
+                <div id="geminiResponseArea" class="text-sm whitespace-pre-wrap"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+
+        function wrapLabels(label, maxWidth) {
+            if (typeof label !== 'string') {
+                return label; 
+            }
+            if (label.length <= maxWidth) {
+                return label;
+            }
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = '';
+            for (const word of words) {
+                if ((currentLine + word).length > maxWidth && currentLine.length > 0) {
+                    lines.push(currentLine.trim());
+                    currentLine = word + ' ';
+                } else {
+                    currentLine += word + ' ';
+                }
+            }
+            lines.push(currentLine.trim());
+            return lines;
+        }
+        
+        const defaultTooltipCallbacks = {
+            title: function(tooltipItems) {
+                const item = tooltipItems[0];
+                let label = item.chart.data.labels[item.dataIndex];
+                if (Array.isArray(label)) {
+                  return label.join(' ');
+                } else {
+                  return label;
+                }
+            }
+        };
+
+
+        const primaryColor = '#4682B4'; 
+        const secondaryColor = '#FF7F50'; 
+        const tertiaryColor = '#FFD700'; 
+        const highlightColor = '#5F9EA0'; 
+        const textDarkColor = '#2A3B4C';
+        const textLightColor = '#4A5568';
+
+
+        const demandaData = {
+            labels: ['Contabilidade', 'Jurídico', 'Tecnologia', 'Tributário'],
+            datasets: [{
+                label: 'Demanda Estimada',
+                data: [3, 3, 4, 5], 
+                backgroundColor: [secondaryColor, primaryColor, highlightColor, tertiaryColor],
+                borderColor: [secondaryColor, primaryColor, highlightColor, tertiaryColor],
+                borderWidth: 1
+            }]
+        };
+        new Chart(document.getElementById('demandaSegmentoChart'), {
+            type: 'bar',
+            data: demandaData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                const labels = ['', 'Baixa', 'Média', 'Alta', 'Muito Alta', 'Extrema'];
+                                return labels[value];
+                            },
+                            color: textLightColor
+                        },
+                        grid: { color: '#e0e0e0' }
+                    },
+                    x: {
+                        ticks: { color: textLightColor },
+                        grid: { display: false }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: 'Nível de Demanda (1=Baixa, 5=Extrema)', color: textDarkColor, font: {size: 14}},
+                    tooltip: { callbacks: defaultTooltipCallbacks }
+                }
+            }
+        });
+
+
+        const mudancasData = {
+            labels: ['CBS (Unifica PIS/COFINS)', 'IBS (Unifica ICMS/ISS)', 'Imposto Seletivo (Extrafiscal)'],
+            datasets: [{
+                label: 'Principais Mudanças',
+                data: [40, 40, 20],
+                backgroundColor: [primaryColor, secondaryColor, tertiaryColor],
+                hoverOffset: 4
+            }]
+        };
+        mudancasData.labels = mudancasData.labels.map(label => wrapLabels(label, 20));
+        new Chart(document.getElementById('mudancasReformaChart'), {
+            type: 'doughnut',
+            data: mudancasData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom', labels: { color: textLightColor, font: {size: 11}, boxWidth: 20, padding: 15,
+                        generateLabels: function(chart) {
+                            const data = chart.data;
+                            if (data.labels.length && data.datasets.length) {
+                                return data.labels.map(function(label, i) {
+                                    const meta = chart.getDatasetMeta(0);
+                                    const style = meta.controller.getStyle(i);
+                                    return {
+                                        text: Array.isArray(label) ? label.join(' ') : label,
+                                        fillStyle: style.backgroundColor,
+                                        strokeStyle: style.borderColor,
+                                        lineWidth: style.borderWidth,
+                                        hidden: isNaN(data.datasets[0].data[i]) || meta.data[i].hidden,
+                                        index: i
+                                    };
+                                });
+                            }
+                            return [];
+                        }
+                    }},
+                    title: { display: false },
+                    tooltip: { 
+                        callbacks: {
+                             title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) {
+                                  return label.join(' ');
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        const competenciasData = {
+            labels: [
+                wrapLabels('Conhec. Novas Regras', 16), 
+                wrapLabels('Planej. Estratégico', 16), 
+                wrapLabels('Compliance Fiscal', 16), 
+                wrapLabels('Análise de Impacto', 16), 
+                wrapLabels('Domínio de TaxTech', 16), 
+                wrapLabels('Atualização Constante', 16)
+            ],
+            datasets: [{
+                label: 'Nível de Importância',
+                data: [5, 4, 4, 4, 5, 5],
+                fill: true,
+                backgroundColor: 'rgba(70, 130, 180, 0.2)', 
+                borderColor: primaryColor,
+                pointBackgroundColor: primaryColor,
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: primaryColor
+            }]
+        };
+        new Chart(document.getElementById('competenciasReformaChart'), {
+            type: 'radar',
+            data: competenciasData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { color: '#cccccc' },
+                        grid: { color: '#dddddd' },
+                        pointLabels: { 
+                            font: { size: 10 }, 
+                            color: textLightColor,
+                            callback: function(label) {
+                                return Array.isArray(label) ? label : [label]; 
+                            }
+                        },
+                        ticks: {
+                            backdropColor: 'transparent',
+                            stepSize: 1,
+                            color: textLightColor,
+                            font: {size: 10}
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 5
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: 'Importância (1=Baixa, 5=Muito Alta)', color: textDarkColor, font: {size: 14}},
+                    tooltip: { 
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                const item = tooltipItems[0];
+                                let label = item.chart.data.labels[item.dataIndex];
+                                if (Array.isArray(label)) {
+                                  return label.join(' ');
+                                }
+                                return label;
+                            },
+                            label: function(context) {
+                                return `Importância: ${context.raw}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+
+        const nichosData = {
+            datasets: [{
+                label: 'IVA Dual (IBS/CBS)',
+                data: [{ x: 2, y: 3, r: 25 }],
+                backgroundColor: primaryColor,
+                tooltipText: 'IVA Dual (IBS/CBS): Alta demanda por cursos sobre cálculo, creditamento e regimes.'
+            }, {
+                label: 'Imposto Seletivo',
+                data: [{ x: 4, y: 5, r: 18 }],
+                backgroundColor: secondaryColor,
+                tooltipText: 'Imposto Seletivo: Foco em setores atingidos e estratégias de conformidade.'
+            }, {
+                label: 'Tributação Setorial',
+                data: [{ x: 6, y: 2, r: 22 }],
+                backgroundColor: tertiaryColor,
+                tooltipText: 'Tributação Setorial: Cursos para agronegócio, serviços, imobiliário, etc.'
+            }, {
+                label: 'TaxTech & Automação',
+                data: [{ x: 3, y: 7, r: 28 }],
+                backgroundColor: highlightColor,
+                tooltipText: 'TaxTech: Capacitação em software fiscal, auditoria digital e automação.'
+            }, {
+                label: 'Planej. na Transição',
+                data: [{ x: 7, y: 6, r: 20 }],
+                backgroundColor: '#DA70D6', 
+                tooltipText: 'Planej. na Transição: Otimizar carga tributária e aproveitar créditos durante a coexistência de sistemas.'
+            }, {
+                label: 'Compliance & Obrigações',
+                data: [{ x: 5, y: 4, r: 15 }],
+                backgroundColor: '#20B2AA', 
+                tooltipText: 'Compliance: Novas declarações (DIRBI) e escriturações digitais.'
+            }]
+        };
+        new Chart(document.getElementById('nichosPromissoresChart'), {
+            type: 'bubble',
+            data: nichosData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { display: false, min: 0, max: 10 },
+                    x: { display: false, min: 0, max: 10 }
+                },
+                plugins: {
+                    legend: { 
+                        position: 'bottom', 
+                        labels: { color: textLightColor, usePointStyle: true, font: {size: 11}, padding:15 }
+                    },
+                    title: { display: true, text: 'Potencial de Demanda (Tamanho da Bolha)', color: textDarkColor, font: {size: 14}},
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.tooltipText || context.dataset.label;
+                            },
+                            title: function() { return '';} 
+                        }
+                    }
+                }
+            }
+        });
+
+
+        // Gemini API Integration
+        const geminiModal = document.getElementById('geminiModal');
+        const closeGeminiModalBtn = document.getElementById('closeGeminiModal');
+        const geminiModalTitle = document.getElementById('geminiModalTitle');
+        const geminiModalBody = document.getElementById('geminiModalBody');
+        const geminiLoadingIndicator = document.getElementById('geminiLoadingIndicator');
+        const geminiResponseArea = document.getElementById('geminiResponseArea');
+
+
+        const apiKey = ""; // IMPORTANTE: Substitua pela sua chave de API Gemini ou configure para ser injetada pelo ambiente.
+
+
+        async function callGeminiAPI(prompt) {
+            geminiLoadingIndicator.classList.remove('hidden');
+            geminiResponseArea.textContent = '';
+            geminiModal.classList.remove('hidden');
+            geminiModal.classList.add('flex');
+
+
+            if (!apiKey) {
+                geminiResponseArea.textContent = "A chave da API Gemini não foi configurada. Por favor, adicione sua chave no código.";
+                geminiLoadingIndicator.classList.add('hidden');
+                console.error("Chave da API Gemini não configurada.");
+                return;
+            }
+
+
+            const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+            const payload = { contents: chatHistory };
+            // O modelo "gemini-2.0-flash" não existe. Usando "gemini-pro" como um modelo de texto comum.
+            // Ajuste para "gemini-1.5-flash-latest" ou "gemini-1.0-pro" ou o modelo correto que você tem acesso.
+            const model = "gemini-1.5-flash-latest"; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+
+
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("Erro na API Gemini:", errorData);
+                    throw new Error(`Erro na API: ${response.statusText}. Detalhes: ${JSON.stringify(errorData.error?.message || errorData)}`);
+                }
+
+
+                const result = await response.json();
+
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    geminiResponseArea.textContent = text;
+                } else {
+                    console.error("Resposta inesperada da API Gemini:", result);
+                    geminiResponseArea.textContent = "Não foi possível obter uma resposta da IA. Verifique o console para mais detalhes. A resposta pode estar vazia ou malformada.";
+                }
+            } catch (error) {
+                console.error("Falha ao chamar a API Gemini:", error);
+                geminiResponseArea.textContent = `Ocorreu um erro ao tentar obter sugestões da IA: ${error.message}. Verifique sua chave de API, o nome do modelo e a conexão com a internet. Tente novamente mais tarde.`;
+            } finally {
+                geminiLoadingIndicator.classList.add('hidden');
+            }
+        }
+
+
+        closeGeminiModalBtn.addEventListener('click', () => {
+            geminiModal.classList.add('hidden');
+            geminiModal.classList.remove('flex');
+        });
+        
+        window.addEventListener('click', (event) => {
+            if (event.target === geminiModal) {
+                geminiModal.classList.add('hidden');
+                geminiModal.classList.remove('flex');
+            }
+        });
+
+
+        // Feature 1: Niche Course Idea Generator
+        const nicheInput = document.getElementById('nicheInput');
+        const generateNicheIdeasBtn = document.getElementById('generateNicheIdeasBtn');
+        generateNicheIdeasBtn.addEventListener('click', () => {
+            const nicheArea = nicheInput.value.trim() || "aspectos gerais da Reforma Tributária Brasileira";
+            geminiModalTitle.textContent = "✨ Ideias de Cursos de Nicho Geradas por IA";
+            const prompt = `Com base na Reforma Tributária Brasileira, gere 3 ideias detalhadas para cursos online de nicho na área de "${nicheArea}". Para cada ideia, inclua em formato de lista (usando marcadores como '*' ou '-'): 
+1. Título do Curso (sugestivo e claro)
+2. Público-Alvo (específico)
+3. Principais Tópicos/Módulos (3 a 5 tópicos principais)
+4. Um diferencial chave para este curso.`;
+            callGeminiAPI(prompt);
+        });
+
+
+        // Feature 2: Curriculum Content Assistant
+        const curriculumTopicInput = document.getElementById('curriculumTopicInput');
+        const generateCurriculumBtn = document.getElementById('generateCurriculumBtn');
+        generateCurriculumBtn.addEventListener('click', () => {
+            const courseTopic = curriculumTopicInput.value.trim();
+            if (!courseTopic) {
+                geminiResponseArea.textContent = "Por favor, insira o tema do curso para detalhamento.";
+                geminiModalTitle.textContent = "Atenção";
+                geminiModal.classList.remove('hidden');
+                geminiModal.classList.add('flex');
+                return;
+            }
+            geminiModalTitle.textContent = "✨ Sugestões de Conteúdo Curricular por IA";
+            const prompt = `Para um curso online sobre "${courseTopic}" no contexto da Reforma Tributária Brasileira, detalhe 3 módulos principais. Para cada módulo, sugira em formato de lista (usando marcadores como '*' ou '-'):
+1. Nome do Módulo (claro e direto)
+2. Objetivos de Aprendizagem (2 a 3 objetivos)
+3. Tópicos Chave a serem cobertos (3 a 5 tópicos)
+4. Uma sugestão de atividade prática ou estudo de caso para o módulo.`;
+            callGeminiAPI(prompt);
+        });
+
+
+        // Feature 3: Marketing Title Optimizer
+        const marketingTitleInput = document.getElementById('marketingTitleInput');
+        const optimizeTitleBtn = document.getElementById('optimizeTitleBtn');
+        optimizeTitleBtn.addEventListener('click', () => {
+            const currentTitle = marketingTitleInput.value.trim();
+            if (!currentTitle) {
+                geminiResponseArea.textContent = "Por favor, insira o título atual para otimização.";
+                geminiModalTitle.textContent = "Atenção";
+                geminiModal.classList.remove('hidden');
+                geminiModal.classList.add('flex');
+                return;
+            }
+            geminiModalTitle.textContent = "✨ Sugestões de Títulos Otimizados por IA";
+            const prompt = `Analise o seguinte título de curso online sobre a Reforma Tributária Brasileira: "${currentTitle}". Sugira 3 alternativas mais impactantes e otimizadas para SEO, que despertem o interesse do público-alvo (profissionais das áreas contábil, jurídica, empresários e estudantes). Para cada sugestão, explique brevemente o porquê da sugestão ser eficaz. Formate a resposta claramente, separando cada sugestão.`;
+            callGeminiAPI(prompt);
+        });
+
+
+    </script>
+</body>
+</html>
