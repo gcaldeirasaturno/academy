@@ -1,0 +1,1193 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Otimização Tributária Avançada</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; /* Tailwind gray-900 */
+            color: #d1d5db; /* Tailwind gray-300 */
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 240px; /* Ajustado para caber o texto maior */
+            background-color: #374151; /* Tailwind gray-700 */
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 50; 
+            bottom: 130%;
+            left: 50%;
+            margin-left: -120px; /* Ajustado para centralizar */
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.75rem;
+        }
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #374151 transparent transparent transparent;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        label {
+            font-weight: 500;
+            color: #9ca3af; /* Tailwind gray-400 */
+        }
+        .input-field, select {
+            background-color: #374151; 
+            border: 1px solid #6b7280; 
+            color: #d1d5db; 
+            border-radius: 0.375rem; 
+        }
+        .input-field:focus, select:focus {
+            border-color: #3b82f6; 
+        }
+        .input-field::placeholder {
+            color: #6b7280; 
+        }
+        select option {
+            background-color: #1f2937; 
+            color: #d1d5db; 
+        }
+
+
+        .card {
+            background-color: #1f2937; 
+            border: 1px solid #374151; 
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .results-card h3, #resumoLucroReal h3, #analiseDetalhada h3, #proximosPassos h3, #tabelaComparativaContainer h3, #economiaRenttaxCard h3 {
+            font-size: 1.125rem; 
+            font-weight: 600; 
+            margin-bottom: 0.75rem; 
+            color: #60a5fa; 
+        }
+        .results-card p, #resumoLucroReal p, #economiaRenttaxCard p {
+            margin-bottom: 0.25rem;
+            color: #9ca3af; 
+        }
+        .results-card strong, #resumoLucroReal strong, #secaoEconomia strong, #economiaRenttaxCard strong {
+             color: #bfdbfe; 
+        }
+        #economiaRenttaxCard .text-green-400 { /* Específico para o card Renttax */
+            color: #34d399; /* Tailwind green-400 */
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.25em 0.6em;
+            font-size: 75%;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 0.375rem;
+        }
+        .badge-blue {
+            color: #fff;
+            background-color: #2563eb; 
+        }
+        .badge-green {
+            color: #fff;
+            background-color: #059669; 
+        }
+        .badge-red {
+            color: #fff;
+            background-color: #dc2626; 
+        }
+        .badge-yellow {
+            color: #1f2937; 
+            background-color: #f59e0b; 
+        }
+        .badge-purple {
+            color: #fff;
+            background-color: #7c3aed; 
+        }
+
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #374151; 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #6b7280; 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af; 
+        }
+        .comparison-table {
+            width: 100%;
+            margin-top: 1rem;
+            border-collapse: collapse;
+        }
+        .comparison-table th, .comparison-table td {
+            border: 1px solid #374151; 
+            padding: 0.75rem;
+            text-align: left;
+            font-size: 0.875rem; 
+        }
+        .comparison-table th {
+            background-color: #374151; 
+            color: #e5e7eb; 
+            font-weight: 600;
+        }
+        .comparison-table td {
+            color: #d1d5db; 
+        }
+        .highlight-best {
+            background-color: #1e3a8a; 
+            color: #eff6ff; 
+            font-weight: bold;
+        }
+        .highlight-best td {
+            color: #eff6ff !important;
+        }
+        #renttaxComparisonTableBody .highlight-renttax td {
+            background-color: #065f46 !important; 
+            color: #d1fae5 !important; 
+            font-weight: bold;
+        }
+        /* Estilos para impressão */
+        @media print {
+            body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                -webkit-print-color-adjust: exact; /* For Chrome, Safari */
+                color-adjust: exact; /* Standard */
+            }
+            header, #taxForm, #detalhamentoImpostosContainer, #analiseDetalhada, #proximosPassos, .actions-footer button, .actions-footer a, .tooltip, #subHeaderText {
+                display: none !important;
+            }
+            .card {
+                border: 1px solid #ccc !important;
+                box-shadow: none !important;
+                background-color: #ffffff !important;
+                padding: 1rem !important;
+                margin-bottom: 1rem !important;
+            }
+            .results-card h3, #resumoLucroReal h3, #tabelaComparativaContainer h3, #economiaRenttaxCard h3 {
+                 color: #1e3a8a !important; /* Azul escuro para títulos na impressão */
+            }
+             .results-card p, #resumoLucroReal p, #economiaRenttaxCard p, .comparison-table td, .comparison-table th {
+                color: #000000 !important;
+            }
+            .results-card strong, #resumoLucroReal strong, #secaoEconomia strong, #economiaRenttaxCard strong {
+                color: #1e40af !important; /* Azul mais escuro para destaques */
+            }
+            #economiaRenttaxCard .text-green-400, #secaoEconomia .text-green-300, #renttaxEconomiaMonetaria {
+                color: #047857 !important; /* Verde escuro para economia */
+            }
+            .badge {
+                border: 1px solid #ccc;
+                color: #000 !important; /* Texto preto para badges */
+                background-color: #f0f0f0 !important; /* Fundo claro para badges */
+            }
+            .comparison-table th {
+                background-color: #e5e7eb !important; /* Cinza claro para cabeçalho da tabela */
+            }
+            .highlight-best td, #renttaxComparisonTableBody .highlight-renttax td {
+                background-color: #e0e7ff !important; /* Azul bem claro para destaque */
+                color: #000 !important;
+            }
+            .container {
+                max-width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            #resultsArea {
+                display: block !important; /* Garantir que a área de resultados seja exibida */
+            }
+            /* Forçar quebra de página antes de seções longas, se necessário */
+            #tabelaComparativaContainer, #economiaRenttaxCard, #resumoLucroReal {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="container mx-auto max-w-5xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-400">Calculadora de Otimização Tributária Avançada</h1>
+            <p id="subHeaderText" class="text-gray-400 mt-2">Simule e compare regimes tributários para sua empresa.</p>
+        </header>
+
+
+        <form id="taxForm" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10 p-6 card">
+            <div class="space-y-4">
+                <div>
+                    <label for="faturamentoMensal" class="block text-sm">Faturamento Mensal (R$) 
+                        <span class="tooltip text-gray-500">(?)
+                            <span class="tooltiptext">Informe o valor bruto total das vendas de produtos ou serviços no mês.</span>
+                        </span>
+                    </label>
+                    <input type="text" id="faturamentoMensal" name="faturamentoMensal" required class="input-field mt-1 block w-full px-3 py-2 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                </div>
+
+
+                <div>
+                    <label for="regimeAtual" class="block text-sm">Seu Regime Tributário Atual
+                        <span class="tooltip text-gray-500">(?)
+                            <span class="tooltiptext">Selecione o regime tributário em que sua empresa está enquadrada atualmente.</span>
+                        </span>
+                    </label>
+                    <select id="regimeAtual" name="regimeAtual" required class="input-field mt-1 block w-full px-3 py-2 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <option value="Simples Nacional">Simples Nacional</option>
+                        <option value="Lucro Presumido">Lucro Presumido</option>
+                        <option value="Lucro Real">Lucro Real</option>
+                    </select>
+                </div>
+
+
+                <div>
+                    <label for="setorAtuacao" class="block text-sm">Setor de Atuação
+                        <span class="tooltip text-gray-500">(?)
+                            <span class="tooltiptext">Escolha o setor que melhor descreve a atividade principal da sua empresa.</span>
+                        </span>
+                    </label>
+                    <select id="setorAtuacao" name="setorAtuacao" required class="input-field mt-1 block w-full px-3 py-2 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <option value="Comércio">Comércio</option>
+                        <option value="Indústria">Indústria</option>
+                        <option value="Serviços (Geral)">Serviços (Geral)</option>
+                        <option value="Tecnologia (Serviços)">Tecnologia (Serviços)</option>
+                        <option value="Construção Civil (Obras)">Construção Civil (Obras)</option>
+                        <option value="Alimentação (Venda)">Alimentação (Venda)</option>
+                        <option value="Transporte de Passageiros">Transporte de Passageiros</option>
+                        <option value="Saúde (Serviços)">Saúde (Serviços)</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="estadoUF" class="block text-sm">Estado (UF)
+                        <span class="tooltip text-gray-500">(?)
+                            <span class="tooltiptext">Selecione o estado onde sua empresa está localizada.</span>
+                        </span>
+                    </label>
+                    <select id="estadoUF" name="estadoUF" required class="input-field mt-1 block w-full px-3 py-2 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <option value="AC">Acre</option><option value="AL">Alagoas</option><option value="AP">Amapá</option><option value="AM">Amazonas</option><option value="BA">Bahia</option><option value="CE">Ceará</option><option value="DF">Distrito Federal</option><option value="ES">Espírito Santo</option><option value="GO">Goiás</option><option value="MA">Maranhão</option><option value="MT">Mato Grosso</option><option value="MS">Mato Grosso do Sul</option><option value="MG">Minas Gerais</option><option value="PA">Pará</option><option value="PB">Paraíba</option><option value="PR">Paraná</option><option value="PE">Pernambuco</option><option value="PI">Piauí</option><option value="RJ">Rio de Janeiro</option><option value="RN">Rio Grande do Norte</option><option value="RS">Rio Grande do Sul</option><option value="RO">Rondônia</option><option value="RR">Roraima</option><option value="SC">Santa Catarina</option><option value="SP">São Paulo</option><option value="SE">Sergipe</option><option value="TO">Tocantins</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="space-y-4">
+                 <div>
+                    <label for="gastoFolhaSalarial" class="block text-sm">Gasto Mensal com Folha Salarial (R$)
+                         <span class="tooltip text-gray-500">(?)
+                            <span class="tooltiptext">Inclua salários, pró-labore e encargos diretos (ex: FGTS). Não inclua INSS Patronal.</span>
+                        </span>
+                    </label>
+                    <input type="text" id="gastoFolhaSalarial" name="gastoFolhaSalarial" required class="input-field mt-1 block w-full px-3 py-2 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                </div>
+
+
+                <div>
+                    <label for="numeroFuncionarios" class="block text-sm">Número de Funcionários
+                        <span class="tooltip text-gray-500">(?)
+                            <span class="tooltiptext">Informe o número total de funcionários registrados.</span>
+                        </span>
+                    </label>
+                    <input type="number" id="numeroFuncionarios" name="numeroFuncionarios" required min="0" class="input-field mt-1 block w-full px-3 py-2 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                </div>
+                
+                <div>
+                    <label for="custosDespesasTotais" class="block text-sm">Custos e Despesas Totais (Mensal, R$)
+                        <span class="tooltip text-gray-500">(?)
+                            <span class="tooltiptext">Some: Custos de Mercadorias/Insumos Vendidos + Despesas Operacionais (aluguel, marketing, etc.) + Serviços Tomados de PJ com NF. Este total será usado para estimar créditos e deduções no Lucro Real.</span>
+                        </span>
+                    </label>
+                    <input type="text" id="custosDespesasTotais" name="custosDespesasTotais" required class="input-field mt-1 block w-full px-3 py-2 shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                </div>
+            </div>
+
+
+            <div class="md:col-span-2 text-center mt-4">
+                <button type="submit" class="w-full md:w-auto inline-flex justify-center py-3 px-8 border border-transparent shadow-sm text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-800">
+                    Calcular Otimização
+                </button>
+            </div>
+        </form>
+
+
+        <div id="resultsArea" class="hidden space-y-8">
+            <div id="mensagemPrincipal" class="card text-center p-6"></div>
+            
+            <div id="tabelaComparativaContainer" class="card">
+                <h3>Tabela Comparativa dos Regimes</h3>
+                <div class="overflow-x-auto">
+                    <table id="tabelaComparativa" class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Regime Tributário</th>
+                                <th>Imposto Mensal Estimado</th>
+                                <th>Alíquota Efetiva</th>
+                                <th>Imposto Anual Estimado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div id="cardRegimeAtual" class="card results-card"></div>
+                <div id="cardRegimeRecomendado" class="card results-card hidden"></div>
+            </div>
+            
+            <div id="secaoEconomia" class="card hidden p-6"></div>
+
+
+            <div id="economiaRenttaxCard" class="card hidden p-6">
+                <h3>Potencial de Otimização Adicional com Renttax (vs. Lucro Real Padrão)</h3>
+                <p class="text-sm">Aplicando uma otimização adicional estimada de <strong>2 pontos percentuais</strong> sobre a alíquota efetiva do Lucro Real, teríamos os seguintes cenários comparativos:</p>
+                
+                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <p class="font-medium text-blue-300">Lucro Real (Simulação Padrão):</p>
+                        <p>Alíquota Efetiva: <strong id="lrAliquotaOriginal">--%</strong></p>
+                        <p>Imposto Mensal: <strong id="lrImpostoOriginal">R$ --</strong></p>
+                    </div>
+                    <div class="border-l border-gray-700 md:border-l-0 md:border-t md:border-gray-700 md:pt-4 lg:border-t-0 lg:border-l lg:pl-4 lg:pt-0">
+                        <p class="font-medium text-green-400">Lucro Real com Renttax (Estimativa):</p>
+                        <p>Alíquota Efetiva Potencial: <strong id="renttaxAliquotaPotencial" class="text-xl">--%</strong></p>
+                        <p>Imposto Mensal Potencial: <strong id="renttaxImpostoPotencial" class="text-xl">R$ --</strong></p>
+                    </div>
+                </div>
+                
+                <div class="mt-6 text-center">
+                    <p class="text-lg">Economia Mensal Adicional com Renttax:</p>
+                    <p><strong id="renttaxEconomiaMonetaria" class="text-2xl text-green-400">R$ --</strong></p>
+                </div>
+            
+                <h4 class="text-md font-semibold text-blue-300 mt-6 mb-2">Comparativo Detalhado dos 3 Cenários:</h4>
+                <div class="overflow-x-auto">
+                    <table class="comparison-table text-sm w-full">
+                        <thead>
+                            <tr>
+                                <th>Cenário</th>
+                                <th>Imposto Mensal Estimado</th>
+                                <th>Alíquota Efetiva</th>
+                            </tr>
+                        </thead>
+                        <tbody id="renttaxComparisonTableBody">
+                            </tbody>
+                    </table>
+                </div>
+                <p class="text-xs text-gray-500 mt-3">(Este é um valor estimado para demonstrar o potencial de economia com uma gestão tributária especializada, aplicando uma redução de 2 p.p. sobre a alíquota efetiva do Lucro Real calculada.)</p>
+            </div>
+
+
+
+
+            <div id="resumoLucroReal" class="card hidden">
+                </div>
+
+
+            <div id="analiseDetalhada" class="card">
+                 </div>
+
+
+            <div id="proximosPassos" class="card">
+                 </div>
+            
+            <div id="detalhamentoImpostosContainer" class="space-y-6">
+                </div>
+
+
+
+
+            <div class="text-center mt-10 space-y-4 actions-footer">
+                 <button id="printButton" class="inline-flex items-center justify-center px-6 py-3 border border-blue-500 text-base font-medium rounded-md text-blue-300 bg-transparent hover:bg-blue-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-gray-800">
+                    <svg class="w-5 h-5 mr-2 -ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v6a2 2 0 002 2h1v3a1 1 0 001 1h8a1 1 0 001-1v-3h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a1 1 0 00-1-1H6a1 1 0 00-1 1zm1 0h6v3H6V4zm7 6H8v5h5v-5z" clip-rule="evenodd"></path><path d="M14 11H6v1h8v-1z"></path></svg>
+                    Imprimir Resultados
+                </button>
+                 <a href="https://wa.me/5511999999999?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20consultoria%20tribut%C3%A1ria." target="_blank" class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 focus:ring-offset-gray-800">
+                    <svg class="w-5 h-5 mr-2 -ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zm-4 0H9v2h2V9z" clip-rule="evenodd"></path></svg>
+                    Fale com um Consultor
+                </a>
+                <p class="text-xs text-gray-500 px-4">
+                    <strong>Aviso:</strong> Esta calculadora fornece estimativas e tem finalidade educacional. Os cálculos são simplificados e não substituem a análise de um contador profissional. Alíquotas de ICMS, ISS e outras específicas podem variar. Consulte sempre um especialista para decisões financeiras e fiscais. As interpretações de regras complexas, como as do Anexo IV do Simples Nacional, são baseadas nas informações do prompt e podem requerer validação profissional.
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- Funções Utilitárias ---
+        function formatCurrency(value) {
+            if (isNaN(value) || value === null || !isFinite(value)) return "N/A";
+            return `R$ ${value.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+        }
+
+
+        function parseCurrency(value) {
+            if (typeof value !== 'string') return 0;
+            const num = parseFloat(value.replace(/\./g, '').replace(',', '.').replace('R$', '').trim());
+            return isNaN(num) ? 0 : num;
+        }
+
+
+        const currencyFieldsIds = ['faturamentoMensal', 'gastoFolhaSalarial', 'custosDespesasTotais']; 
+        currencyFieldsIds.forEach(id => {
+            const field = document.getElementById(id);
+            if (field) {
+                field.addEventListener('input', (e) => {
+                    let value = e.target.value.replace(/\D/g, '');
+                    if (value === '') {
+                        e.target.value = '';
+                        return;
+                    }
+                    if (e.target.value.length > 0 && value.length > 0) {
+                        value = (parseInt(value) / 100).toFixed(2);
+                         e.target.value = parseFloat(value).toLocaleString('pt-BR', { minimumFractionDigits: 2 }).replace('.', '_TEMP_').replace(',', '.').replace('_TEMP_', ',');
+                    } else {
+                        e.target.value = '';
+                    }
+                });
+                 field.addEventListener('blur', (e) => {
+                    let value = e.target.value.replace(/\D/g, '');
+                     if (value !== '' && !isNaN(parseInt(value))) {
+                        const numValue = parseInt(value) / 100;
+                        e.target.value = numValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2});
+                     } else if (e.target.value.trim() !== ''){
+                         const parsed = parseFloat(e.target.value.replace(/\./g, '').replace(',', '.'));
+                         if(!isNaN(parsed)){
+                            e.target.value = parsed.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2});
+                         } else {
+                            e.target.value = ''; 
+                         }
+                     } else {
+                         e.target.value = ''; 
+                     }
+                });
+            }
+        });
+        
+        // --- Tabelas Simples Nacional ---
+        const anexoI_Comercio = [];
+        const anexoII_Industria = [];
+        const anexoIII_Servicos = [];
+        const anexoIV_ServicosObras = [];
+        const anexoV_ServicosFatorR = [];
+        Object.assign(anexoI_Comercio, [ { rbt12Ate: 180000, aliquota: 0.0400, deduzir: 0 }, { rbt12Ate: 360000, aliquota: 0.0730, deduzir: 5940.00 }, { rbt12Ate: 720000, aliquota: 0.0950, deduzir: 13860.00 }, { rbt12Ate: 1800000, aliquota: 0.1070, deduzir: 22500.00 }, { rbt12Ate: 3600000, aliquota: 0.1430, deduzir: 87300.00 }, { rbt12Ate: 4800000, aliquota: 0.1900, deduzir: 378000.00 } ]);
+        Object.assign(anexoII_Industria, [ { rbt12Ate: 180000, aliquota: 0.0450, deduzir: 0 }, { rbt12Ate: 360000, aliquota: 0.0780, deduzir: 5940.00 }, { rbt12Ate: 720000, aliquota: 0.1000, deduzir: 13860.00 }, { rbt12Ate: 1800000, aliquota: 0.1120, deduzir: 22500.00 }, { rbt12Ate: 3600000, aliquota: 0.1470, deduzir: 85500.00 }, { rbt12Ate: 4800000, aliquota: 0.3000, deduzir: 720000.00 } ]);
+        Object.assign(anexoIII_Servicos, [ { rbt12Ate: 180000, aliquota: 0.0600, deduzir: 0 }, { rbt12Ate: 360000, aliquota: 0.1120, deduzir: 9360.00 }, { rbt12Ate: 720000, aliquota: 0.1350, deduzir: 17640.00 }, { rbt12Ate: 1800000, aliquota: 0.1600, deduzir: 35640.00 }, { rbt12Ate: 3600000, aliquota: 0.2100, deduzir: 125640.00 }, { rbt12Ate: 4800000, aliquota: 0.3300, deduzir: 648000.00 } ]);
+        Object.assign(anexoIV_ServicosObras, [ { rbt12Ate: 180000, aliquota: 0.0450, deduzir: 0 }, { rbt12Ate: 360000, aliquota: 0.0900, deduzir: 8100.00 }, { rbt12Ate: 720000, aliquota: 0.1020, deduzir: 12420.00 }, { rbt12Ate: 1800000, aliquota: 0.1400, deduzir: 39780.00 }, { rbt12Ate: 3600000, aliquota: 0.2200, deduzir: 183780.00 }, { rbt12Ate: 4800000, aliquota: 0.3300, deduzir: 828000.00 } ]);
+        Object.assign(anexoV_ServicosFatorR, [ { rbt12Ate: 180000, aliquota: 0.1550, deduzir: 0 }, { rbt12Ate: 360000, aliquota: 0.1800, deduzir: 4500.00 }, { rbt12Ate: 720000, aliquota: 0.1950, deduzir: 9900.00 }, { rbt12Ate: 1800000, aliquota: 0.2050, deduzir: 17100.00 }, { rbt12Ate: 3600000, aliquota: 0.2300, deduzir: 62100.00 }, { rbt12Ate: 4800000, aliquota: 0.3050, deduzir: 540000.00 } ]);
+
+
+
+
+        // --- Lógica de Cálculo ---
+        function calcularSimplesNacional(inputs) {
+            const { faturamentoMensal, gastoFolhaSalarial, setorAtuacao } = inputs; 
+            const rbt12 = faturamentoMensal * 12;
+            let resultado = {
+                nomeRegime: "Simples Nacional",
+                impostoMensalTotal: Infinity,
+                aliquotaEfetiva: Infinity,
+                impostoAnualEstimado: Infinity,
+                aplicavel: true,
+                componentes: {
+                    das_base: 0,
+                    cpp_anexo_iv: 0,
+                    iss_anexo_iv_comparativo: 0, 
+                    icms_por_fora_sublimite: 0,
+                    iss_por_fora_sublimite: 0,
+                    anexoUtilizado: '',
+                    aliquotaEfetivaDASBase: 0
+                },
+                mensagens: [],
+                fatorR: null
+            };
+
+
+            if (rbt12 > 4800000) {
+                resultado.aplicavel = false;
+                resultado.mensagens.push("Limite máximo de R$ 4,8 milhões/ano excedido para o Simples Nacional.");
+                return resultado;
+            }
+
+
+            let anexo, tabelaAnexo;
+            let fatorR = null;
+
+
+            switch (setorAtuacao) {
+                case "Comércio":
+                case "Alimentação (Venda)":
+                    anexo = "Anexo I";
+                    tabelaAnexo = anexoI_Comercio;
+                    break;
+                case "Indústria":
+                    anexo = "Anexo II";
+                    tabelaAnexo = anexoII_Industria;
+                    break;
+                case "Transporte de Passageiros":
+                    anexo = "Anexo III";
+                    tabelaAnexo = anexoIII_Servicos;
+                    break;
+                case "Serviços (Geral)":
+                case "Tecnologia (Serviços)":
+                case "Saúde (Serviços)":
+                    fatorR = (gastoFolhaSalarial > 0 && faturamentoMensal > 0) ? gastoFolhaSalarial / faturamentoMensal : 0;
+                    resultado.fatorR = fatorR;
+                    if (fatorR >= 0.28) {
+                        anexo = "Anexo III (Fator R >= 0.28)";
+                        tabelaAnexo = anexoIII_Servicos;
+                    } else {
+                        anexo = "Anexo V (Fator R < 0.28)";
+                        tabelaAnexo = anexoV_ServicosFatorR;
+                    }
+                    break;
+                case "Construção Civil (Obras)":
+                    anexo = "Anexo IV";
+                    tabelaAnexo = anexoIV_ServicosObras;
+                    break;
+                default:
+                    resultado.mensagens.push("Setor de atuação não mapeado para Simples Nacional.");
+                    resultado.aplicavel = false;
+                    return resultado;
+            }
+            resultado.componentes.anexoUtilizado = anexo;
+
+
+            const faixa = tabelaAnexo.find(f => rbt12 <= f.rbt12Ate);
+            if (!faixa) {
+                resultado.mensagens.push("Faixa de RBT12 não encontrada no anexo.");
+                resultado.aplicavel = false;
+                return resultado;
+            }
+
+
+            const aliquotaNominal = faixa.aliquota;
+            const parcelaDeduzir = faixa.deduzir;
+            const aliquotaEfetivaDASBase = rbt12 > 0 ? ((rbt12 * aliquotaNominal) - parcelaDeduzir) / rbt12 : 0;
+            
+            let dasBase = faturamentoMensal * aliquotaEfetivaDASBase;
+            resultado.componentes.das_base = dasBase; 
+            resultado.componentes.aliquotaEfetivaDASBase = aliquotaEfetivaDASBase * 100;
+
+
+            let cppAnexoIV = 0;
+            let icmsPorForaSublimite = 0;
+            let issPorForaSublimite = 0;
+            
+            if (setorAtuacao === "Construção Civil (Obras)") {
+                cppAnexoIV = gastoFolhaSalarial * 0.20; 
+                resultado.componentes.cpp_anexo_iv = cppAnexoIV;
+                resultado.componentes.iss_anexo_iv_comparativo = faturamentoMensal * 0.035; 
+            }
+            
+            if (rbt12 > 3600000 && rbt12 <= 4800000) {
+                resultado.mensagens.push("Atenção: RBT12 excedeu o sublimite de R$ 3,6 milhões. ICMS/ISS podem ser devidos por fora do DAS.");
+                if (setorAtuacao === "Comércio" || setorAtuacao === "Indústria" || setorAtuacao === "Alimentação (Venda)") {
+                    icmsPorForaSublimite = faturamentoMensal * 0.03; 
+                    resultado.componentes.icms_por_fora_sublimite = icmsPorForaSublimite;
+                } else if (setorAtuacao !== "Construção Civil (Obras)") { 
+                    issPorForaSublimite = faturamentoMensal * 0.035; 
+                    resultado.componentes.iss_por_fora_sublimite = issPorForaSublimite;
+                }
+            }
+
+
+            let impostoTotalSN = dasBase + cppAnexoIV + icmsPorForaSublimite + issPorForaSublimite;
+            
+            resultado.impostoMensalTotal = impostoTotalSN;
+            resultado.aliquotaEfetiva = (faturamentoMensal > 0) ? (impostoTotalSN / faturamentoMensal) * 100 : 0;
+            resultado.impostoAnualEstimado = resultado.impostoMensalTotal * 12;
+
+
+            return resultado;
+        }
+
+
+        function calcularLucroPresumido(inputs) {
+            const { faturamentoMensal, gastoFolhaSalarial, setorAtuacao } = inputs; 
+            let resultado = {
+                nomeRegime: "Lucro Presumido",
+                impostoMensalTotal: 0,
+                aliquotaEfetiva: 0,
+                impostoAnualEstimado: 0,
+                aplicavel: true,
+                componentes: {
+                    pis_cofins: 0,
+                    irpj_csll: 0,
+                    inss_patronal: 0,
+                    outros_impostos: 0, 
+                    base_irpj: 0,
+                    base_csll: 0
+                },
+                mensagens: []
+            };
+
+
+            let percPresuncaoIRPJ, percPresuncaoCSLL;
+            let isServico = false;
+
+
+            switch (setorAtuacao) {
+                case "Comércio":
+                case "Indústria":
+                case "Alimentação (Venda)":
+                    percPresuncaoIRPJ = 0.08;
+                    percPresuncaoCSLL = 0.12;
+                    break;
+                case "Transporte de Passageiros":
+                    percPresuncaoIRPJ = 0.16;
+                    percPresuncaoCSLL = 0.12; 
+                    break;
+                case "Serviços (Geral)":
+                case "Tecnologia (Serviços)":
+                case "Construção Civil (Obras)": 
+                case "Saúde (Serviços)":
+                    percPresuncaoIRPJ = 0.32;
+                    percPresuncaoCSLL = 0.32;
+                    isServico = true;
+                    break;
+                default:
+                    resultado.mensagens.push("Setor de atuação não mapeado para Lucro Presumido.");
+                    resultado.aplicavel = false;
+                    return resultado;
+            }
+
+
+            const bcpIRPJ = faturamentoMensal * percPresuncaoIRPJ;
+            const bcpCSLL = faturamentoMensal * percPresuncaoCSLL;
+            resultado.componentes.base_irpj = bcpIRPJ;
+            resultado.componentes.base_csll = bcpCSLL;
+
+
+            let irpjMensal = bcpIRPJ * 0.15;
+            if (bcpIRPJ > 20000) { 
+                irpjMensal += (bcpIRPJ - 20000) * 0.10;
+            }
+            const csllMensal = bcpCSLL * 0.09;
+            resultado.componentes.irpj_csll = irpjMensal + csllMensal;
+
+
+            const pisMensal = faturamentoMensal * 0.0065;
+            const cofinsMensal = faturamentoMensal * 0.03;
+            resultado.componentes.pis_cofins = pisMensal + cofinsMensal;
+
+
+            const inssPatronalLP = gastoFolhaSalarial * 0.20;
+            resultado.componentes.inss_patronal = inssPatronalLP;
+
+
+            let impostoMunicipalEstadual = 0;
+            if (isServico) {
+                impostoMunicipalEstadual = faturamentoMensal * 0.035; 
+            } else {
+                impostoMunicipalEstadual = faturamentoMensal * 0.03; 
+            }
+            resultado.componentes.outros_impostos = impostoMunicipalEstadual;
+
+
+            resultado.impostoMensalTotal = (irpjMensal + csllMensal) + (pisMensal + cofinsMensal) + inssPatronalLP + impostoMunicipalEstadual;
+            resultado.aliquotaEfetiva = (faturamentoMensal > 0) ? (resultado.impostoMensalTotal / faturamentoMensal) * 100 : 0;
+            resultado.impostoAnualEstimado = resultado.impostoMensalTotal * 12;
+            
+            return resultado;
+        }
+
+
+        function calcularLucroReal(inputs) {
+            const { faturamentoMensal, gastoFolhaSalarial, custosDespesasTotais, setorAtuacao } = inputs; 
+             let resultado = {
+                nomeRegime: "Lucro Real",
+                impostoMensalTotal: 0,
+                aliquotaEfetiva: 0,
+                impostoAnualEstimado: 0,
+                aplicavel: true,
+                componentes: {
+                    pis_cofins: 0,
+                    irpj_csll: 0,
+                    inss_patronal: 0,
+                    outros_impostos: 0, 
+                    creditos_pis_cofins_total: 0,
+                    lair_apurado: 0
+                },
+                detalhesLR: { 
+                    faturamento_bruto_lr: faturamentoMensal,
+                    custos_despesas_totais_lr: custosDespesasTotais, 
+                    despesas_folha_lr: gastoFolhaSalarial,
+                    pis_cofins_apurado_lr: 0,
+                    total_custos_despesas_dedutiveis_lair: 0,
+                    lair_apurado: 0
+                },
+                mensagens: []
+            };
+
+
+            const debitoPIS_LR = faturamentoMensal * 0.0165;
+            const debitoCOFINS_LR = faturamentoMensal * 0.076;
+
+
+            const creditoPIS_Total = custosDespesasTotais * 0.0165;
+            const creditoCOFINS_Total = custosDespesasTotais * 0.076;
+            
+            resultado.componentes.creditos_pis_cofins_total = creditoPIS_Total + creditoCOFINS_Total;
+
+
+            const pisAPagarLR = Math.max(0, debitoPIS_LR - creditoPIS_Total);
+            const cofinsAPagarLR = Math.max(0, debitoCOFINS_LR - creditoCOFINS_Total);
+            const totalPISCOFINS_LR_Devido = pisAPagarLR + cofinsAPagarLR;
+            resultado.componentes.pis_cofins = totalPISCOFINS_LR_Devido;
+            resultado.detalhesLR.pis_cofins_apurado_lr = totalPISCOFINS_LR_Devido;
+
+
+            const totalDeduzivelAntesImpostos = custosDespesasTotais + gastoFolhaSalarial + totalPISCOFINS_LR_Devido;
+            const lair = faturamentoMensal - totalDeduzivelAntesImpostos;
+            
+            resultado.componentes.lair_apurado = lair;
+            resultado.detalhesLR.lair_apurado = lair;
+            resultado.detalhesLR.total_custos_despesas_dedutiveis_lair = totalDeduzivelAntesImpostos;
+
+
+            let irpjLRMensal = 0;
+            let csllLRMensal = 0;
+            if (lair > 0) {
+                irpjLRMensal = lair * 0.15;
+                if (lair > 20000) { 
+                    irpjLRMensal += (lair - 20000) * 0.10;
+                }
+                csllLRMensal = lair * 0.09;
+            }
+            resultado.componentes.irpj_csll = irpjLRMensal + csllLRMensal;
+
+
+            const inssPatronalLR = gastoFolhaSalarial * 0.20;
+            resultado.componentes.inss_patronal = inssPatronalLR;
+
+
+            let impostoEstadualMunicipalLR = 0;
+            let isServicoLR = ["Serviços (Geral)", "Tecnologia (Serviços)", "Construção Civil (Obras)", "Saúde (Serviços)", "Transporte de Passageiros"].includes(setorAtuacao);
+
+
+            if (isServicoLR) {
+                impostoEstadualMunicipalLR = faturamentoMensal * 0.035; 
+            } else { 
+                impostoEstadualMunicipalLR = faturamentoMensal * 0.03; 
+            }
+            resultado.componentes.outros_impostos = impostoEstadualMunicipalLR;
+
+
+            resultado.impostoMensalTotal = irpjLRMensal + csllLRMensal + totalPISCOFINS_LR_Devido + inssPatronalLR + impostoEstadualMunicipalLR;
+            resultado.aliquotaEfetiva = (faturamentoMensal > 0) ? (resultado.impostoMensalTotal / faturamentoMensal) * 100 : 0;
+            resultado.impostoAnualEstimado = resultado.impostoMensalTotal * 12;
+
+
+            if (lair <= 0) {
+                resultado.mensagens.push("LAIR (Lucro Real) negativo ou zero. IRPJ e CSLL não são devidos sobre o lucro, mas outros impostos (PIS, COFINS, INSS, ICMS/ISS) podem incidir.");
+            }
+            return resultado;
+        }
+
+
+        function displayResults(inputs, resultados) {
+            const { simples, presumido, real } = resultados;
+            
+            let regimesValidos = [simples, presumido, real].filter(r => r.aplicavel && isFinite(r.impostoMensalTotal));
+            regimesValidos.sort((a, b) => a.impostoMensalTotal - b.impostoMensalTotal);
+            
+            const regimeRecomendado = regimesValidos.length > 0 ? regimesValidos[0] : null;
+
+
+            const tabelaCorpo = document.getElementById('tabelaComparativa').getElementsByTagName('tbody')[0];
+            tabelaCorpo.innerHTML = ''; 
+            [simples, presumido, real].forEach(reg => {
+                const row = tabelaCorpo.insertRow();
+                row.insertCell().textContent = reg.nomeRegime + (!reg.aplicavel ? " (Inválido)" : "");
+                row.insertCell().textContent = reg.aplicavel ? formatCurrency(reg.impostoMensalTotal) : "N/A";
+                row.insertCell().textContent = reg.aplicavel && isFinite(reg.aliquotaEfetiva) ? reg.aliquotaEfetiva.toFixed(2) + '%' : "N/A";
+                row.insertCell().textContent = reg.aplicavel ? formatCurrency(reg.impostoAnualEstimado) : "N/A";
+
+
+                if (regimeRecomendado && reg.nomeRegime === regimeRecomendado.nomeRegime && reg.aplicavel) {
+                    row.classList.add('highlight-best');
+                }
+                if (!reg.aplicavel) {
+                    row.style.color = "#ef4444"; 
+                    row.style.fontStyle = "italic";
+                }
+            });
+
+
+            let regimeAtualCalculado;
+            if (inputs.regimeAtual === "Simples Nacional") regimeAtualCalculado = simples;
+            else if (inputs.regimeAtual === "Lucro Presumido") regimeAtualCalculado = presumido;
+            else regimeAtualCalculado = real;
+
+
+            const mensagemPrincipalEl = document.getElementById('mensagemPrincipal');
+            let htmlMsgPrincipal = '';
+
+
+            if (inputs.regimeAtual === "Simples Nacional" && !simples.aplicavel) {
+                htmlMsgPrincipal = `<h2 class="text-xl font-semibold text-red-400 mb-2">Alerta: Simples Nacional Inválido!</h2>
+                                   <p class="text-gray-400">${simples.mensagens.join('<br>')}</p>
+                                   <p class="text-gray-400 mt-1">A recomendação considerará apenas Lucro Presumido e Lucro Real.</p>`;
+            }
+
+
+            if (regimeRecomendado) {
+                if (regimeAtualCalculado.nomeRegime === regimeRecomendado.nomeRegime && regimeAtualCalculado.aplicavel) {
+                    htmlMsgPrincipal += `<h2 class="text-xl font-semibold text-green-400 mt-2">Seu regime atual (<span class="badge badge-blue">${inputs.regimeAtual}</span>) parece ser o mais vantajoso entre as opções válidas!</h2>`;
+                } else if (regimeAtualCalculado.aplicavel && regimeRecomendado.impostoMensalTotal < regimeAtualCalculado.impostoMensalTotal) {
+                    htmlMsgPrincipal += `<h2 class="text-xl font-semibold text-yellow-400 mt-2">Oportunidade de Economia!</h2>
+                                       <p class="text-gray-300">O regime <span class="badge badge-green">${regimeRecomendado.nomeRegime}</span> pode ser mais econômico para sua empresa.</p>`;
+                } else if (!regimeAtualCalculado.aplicavel && regimeRecomendado) {
+                     htmlMsgPrincipal += `<h2 class="text-xl font-semibold text-yellow-400 mt-2">Recomendação:</h2>
+                                       <p class="text-gray-300">O regime <span class="badge badge-green">${regimeRecomendado.nomeRegime}</span> é o mais indicado entre as opções válidas.</p>`;
+                } else if (regimeAtualCalculado.aplicavel) { 
+                     htmlMsgPrincipal += `<h2 class="text-xl font-semibold text-blue-400 mt-2">Análise Concluída.</h2>
+                                        <p class="text-gray-300">Seu regime atual (<span class="badge badge-blue">${inputs.regimeAtual}</span>) é válido. O regime <span class="badge badge-purple">${regimeRecomendado.nomeRegime}</span> apresentou o menor custo total. Verifique os detalhes.</p>`;
+                } else {
+                     htmlMsgPrincipal += `<h2 class="text-xl font-semibold text-gray-300 mt-2">Análise Concluída.</h2>
+                                        <p class="text-gray-400">Verifique os detalhes abaixo. Pode não haver economia significativa ou seu regime atual já é competitivo dentro das opções válidas.</p>`;
+                }
+            } else {
+                htmlMsgPrincipal += `<h2 class="text-xl font-semibold text-red-400 mt-2">Não foi possível determinar um regime recomendado.</h2>
+                                   <p class="text-gray-400">Verifique as mensagens de cada regime ou os dados de entrada.</p>`;
+            }
+            mensagemPrincipalEl.innerHTML = htmlMsgPrincipal;
+
+
+            const cardRegimeAtualEl = document.getElementById('cardRegimeAtual');
+            let htmlAtual = `<h3>Seu Regime Atual: <span class="badge badge-blue">${inputs.regimeAtual}</span></h3>`;
+            if (regimeAtualCalculado.aplicavel) {
+                htmlAtual += `<p>Imposto Mensal Estimado: <strong class="text-blue-300">${formatCurrency(regimeAtualCalculado.impostoMensalTotal)}</strong></p>
+                              <p>Alíquota Efetiva: <strong>${isFinite(regimeAtualCalculado.aliquotaEfetiva) ? regimeAtualCalculado.aliquotaEfetiva.toFixed(2) + '%' : 'N/A'}</strong></p>
+                              <p>Imposto Anual Estimado: <strong>${formatCurrency(regimeAtualCalculado.impostoAnualEstimado)}</strong></p>`;
+                 if (regimeAtualCalculado.nomeRegime === "Simples Nacional" && regimeAtualCalculado.fatorR !== null) {
+                    htmlAtual += `<p class="text-sm text-gray-500">Fator R (SN): ${regimeAtualCalculado.fatorR.toFixed(4)} (${regimeAtualCalculado.componentes.anexoUtilizado})</p>`;
+                }
+            } else {
+                htmlAtual += `<p class="text-red-400">N/A (Regime Inválido ou Limite Excedido)</p>
+                              <p class="text-sm text-red-500">${regimeAtualCalculado.mensagens.join('<br>')}</p>`;
+            }
+            cardRegimeAtualEl.innerHTML = htmlAtual;
+
+
+            const cardRegimeRecomendadoEl = document.getElementById('cardRegimeRecomendado');
+            if (regimeRecomendado && (regimeRecomendado.nomeRegime !== regimeAtualCalculado.nomeRegime || !regimeAtualCalculado.aplicavel)) {
+                cardRegimeRecomendadoEl.classList.remove('hidden');
+                let htmlRecomendado = `<h3>Regime Recomendado: <span class="badge badge-green">${regimeRecomendado.nomeRegime}</span></h3>
+                                   <p>Imposto Mensal Estimado: <strong class="text-green-300">${formatCurrency(regimeRecomendado.impostoMensalTotal)}</strong></p>
+                                   <p>Alíquota Efetiva: <strong>${isFinite(regimeRecomendado.aliquotaEfetiva) ? regimeRecomendado.aliquotaEfetiva.toFixed(2) + '%' : 'N/A'}</strong></p>
+                                   <p>Imposto Anual Estimado: <strong>${formatCurrency(regimeRecomendado.impostoAnualEstimado)}</strong></p>`;
+                if (regimeRecomendado.nomeRegime === "Simples Nacional" && regimeRecomendado.fatorR !== null) {
+                    htmlRecomendado += `<p class="text-sm text-gray-500">Fator R (SN): ${regimeRecomendado.fatorR.toFixed(4)} (${regimeRecomendado.componentes.anexoUtilizado})</p>`;
+                }
+                 if (regimeRecomendado.mensagens && regimeRecomendado.mensagens.length > 0) {
+                    htmlRecomendado += `<p class="text-xs text-yellow-500 mt-1">${regimeRecomendado.mensagens.join('<br>')}</p>`;
+                }
+                cardRegimeRecomendadoEl.innerHTML = htmlRecomendado;
+            } else {
+                cardRegimeRecomendadoEl.classList.add('hidden');
+            }
+
+
+            const secaoEconomiaEl = document.getElementById('secaoEconomia');
+            if (regimeRecomendado && regimeAtualCalculado.aplicavel && regimeRecomendado.nomeRegime !== regimeAtualCalculado.nomeRegime && regimeRecomendado.impostoMensalTotal < regimeAtualCalculado.impostoMensalTotal) {
+                secaoEconomiaEl.classList.remove('hidden');
+                const economiaMensal = regimeAtualCalculado.impostoMensalTotal - regimeRecomendado.impostoMensalTotal;
+                const economiaMensalPerc = regimeAtualCalculado.impostoMensalTotal > 0 ? (economiaMensal / regimeAtualCalculado.impostoMensalTotal) * 100 : 0;
+                const economiaAnual = economiaMensal * 12;
+                secaoEconomiaEl.innerHTML = `<h3 class="text-lg font-semibold text-blue-400">Economia Estimada com Mudança para ${regimeRecomendado.nomeRegime}</h3>
+                                           <p>Economia Mensal: <strong class="text-green-300">${formatCurrency(economiaMensal)}</strong> (${economiaMensalPerc.toFixed(2)}%)</p>
+                                           <p>Economia Anual Estimada: <strong class="text-green-300">${formatCurrency(economiaAnual)}</strong></p>`;
+            } else {
+                secaoEconomiaEl.classList.add('hidden');
+            }
+            
+            const economiaRenttaxCardEl = document.getElementById('economiaRenttaxCard');
+            const lrAliquotaOriginalEl = document.getElementById('lrAliquotaOriginal');
+            const renttaxAliquotaPotencialEl = document.getElementById('renttaxAliquotaPotencial');
+            const lrImpostoOriginalEl = document.getElementById('lrImpostoOriginal');
+            const renttaxImpostoPotencialEl = document.getElementById('renttaxImpostoPotencial');
+            const renttaxEconomiaMonetariaEl = document.getElementById('renttaxEconomiaMonetaria');
+            const renttaxComparisonTableBodyEl = document.getElementById('renttaxComparisonTableBody');
+
+
+            if (real.aplicavel && isFinite(real.aliquotaEfetiva) && inputs.faturamentoMensal > 0) {
+                const aliquotaEfetivaLR = real.aliquotaEfetiva;
+                let aliquotaEfetivaRenttax = Math.max(0, aliquotaEfetivaLR - 2.0); 
+
+
+                let impostoMensalLRComRenttax = inputs.faturamentoMensal * (aliquotaEfetivaRenttax / 100);
+                let economiaMonetariaRenttaxVsLRNormal = real.impostoMensalTotal - impostoMensalLRComRenttax;
+
+
+                if (aliquotaEfetivaLR <= 2.0 && aliquotaEfetivaLR > 0) { 
+                    aliquotaEfetivaRenttax = 0; 
+                    impostoMensalLRComRenttax = 0;
+                    economiaMonetariaRenttaxVsLRNormal = real.impostoMensalTotal; 
+                } else if (aliquotaEfetivaLR === 0) { 
+                     aliquotaEfetivaRenttax = 0;
+                     impostoMensalLRComRenttax = 0;
+                     economiaMonetariaRenttaxVsLRNormal = 0;
+                }
+                
+                lrAliquotaOriginalEl.textContent = `${aliquotaEfetivaLR.toFixed(2)}%`;
+                renttaxAliquotaPotencialEl.textContent = `${aliquotaEfetivaRenttax.toFixed(2)}%`;
+                lrImpostoOriginalEl.textContent = formatCurrency(real.impostoMensalTotal);
+                renttaxImpostoPotencialEl.textContent = formatCurrency(impostoMensalLRComRenttax);
+                renttaxEconomiaMonetariaEl.textContent = formatCurrency(economiaMonetariaRenttaxVsLRNormal);
+
+
+                renttaxComparisonTableBodyEl.innerHTML = ''; 
+
+
+                let rowAtual = renttaxComparisonTableBodyEl.insertRow();
+                rowAtual.insertCell().textContent = `Regime Atual (${inputs.regimeAtual})`;
+                rowAtual.insertCell().textContent = regimeAtualCalculado.aplicavel ? formatCurrency(regimeAtualCalculado.impostoMensalTotal) : "N/A";
+                rowAtual.insertCell().textContent = regimeAtualCalculado.aplicavel && isFinite(regimeAtualCalculado.aliquotaEfetiva) ? `${regimeAtualCalculado.aliquotaEfetiva.toFixed(2)}%` : "N/A";
+                if (!regimeAtualCalculado.aplicavel) rowAtual.style.color = "#ef4444";
+
+
+                let rowLR = renttaxComparisonTableBodyEl.insertRow();
+                rowLR.insertCell().textContent = "Lucro Real (Simulação Padrão)";
+                rowLR.insertCell().textContent = formatCurrency(real.impostoMensalTotal);
+                rowLR.insertCell().textContent = `${aliquotaEfetivaLR.toFixed(2)}%`;
+
+
+                let rowRenttax = renttaxComparisonTableBodyEl.insertRow();
+                rowRenttax.insertCell().textContent = "Lucro Real com Renttax (Estimativa)";
+                rowRenttax.insertCell().textContent = formatCurrency(impostoMensalLRComRenttax);
+                rowRenttax.insertCell().textContent = `${aliquotaEfetivaRenttax.toFixed(2)}%`;
+                rowRenttax.classList.add('highlight-renttax'); 
+
+
+                economiaRenttaxCardEl.classList.remove('hidden');
+            } else {
+                economiaRenttaxCardEl.classList.add('hidden');
+            }
+
+
+
+
+            const resumoLucroRealEl = document.getElementById('resumoLucroReal');
+            if (real.aplicavel) { 
+                resumoLucroRealEl.classList.remove('hidden');
+                resumoLucroRealEl.innerHTML = `
+                    <h3 class="text-xl font-semibold text-blue-400 mb-3">Resumo da Apuração do Lucro Real (Estimativa)</h3>
+                    <div class="space-y-1 text-sm text-gray-400">
+                        <p>Faturamento Bruto: <span class="font-medium text-gray-200">${formatCurrency(real.detalhesLR.faturamento_bruto_lr)}</span></p>
+                        <p>(-) Custos e Despesas Totais Informados: <span class="font-medium text-gray-200">${formatCurrency(real.detalhesLR.custos_despesas_totais_lr)}</span></p>
+                        <p>(-) Despesas com Folha Salarial: <span class="font-medium text-gray-200">${formatCurrency(real.detalhesLR.despesas_folha_lr)}</span></p>
+                        <p>(-) PIS/COFINS Devidos (LR): <span class="font-medium text-gray-200">${formatCurrency(real.detalhesLR.pis_cofins_apurado_lr)}</span></p>
+                        <hr class="my-2 border-gray-700">
+                        <p class="font-semibold text-gray-300">(=) Lucro Antes do IRPJ e CSLL (LAIR): <span class="text-lg ${real.detalhesLR.lair_apurado > 0 ? 'text-blue-300' : 'text-red-400'}">${formatCurrency(real.detalhesLR.lair_apurado)}</span></p>
+                    </div>
+                    <p class="mt-3 text-xs text-gray-500">*Este resumo ajuda a visualizar a "margem de lucro" sobre a qual IRPJ e CSLL incidem no Lucro Real. O campo "Custos e Despesas Totais Informados" é usado como base para créditos de PIS/COFINS e como dedução.</p>`;
+            } else {
+                resumoLucroRealEl.classList.add('hidden');
+            }
+
+
+            const detalhamentoContainer = document.getElementById('detalhamentoImpostosContainer');
+            detalhamentoContainer.innerHTML = ''; 
+            [simples, presumido, real].forEach(reg => {
+                if (reg.aplicavel) {
+                    let htmlDetalhe = `<div class="card"> <h4 class="text-lg font-semibold text-blue-300 mb-2">Detalhamento: ${reg.nomeRegime}</h4> <ul class="list-disc list-inside space-y-1 text-sm text-gray-400">`;
+                    if (reg.nomeRegime === "Simples Nacional") {
+                        htmlDetalhe += `<li>DAS Base (Alíq. Efetiva ${reg.componentes.aliquotaEfetivaDASBase.toFixed(2)}%): ${formatCurrency(reg.componentes.das_base)}</li>`;
+                        if(reg.componentes.cpp_anexo_iv > 0) htmlDetalhe += `<li>CPP Anexo IV (20% s/ Folha): ${formatCurrency(reg.componentes.cpp_anexo_iv)}</li>`;
+                        if(reg.componentes.iss_anexo_iv_comparativo > 0 && inputs.setorAtuacao === "Construção Civil (Obras)") htmlDetalhe += `<li>ISS Anexo IV (Comparativo ${ (0.035*100).toFixed(1) }% s/ Fat.): ${formatCurrency(reg.componentes.iss_anexo_iv_comparativo)} <span class="text-xs text-gray-500">(informativo, ISS do Simples já no DAS)</span></li>`;
+                        if(reg.componentes.icms_por_fora_sublimite > 0) htmlDetalhe += `<li>ICMS por Fora (Sublimite): ${formatCurrency(reg.componentes.icms_por_fora_sublimite)}</li>`;
+                        if(reg.componentes.iss_por_fora_sublimite > 0) htmlDetalhe += `<li>ISS por Fora (Sublimite): ${formatCurrency(reg.componentes.iss_por_fora_sublimite)}</li>`;
+                        if (reg.fatorR !== null) htmlDetalhe += `<li>Fator R: ${reg.fatorR.toFixed(4)} (Anexo: ${reg.componentes.anexoUtilizado})</li>`;
+                    } else if (reg.nomeRegime === "Lucro Presumido") {
+                        htmlDetalhe += `<li>PIS (0,65%): ${formatCurrency(inputs.faturamentoMensal * 0.0065)}</li>`;
+                        htmlDetalhe += `<li>COFINS (3,00%): ${formatCurrency(inputs.faturamentoMensal * 0.03)}</li>`;
+                        let irpjPresumido = reg.componentes.irpj_csll - (reg.componentes.base_csll * 0.09);
+                        let csllPresumido = reg.componentes.base_csll * 0.09;
+                        htmlDetalhe += `<li>IRPJ (15% s/ Base ${formatCurrency(reg.componentes.base_irpj)} + Adicional): ${formatCurrency(irpjPresumido)}</li>`;
+                        htmlDetalhe += `<li>CSLL (9% s/ Base ${formatCurrency(reg.componentes.base_csll)}): ${formatCurrency(csllPresumido)}</li>`;
+                        htmlDetalhe += `<li>INSS Patronal (20% s/ Folha): ${formatCurrency(reg.componentes.inss_patronal)}</li>`;
+                        htmlDetalhe += `<li>ICMS/ISS Estimado: ${formatCurrency(reg.componentes.outros_impostos)}</li>`;
+                    } else if (reg.nomeRegime === "Lucro Real") {
+                        let pisLR = reg.componentes.pis_cofins;
+                        let cofinsLR = 0; 
+                        if (reg.componentes.pis_cofins > 0 && reg.componentes.creditos_pis_cofins_total >= 0) {
+                            let proporcaoPis = 0.0165 / (0.0165 + 0.076);
+                            pisLR = reg.componentes.pis_cofins * proporcaoPis;
+                            cofinsLR = reg.componentes.pis_cofins * (1 - proporcaoPis);
+                        }
+                        htmlDetalhe += `<li>PIS Devido (1,65% s/ Fat. - Créditos): ${formatCurrency(pisLR)}</li>`;
+                        htmlDetalhe += `<li>COFINS Devida (7,6% s/ Fat. - Créditos): ${formatCurrency(cofinsLR)}</li>`;
+                        htmlDetalhe += `<li>Total Créditos PIS/COFINS Estimados (sobre Custos/Desp. Totais): ${formatCurrency(reg.componentes.creditos_pis_cofins_total)}</li>`;
+                        let irpjReal = reg.componentes.irpj_csll - (reg.componentes.lair_apurado > 0 ? reg.componentes.lair_apurado * 0.09 : 0);
+                        let csllReal = reg.componentes.lair_apurado > 0 ? reg.componentes.lair_apurado * 0.09 : 0;
+                        htmlDetalhe += `<li>IRPJ (15% s/ LAIR ${formatCurrency(reg.componentes.lair_apurado)} + Adicional): ${formatCurrency(irpjReal)}</li>`;
+                        htmlDetalhe += `<li>CSLL (9% s/ LAIR ${formatCurrency(reg.componentes.lair_apurado)}): ${formatCurrency(csllReal)}</li>`;
+                        htmlDetalhe += `<li>INSS Patronal (20% s/ Folha): ${formatCurrency(reg.componentes.inss_patronal)}</li>`;
+                        htmlDetalhe += `<li>ICMS/ISS Estimado (sobre Faturamento): ${formatCurrency(reg.componentes.outros_impostos)}</li>`;
+                    }
+                    htmlDetalhe += `</ul> <p class="mt-2 font-semibold text-blue-300">Total Estimado ${reg.nomeRegime}: ${formatCurrency(reg.impostoMensalTotal)}</p></div>`;
+                    detalhamentoContainer.innerHTML += htmlDetalhe;
+                }
+            });
+
+
+
+
+            const analiseDetalhadaEl = document.getElementById('analiseDetalhada');
+            const proximosPassosEl = document.getElementById('proximosPassos');
+            
+            let htmlAnalise = `<h3 class="text-xl font-semibold text-blue-400 mb-3">Análise Detalhada dos Resultados</h3><ul class="list-disc list-inside space-y-1 text-sm text-gray-400">`;
+            let htmlPassos = `<h3 class="text-xl font-semibold text-blue-400 mb-3">Próximos Passos e Dicas</h3><ul class="list-disc list-inside space-y-1 text-sm text-gray-400">`;
+
+
+            if (regimeRecomendado && regimeAtualCalculado.aplicavel && regimeRecomendado.nomeRegime !== regimeAtualCalculado.nomeRegime) {
+                htmlAnalise += `<li>Comparando seu regime atual (<span class="badge badge-blue">${inputs.regimeAtual}</span>) com o regime recomendado (<span class="badge badge-green">${regimeRecomendado.nomeRegime}</span>):</li>
+                                <ul class="list-disc list-inside ml-4">
+                                    <li>PIS/COFINS: ${formatCurrency(regimeAtualCalculado.componentes.pis_cofins || 0)} vs ${formatCurrency(regimeRecomendado.componentes.pis_cofins || 0)}</li>
+                                    <li>IRPJ/CSLL: ${formatCurrency(regimeAtualCalculado.componentes.irpj_csll || 0)} vs ${formatCurrency(regimeRecomendado.componentes.irpj_csll || 0)}</li>
+                                    <li>INSS Patronal: ${formatCurrency(regimeAtualCalculado.componentes.inss_patronal || 0)} vs ${formatCurrency(regimeRecomendado.componentes.inss_patronal || 0)}</li>
+                                    <li>Outros (ICMS/ISS): ${formatCurrency(regimeAtualCalculado.componentes.outros_impostos || (regimeAtualCalculado.componentes.icms_por_fora_sublimite || 0) + (regimeAtualCalculado.componentes.iss_por_fora_sublimite || 0) )} vs ${formatCurrency(regimeRecomendado.componentes.outros_impostos || (regimeRecomendado.componentes.icms_por_fora_sublimite || 0) + (regimeRecomendado.componentes.iss_por_fora_sublimite || 0))}</li>
+                                </ul>`;
+                if (regimeRecomendado.nomeRegime === "Lucro Real") {
+                    htmlAnalise += `<li>O Lucro Real se beneficia de créditos de PIS/COFINS (Total estimado sobre Custos/Desp. Totais: ${formatCurrency(real.componentes.creditos_pis_cofins_total || 0)}) e tributa IRPJ/CSLL sobre o lucro efetivo (LAIR: ${formatCurrency(real.componentes.lair_apurado || 0)}). A unificação dos campos de custos/despesas simplifica a entrada, mas lembre-se que nem todas as despesas geram crédito na realidade.</li>`;
+                }
+                 if (regimeRecomendado.nomeRegime === "Lucro Presumido") {
+                    htmlAnalise += `<li>O Lucro Presumido utiliza bases de cálculo fixas para IRPJ/CSLL (Base IRPJ: ${formatCurrency(presumido.componentes.base_irpj || 0)}, Base CSLL: ${formatCurrency(presumido.componentes.base_csll || 0)}). Pode ser vantajoso se sua margem de lucro real for consistentemente superior à presunção legal.</li>`;
+                }
+            } else if (regimeRecomendado && regimeAtualCalculado.aplicavel && regimeRecomendado.nomeRegime === regimeAtualCalculado.nomeRegime) {
+                 htmlAnalise += `<li>Seu regime atual, <span class="badge badge-blue">${inputs.regimeAtual}</span>, já se apresenta como o mais vantajoso entre as opções válidas simuladas.</li>`;
+            } else if (!regimeAtualCalculado.aplicavel && regimeRecomendado) {
+                htmlAnalise += `<li>Seu regime atual, <span class="badge badge-red">${inputs.regimeAtual}</span>, é inválido para o cenário informado. O regime recomendado é <span class="badge badge-green">${regimeRecomendado.nomeRegime}</span>.</li>`;
+            }
+
+
+
+
+            if (simples.aplicavel && simples.mensagens.some(m => m.includes("sublimite"))) {
+                htmlAnalise += `<li class="text-yellow-500">Atenção ao sublimite do Simples Nacional: ICMS/ISS podem ser devidos à parte, aumentando a carga tributária efetiva. Este cálculo já considera essa estimativa.</li>`;
+            }
+            if (simples.aplicavel && simples.fatorR !== null) {
+                htmlAnalise += `<li>No Simples Nacional (Serviços), o Fator R (${simples.fatorR.toFixed(4)}) determinou o enquadramento no ${simples.componentes.anexoUtilizado}. Monitorar este fator é crucial, pois pequenas variações na folha ou faturamento podem alterar seu anexo e alíquota.</li>`;
+            }
+
+
+
+
+            if (inputs.regimeAtual === "Simples Nacional" && !simples.aplicavel) {
+                htmlPassos += `<li class="text-red-400 font-semibold">URGENTE: Sua empresa excedeu o limite do Simples Nacional. É necessário realizar o desenquadramento e optar pelo Lucro Presumido ou Lucro Real. Procure seu contador imediatamente!</li>`;
+            }
+            if (regimeRecomendado && regimeAtualCalculado.aplicavel && regimeRecomendado.nomeRegime !== regimeAtualCalculado.nomeRegime && regimeRecomendado.impostoMensalTotal < regimeAtualCalculado.impostoMensalTotal) {
+                htmlPassos += `<li>Considere planejar a transição para o <span class="badge badge-green">${regimeRecomendado.nomeRegime}</span>. Converse com seu contador sobre os prazos (geralmente no início do ano-calendário) e procedimentos.</li>`;
+                if (regimeRecomendado.nomeRegime === "Lucro Real") {
+                    htmlPassos += `<li>Para o Lucro Real, é fundamental ter um controle financeiro e contábil rigoroso e detalhado para apurar corretamente custos, despesas e todos os créditos permitidos. A unificação dos campos nesta calculadora é uma simplificação; na prática, a segregação é necessária.</li>`;
+                }
+            } else if (regimeRecomendado && regimeAtualCalculado.aplicavel && regimeRecomendado.nomeRegime === regimeAtualCalculado.nomeRegime) {
+                 htmlPassos += `<li>Seu regime atual (<span class="badge badge-blue">${inputs.regimeAtual}</span>) parece ser o mais adequado. Continue monitorando:</li>`;
+                 if (inputs.regimeAtual === "Simples Nacional" && simples.fatorR !== null) {
+                     htmlPassos += `<li>No Simples Nacional (Serviços): Monitore o Fator R mensalmente.</li>`;
+                 }
+                 if (inputs.regimeAtual === "Lucro Presumido") {
+                     htmlPassos += `<li>No Lucro Presumido: Acompanhe suas margens de lucro reais. Se estiverem consistentemente abaixo da presunção legal, o Lucro Real pode se tornar uma alternativa interessante.</li>`;
+                 }
+                 if (inputs.regimeAtual === "Lucro Real") {
+                     htmlPassos += `<li>No Lucro Real: Maximize a apuração de créditos de PIS/COFINS e mantenha um controle rigoroso das despesas dedutíveis. A simplificação de entrada de custos/despesas nesta calculadora pode não refletir todos os detalhes para otimização máxima.</li>`;
+                 }
+            }
+            
+            htmlPassos += `<li>Realize uma revisão tributária completa com seu contador anualmente ou sempre que houver mudanças significativas na legislação, no seu faturamento ou na estrutura de custos da sua empresa.</li>`;
+            htmlPassos += `<li>Verifique a possibilidade de benefícios fiscais específicos para seu setor de atuação ou região geográfica.</li>`;
+            htmlPassos += `<li>Lembre-se que esta calculadora utiliza alíquotas médias para ICMS/ISS. A alíquota real pode variar conforme seu estado/município e tipo de produto/serviço.</li>`;
+
+
+
+
+            htmlAnalise += `</ul>`;
+            htmlPassos += `</ul>`;
+            analiseDetalhadaEl.innerHTML = htmlAnalise;
+            proximosPassosEl.innerHTML = htmlPassos;
+
+
+            document.getElementById('resultsArea').classList.remove('hidden');
+            document.getElementById('resultsArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+
+
+
+        document.getElementById('taxForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const inputs = {
+                faturamentoMensal: parseCurrency(formData.get('faturamentoMensal')),
+                regimeAtual: formData.get('regimeAtual'),
+                setorAtuacao: formData.get('setorAtuacao'),
+                estadoUF: formData.get('estadoUF'),
+                gastoFolhaSalarial: parseCurrency(formData.get('gastoFolhaSalarial')),
+                numeroFuncionarios: parseInt(formData.get('numeroFuncionarios')) || 0,
+                custosDespesasTotais: parseCurrency(formData.get('custosDespesasTotais')), 
+            };
+
+
+            const faturamentoInput = document.getElementById('faturamentoMensal');
+            const custosDespesasInput = document.getElementById('custosDespesasTotais');
+
+
+            if (inputs.faturamentoMensal <= 0) {
+                alert("O Faturamento Mensal deve ser maior que zero."); 
+                faturamentoInput.focus();
+                return;
+            }
+             if (inputs.custosDespesasTotais < 0) { 
+                alert("O campo 'Custos e Despesas Totais' não pode ser negativo."); 
+                custosDespesasInput.focus();
+                return;
+            }
+            
+            const resultados = {
+                simples: calcularSimplesNacional(inputs),
+                presumido: calcularLucroPresumido(inputs),
+                real: calcularLucroReal(inputs)
+            };
+            
+            displayResults(inputs, resultados);
+        });
+
+
+        // Funcionalidade do Botão Imprimir
+        const printButton = document.getElementById('printButton');
+        if (printButton) {
+            printButton.addEventListener('click', () => {
+                window.print();
+            });
+        }
+    </script>
+</body>
+</html>
