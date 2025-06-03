@@ -1,0 +1,622 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Gerador de Cadência de E-mails - Saturno</title>
+   <script src="https://cdn.tailwindcss.com"></script>
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+   <style>
+       body {
+           font-family: 'Montserrat', sans-serif;
+           background-color: #000000; /* Preto */
+           color: #E5E7EB; /* Cinza claro para texto padrão */
+       }
+       .highlight-color {
+           color: #77F1CE; /* R119 G241 B206 */
+       }
+       .bg-highlight {
+           background-color: #77F1CE;
+       }
+       .border-highlight {
+           border-color: #77F1CE;
+       }
+       .ring-highlight:focus {
+           --tw-ring-color: #77F1CE;
+       }
+       .selection\:bg-highlight::selection {
+           background-color: #77F1CE;
+           color: #000000;
+       }
+       /* Estilo para o loader */
+       .loader {
+           border: 5px solid #374151; /* Cinza escuro para o fundo do loader */
+           border-top: 5px solid #77F1CE; /* Cor de destaque */
+           border-radius: 50%;
+           width: 50px;
+           height: 50px;
+           animation: spin 1s linear infinite;
+           margin: 20px auto;
+       }
+       @keyframes spin {
+           0% { transform: rotate(0deg); }
+           100% { transform: rotate(360deg); }
+       }
+       /* Custom scrollbar for output container and service list */
+       #outputContainer::-webkit-scrollbar, #listaServicos::-webkit-scrollbar {
+           width: 8px;
+       }
+       #outputContainer::-webkit-scrollbar-track, #listaServicos::-webkit-scrollbar-track {
+           background: #111827; /* Cinza mais escuro para track */
+           border-radius: 10px;
+       }
+       #outputContainer::-webkit-scrollbar-thumb, #listaServicos::-webkit-scrollbar-thumb {
+           background: #77F1CE;
+           border-radius: 10px;
+       }
+       #outputContainer::-webkit-scrollbar-thumb:hover, #listaServicos::-webkit-scrollbar-thumb:hover {
+           background: #5cd9b8;
+       }
+       .form-checkbox:checked {
+           background-color: #77F1CE;
+           border-color: #77F1CE;
+       }
+       .email-card {
+           background-color: #1F2937; /* Cinza escuro para o card */
+           border: 1px solid #374151; /* Borda sutil */
+           border-left: 4px solid #77F1CE; /* Destaque na borda esquerda */
+           border-radius: 8px;
+           padding: 16px;
+           margin-bottom: 16px;
+           color: #D1D5DB; /* Texto dentro do card */
+       }
+       .email-card h3 {
+           color: #77F1CE;
+           font-size: 1.125rem; /* 18px */
+           font-weight: 600;
+           margin-bottom: 8px;
+       }
+       .email-card strong { /* Para "Assunto:" e "CTA:" */
+           color: #9CA3AF; /* Cinza um pouco mais claro */
+       }
+       .email-card .email-body {
+           margin-top: 12px;
+           font-size: 0.875rem; /* 14px */
+           line-height: 1.6;
+       }
+       .email-card .email-body p {
+           margin-bottom: 0.75em;
+       }
+       .email-card .email-body strong { /* Negrito dentro do corpo do e-mail */
+           color: #E5E7EB;
+       }
+       .email-card .email-body em { /* Itálico dentro do corpo do e-mail */
+           color: #E5E7EB;
+       }
+       .email-card .email-body ul, .email-card .email-body ol {
+           margin-left: 20px;
+           margin-bottom: 0.75em;
+       }
+       .email-card .email-body li {
+           margin-bottom: 0.25em;
+       }
+   </style>
+</head>
+<body class="selection:bg-highlight">
+
+
+   <div class="bg-gray-900 shadow-2xl shadow-[#77F1CE]/10 rounded-xl p-6 md:p-10 w-full max-w-4xl my-8">
+       <header class="mb-8 text-center">
+           <h1 class="text-3xl md:text-4xl font-bold highlight-color">Gerador de Cadência de E-mails</h1>
+           <p class="text-gray-400 mt-2">Preencha os campos abaixo para gerar uma cadência de prospecção personalizada.</p>
+       </header>
+
+
+       <form id="formCadencia" class="space-y-6">
+           <fieldset class="border border-highlight/50 p-4 rounded-lg">
+               <legend class="text-lg font-semibold highlight-color px-2">Informações da Sua Empresa e Evento</legend>
+               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                   <div>
+                       <label for="nomeSuaEmpresa" class="block text-sm font-medium text-gray-300 mb-1">Nome da Sua Empresa (Saturno):</label>
+                       <input type="text" id="nomeSuaEmpresa" name="nomeSuaEmpresa" class="w-full bg-gray-800 border border-gray-700 text-gray-100 rounded-md p-2.5 ring-highlight placeholder-gray-500" placeholder="Ex: Saturno Conteúdo Criativo" required>
+                   </div>
+                   <div>
+                       <label for="nomeEvento" class="block text-sm font-medium text-gray-300 mb-1">Nome do Evento Específico:</label>
+                       <input type="text" id="nomeEvento" name="nomeEvento" class="w-full bg-gray-800 border border-gray-700 text-gray-100 rounded-md p-2.5 ring-highlight placeholder-gray-500" placeholder="Ex: FCE Cosmetique 2025" required>
+                   </div>
+                   <div>
+                       <label for="dataEvento" class="block text-sm font-medium text-gray-300 mb-1">Data do Evento:</label>
+                       <input type="text" id="dataEvento" name="dataEvento" class="w-full bg-gray-800 border border-gray-700 text-gray-100 rounded-md p-2.5 ring-highlight placeholder-gray-500" placeholder="Ex: 20 a 22 de Outubro de 2025" required>
+                   </div>
+                   <div>
+                       <label for="segmentoEvento" class="block text-sm font-medium text-gray-300 mb-1">Segmento Principal do Evento:</label>
+                       <input type="text" id="segmentoEvento" name="segmentoEvento" class="w-full bg-gray-800 border border-gray-700 text-gray-100 rounded-md p-2.5 ring-highlight placeholder-gray-500" placeholder="Ex: Indústria Cosmética e de Beleza" required>
+                   </div>
+               </div>
+           </fieldset>
+
+
+           <fieldset class="border border-highlight/50 p-4 rounded-lg">
+               <legend class="text-lg font-semibold highlight-color px-2">Detalhes da Prospecção</legend>
+               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                   <div>
+                       <label for="diasFaltando" class="block text-sm font-medium text-gray-300 mb-1">Dias Faltando para o Evento:</label>
+                       <input type="text" id="diasFaltando" name="diasFaltando" class="w-full bg-gray-800 border border-gray-700 text-gray-100 rounded-md p-2.5 ring-highlight placeholder-gray-500" placeholder="Ex: 60 dias" required>
+                   </div>
+                   <div>
+                       <label for="estiloEmpresas" class="block text-sm font-medium text-gray-300 mb-1">Estilo das Empresas Prospects:</label>
+                       <select id="estiloEmpresas" name="estiloEmpresas" class="w-full bg-gray-800 border border-gray-700 text-gray-100 rounded-md p-2.5 ring-highlight">
+                           <option value="Startups e Empresas Inovadoras de Crescimento Acelerado">Startups e Empresas Inovadoras</option>
+                           <option value="Empresas Tradicionais e Corporações Estabelecidas">Empresas Tradicionais e Corporações</option>
+                           <option value="Pequenas e Médias Empresas com Foco em Nicho">Pequenas e Médias Empresas (Nicho)</option>
+                           <option value="Grandes Players Globais e Multinacionais">Grandes Players Globais</option>
+                       </select>
+                   </div>
+                   <div>
+                       <label for="tomDeVoz" class="block text-sm font-medium text-gray-300 mb-1">Tom de Voz da Cadência:</label>
+                       <select id="tomDeVoz" name="tomDeVoz" class="w-full bg-gray-800 border border-gray-700 text-gray-100 rounded-md p-2.5 ring-highlight">
+                           <option value="Profissional e Direto">Profissional e Direto</option>
+                           <option value="Consultivo e Educacional">Consultivo e Educacional</option>
+                           <option value="Amigável e Colaborativo">Amigável e Colaborativo</option>
+                           <option value="Entusiasmado e Inovador">Entusiasmado e Inovador</option>
+                           <option value="Formal e Técnico">Formal e Técnico</option>
+                           <option value="Urgente e Orientado à Ação">Urgente e Orientado à Ação</option>
+                       </select>
+                   </div>
+                    <div>
+                       <label for="numeroEmails" class="block text-sm font-medium text-gray-300 mb-1">Número de E-mails na Cadência:</label>
+                       <select id="numeroEmails" name="numeroEmails" class="w-full bg-gray-800 border border-gray-700 text-gray-100 rounded-md p-2.5 ring-highlight">
+                           <option value="3">3 E-mails</option>
+                           <option value="4">4 E-mails</option>
+                           <option value="5">5 E-mails</option>
+                       </select>
+                   </div>
+                   <div class="md:col-span-2">
+                       <label for="nivelPersonalizacao" class="block text-sm font-medium text-gray-300 mb-1">Nível de Personalização do E-mail:</label>
+                       <select id="nivelPersonalizacao" name="nivelPersonalizacao" class="w-full bg-gray-800 border border-gray-700 text-gray-100 rounded-md p-2.5 ring-highlight">
+                           <option value="contato_empresa">Usar Nome do Contato e Nome da Empresa</option>
+                           <option value="empresa_apenas">Usar Apenas Nome da Empresa</option>
+                           <option value="contato_apenas">Usar Apenas Nome do Contato</option>
+                           <option value="sem_personalizacao">Sem Personalização (E-mail Genérico)</option>
+                       </select>
+                   </div>
+               </div>
+           </fieldset>
+          
+           <fieldset class="border border-highlight/50 p-4 rounded-lg">
+               <legend class="text-lg font-semibold highlight-color px-2">Call to Action (CTA)</legend>
+               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                   <div>
+                       <label for="tipoCTA" class="block text-sm font-medium text-gray-300 mb-1">Tipo de CTA Principal:</label>
+                       <select id="tipoCTA" name="tipoCTA" class="w-full bg-gray-800 border border-gray-700 text-gray-100 rounded-md p-2.5 ring-highlight">
+                           <option value="Agendar Reunião/Demonstração">Agendar Reunião/Demonstração</option>
+                           <option value="Receber Material/Proposta (PDF, Valores)">Receber Material/Proposta</option>
+                           <option value="Tirar Dúvidas/Saber Mais">Tirar Dúvidas/Saber Mais</option>
+                           <option value="Visitar Nosso Stand no Evento">Visitar Nosso Stand no Evento</option>
+                           <option value="Conhecer Solução Específica X">Conhecer Solução Específica X</option>
+                           <!-- Adicione mais opções de CTA aqui se necessário -->
+                       </select>
+                   </div>
+                   <div>
+                       <label for="linkCTA" class="block text-sm font-medium text-gray-300 mb-1">Link do CTA (Opcional):</label>
+                       <input type="url" id="linkCTA" name="linkCTA" class="w-full bg-gray-800 border border-gray-700 text-gray-100 rounded-md p-2.5 ring-highlight placeholder-gray-500" placeholder="https://seu-calendario.com ou página">
+                   </div>
+               </div>
+           </fieldset>
+
+
+           <fieldset class="border border-highlight/50 p-4 rounded-lg">
+               <legend class="text-lg font-semibold highlight-color px-2">Produtos/Serviços e Remetente</legend>
+               <div class="mt-2">
+                   <label class="block text-sm font-medium text-gray-300 mb-2">Produtos/Serviços da Sua Empresa (Saturno) a Oferecer:</label>
+                   <div id="listaServicos" class="space-y-2 max-h-40 overflow-y-auto pr-2">
+                       <div>
+                           <input type="checkbox" id="servicoFoto" name="servico" value="Cobertura Fotográfica Profissional: Registra os melhores momentos do stand, produtos e interações, gerando material de alta qualidade para marketing pós-evento." class="form-checkbox h-4 w-4 text-[#77F1CE] bg-gray-700 border-gray-600 rounded ring-highlight focus:ring-offset-gray-900">
+                           <label for="servicoFoto" class="ml-2 text-gray-300">Cobertura Fotográfica Profissional</label>
+                       </div>
+                       <div>
+                           <input type="checkbox" id="servicoVideo" name="servico" value="Produção de Vídeos Dinâmicos para Eventos: Criação de vídeos curtos (resumos do dia, entrevistas, demonstrações) para engajamento em redes sociais e websites." class="form-checkbox h-4 w-4 text-[#77F1CE] bg-gray-700 border-gray-600 rounded ring-highlight focus:ring-offset-gray-900">
+                           <label for="servicoVideo" class="ml-2 text-gray-300">Produção de Vídeos Dinâmicos</label>
+                       </div>
+                       <div>
+                           <input type="checkbox" id="servicoStories" name="servico" value="Conteúdo Mobile e Stories em Tempo Real: Produção ágil de conteúdo para Instagram Stories e outras plataformas mobile, maximizando o alcance durante o evento." class="form-checkbox h-4 w-4 text-[#77F1CE] bg-gray-700 border-gray-600 rounded ring-highlight focus:ring-offset-gray-900">
+                           <label for="servicoStories" class="ml-2 text-gray-300">Conteúdo Mobile e Stories</label>
+                       </div>
+                       <div>
+                           <input type="checkbox" id="servicoPacoteCompleto" name="servico" value="Pacote de Conteúdo Integrado para Eventos: Solução completa combinando foto, vídeo e conteúdo mobile para uma presença de marca impactante." class="form-checkbox h-4 w-4 text-[#77F1CE] bg-gray-700 border-gray-600 rounded ring-highlight focus:ring-offset-gray-900">
+                           <label for="servicoPacoteCompleto" class="ml-2 text-gray-300">Pacote de Conteúdo Integrado</label>
+                       </div>
+                       <div>
+                           <input type="checkbox" id="servicoConsultoria" name="servico" value="Consultoria Estratégica de Conteúdo para Eventos: Planejamento e orientação para maximizar o impacto do conteúdo antes, durante e após o evento." class="form-checkbox h-4 w-4 text-[#77F1CE] bg-gray-700 border-gray-600 rounded ring-highlight focus:ring-offset-gray-900">
+                           <label for="servicoConsultoria" class="ml-2 text-gray-300">Consultoria Estratégica de Conteúdo</label>
+                       </div>
+                   </div>
+               </div>
+
+
+               <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                   <div>
+                       <label for="nomeRemetente" class="block text-sm font-medium text-gray-300 mb-1">Nome do Remetente (Opcional):</label>
+                       <input type="text" id="nomeRemetente" name="nomeRemetente" class="w-full bg-gray-800 border border-gray-700 text-gray-100 rounded-md p-2.5 ring-highlight placeholder-gray-500" placeholder="Ex: João Silva">
+                   </div>
+                   <div>
+                       <label for="cargoRemetente" class="block text-sm font-medium text-gray-300 mb-1">Cargo do Remetente (Opcional):</label>
+                       <input type="text" id="cargoRemetente" name="cargoRemetente" class="w-full bg-gray-800 border border-gray-700 text-gray-100 rounded-md p-2.5 ring-highlight placeholder-gray-500" placeholder="Ex: Gerente de Contas">
+                   </div>
+                   <div>
+                       <label for="linkPortfolio" class="block text-sm font-medium text-gray-300 mb-1">Link do Portfólio/Site (Opcional):</label>
+                       <input type="url" id="linkPortfolio" name="linkPortfolio" class="w-full bg-gray-800 border border-gray-700 text-gray-100 rounded-md p-2.5 ring-highlight placeholder-gray-500" placeholder="https://suaempresa.com">
+                   </div>
+                   <div>
+                       <label for="linkLinkedin" class="block text-sm font-medium text-gray-300 mb-1">Link do LinkedIn (Opcional):</label>
+                       <input type="url" id="linkLinkedin" name="linkLinkedin" class="w-full bg-gray-800 border border-gray-700 text-gray-100 rounded-md p-2.5 ring-highlight placeholder-gray-500" placeholder="https://linkedin.com/in/seu-perfil">
+                   </div>
+                   <div class="md:col-span-2">
+                       <label for="telefoneRemetente" class="block text-sm font-medium text-gray-300 mb-1">Telefone do Remetente (Opcional):</label>
+                       <input type="tel" id="telefoneRemetente" name="telefoneRemetente" class="w-full bg-gray-800 border border-gray-700 text-gray-100 rounded-md p-2.5 ring-highlight placeholder-gray-500" placeholder="(XX) XXXXX-XXXX">
+                   </div>
+               </div>
+           </fieldset>
+
+
+           <div class="flex justify-center mt-8">
+               <button type="submit" id="btnGerar" class="bg-highlight hover:bg-opacity-80 text-black font-semibold py-3 px-8 rounded-lg shadow-md hover:shadow-lg hover:shadow-[#77F1CE]/30 transition-all duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[#77F1CE] focus:ring-opacity-70">
+                   Gerar Cadência de E-mails
+               </button>
+           </div>
+       </form>
+
+
+       <div id="resultado" class="mt-10 hidden">
+           <h2 class="text-2xl font-semibold highlight-color mb-6 text-center">Cadência Gerada:</h2>
+           <div id="loader" class="loader hidden"></div>
+           <div id="outputContainer" class="space-y-6">
+               <!-- Cards de e-mail serão inseridos aqui -->
+           </div>
+           <button id="copyAllButton" class="mt-6 w-full bg-highlight hover:bg-opacity-80 text-black font-semibold py-2.5 px-4 rounded-md text-sm transition-colors duration-200 hidden">
+               Copiar Toda a Cadência (Texto)
+           </button>
+           <div id="errorMessage" class="mt-4 text-red-400 text-center hidden p-3 bg-red-900/30 border border-red-700 rounded-md"></div>
+       </div>
+   </div>
+
+
+   <script>
+       const formCadencia = document.getElementById('formCadencia');
+       const resultadoDiv = document.getElementById('resultado');
+       const outputContainer = document.getElementById('outputContainer');
+       const loader = document.getElementById('loader');
+       const btnGerar = document.getElementById('btnGerar');
+       const errorMessageDiv = document.getElementById('errorMessage');
+       const copyAllButton = document.getElementById('copyAllButton');
+
+
+       const API_KEY = "AIzaSyDGftkvHVzbWvuXLRK2_KNJ1usknwfRBdw"; // ATENÇÃO: Chave no cliente
+
+
+       function parseEmailData(emailBlock) {
+           const emailData = {};
+           const lines = emailBlock.split('\n');
+           let currentKey = null;
+           let accumulatingHTML = false;
+
+
+           lines.forEach(line => {
+               if (line.startsWith("Touchpoint:")) {
+                   emailData.touchpoint = line.substring("Touchpoint:".length).trim();
+                   accumulatingHTML = false;
+               } else if (line.startsWith("Objetivo:")) {
+                   emailData.objetivo = line.substring("Objetivo:".length).trim();
+                   accumulatingHTML = false;
+               } else if (line.startsWith("Assunto:")) {
+                   emailData.assunto = line.substring("Assunto:".length).trim();
+                   accumulatingHTML = false;
+               } else if (line.startsWith("CTA:")) {
+                   emailData.cta = line.substring("CTA:".length).trim();
+                   accumulatingHTML = false;
+               } else if (line.startsWith("CorpoHTML:")) {
+                   emailData.corpoHTML = "";
+                   accumulatingHTML = true;
+               } else if (accumulatingHTML) {
+                   emailData.corpoHTML += line + "\n";
+               }
+           });
+           if (emailData.corpoHTML) {
+               emailData.corpoHTML = emailData.corpoHTML.trim();
+           }
+           return emailData;
+       }
+
+
+       function renderizarCadencia(apiResponseText) {
+           outputContainer.innerHTML = '';
+           copyAllButton.classList.add('hidden');
+
+
+           const cadenciaInicioMarker = "EMAIL_START";
+           const inicioRealCadencia = apiResponseText.indexOf(cadenciaInicioMarker);
+          
+           if (inicioRealCadencia === -1) {
+                const errorCard = document.createElement('div');
+                errorCard.className = 'email-card';
+                errorCard.innerHTML = `<h3>Erro de Formato da Resposta</h3><p>A API não retornou os e-mails no formato esperado (marcador EMAIL_START não encontrado). Verifique a resposta completa no console do navegador (F12).</p><pre class="text-xs whitespace-pre-wrap overflow-x-auto">${apiResponseText}</pre>`;
+                outputContainer.appendChild(errorCard);
+                console.error("Resposta completa da API (sem marcador EMAIL_START):", apiResponseText);
+                return;
+           }
+
+
+           const cadenciaPura = apiResponseText.substring(inicioRealCadencia);
+           const emailBlocks = cadenciaPura.split("EMAIL_END");
+           let fullCadenceTextForCopy = `Cadência de E-mails Gerada:\nEvento: ${document.getElementById('nomeEvento').value}\nEmpresa: ${document.getElementById('nomeSuaEmpresa').value}\n\n`;
+
+
+           emailBlocks.forEach((block, index) => {
+               if (block.trim() === "" || !block.includes("EMAIL_START")) return;
+
+
+               const emailData = parseEmailData(block.replace("EMAIL_START", "").trim());
+
+
+               if (!emailData.touchpoint && !emailData.assunto && !emailData.corpoHTML) {
+                   console.warn("Bloco de e-mail vazio ou malformado detectado e pulado:", block);
+                   return;
+               }
+              
+               const card = document.createElement('div');
+               card.className = 'email-card';
+               let cardHTML = '';
+
+
+               const touchpointTitle = emailData.touchpoint || `E-mail ${index + 1} (Título não fornecido)`;
+               cardHTML += `<h3>${touchpointTitle}</h3>`;
+               fullCadenceTextForCopy += `--- ${touchpointTitle} ---\n`;
+
+
+               if (emailData.assunto) {
+                   cardHTML += `<p class="mb-2"><strong>Assunto:</strong> ${emailData.assunto}</p>`;
+                   fullCadenceTextForCopy += `Assunto: ${emailData.assunto}\n`;
+               }
+               if (emailData.objetivo) { // Adicionado para cópia, não exibido no card por padrão
+                    fullCadenceTextForCopy += `Objetivo: ${emailData.objetivo}\n`;
+               }
+
+
+               if (emailData.corpoHTML) {
+                   cardHTML += `<div class="email-body mt-3 border-t border-gray-700 pt-3">${emailData.corpoHTML}</div>`;
+                   const tempDiv = document.createElement('div');
+                   tempDiv.innerHTML = emailData.corpoHTML;
+                   fullCadenceTextForCopy += `Corpo:\n${tempDiv.textContent || tempDiv.innerText || ""}\n`;
+               }
+                if (emailData.cta) {
+                   cardHTML += `<p class="mt-3 pt-3 border-t border-gray-700"><strong>CTA Sugerido:</strong> ${emailData.cta}</p>`;
+                   fullCadenceTextForCopy += `CTA Sugerido: ${emailData.cta}\n`;
+               }
+
+
+               card.innerHTML = cardHTML;
+               outputContainer.appendChild(card);
+               fullCadenceTextForCopy += "\n";
+           });
+
+
+            if (outputContainer.children.length > 0) {
+               copyAllButton.classList.remove('hidden');
+               copyAllButton.onclick = () => copyTextToClipboard(fullCadenceTextForCopy.trim());
+           } else if (inicioRealCadencia !== -1) { // Se havia marcador EMAIL_START mas nenhum card foi gerado
+               const errorCard = document.createElement('div');
+               errorCard.className = 'email-card';
+               errorCard.innerHTML = `<h3>Erro de Formato dos E-mails</h3><p>A API retornou dados, mas não foi possível extrair e-mails individuais. Verifique a resposta completa no console (F12).</p><pre class="text-xs whitespace-pre-wrap overflow-x-auto">${apiResponseText}</pre>`;
+               outputContainer.appendChild(errorCard);
+               console.error("Resposta completa da API (erro ao parsear e-mails individuais):", apiResponseText);
+           }
+       }
+      
+       function copyTextToClipboard(text) {
+           const textArea = document.createElement('textarea');
+           textArea.value = text;
+           textArea.style.position = 'fixed'; // Evita scroll
+           textArea.style.opacity = '0'; // Torna invisível
+           document.body.appendChild(textArea);
+           textArea.select();
+           try {
+               document.execCommand('copy');
+               copyAllButton.textContent = 'Copiado!';
+               setTimeout(() => { copyAllButton.textContent = 'Copiar Toda a Cadência (Texto)'; }, 2000);
+           } catch (err) {
+               console.error('Erro ao copiar texto: ', err);
+               prompt("Falha ao copiar. Copie manualmente (Ctrl+C):", text);
+           }
+           document.body.removeChild(textArea);
+       }
+
+
+       formCadencia.addEventListener('submit', async function(event) {
+           event.preventDefault();
+           errorMessageDiv.classList.add('hidden');
+           errorMessageDiv.textContent = '';
+           outputContainer.innerHTML = '';
+           resultadoDiv.classList.remove('hidden');
+           loader.classList.remove('hidden');
+           btnGerar.disabled = true;
+           btnGerar.textContent = 'Gerando...';
+           copyAllButton.classList.add('hidden');
+
+
+           const servicosSelecionados = [];
+           document.querySelectorAll('#listaServicos input[name="servico"]:checked').forEach((checkbox) => {
+               servicosSelecionados.push(checkbox.value);
+           });
+
+
+           if (servicosSelecionados.length === 0) {
+               errorMessageDiv.textContent = 'Por favor, selecione ao menos um produto/serviço.';
+               errorMessageDiv.classList.remove('hidden');
+               loader.classList.add('hidden');
+               btnGerar.disabled = false;
+               btnGerar.textContent = 'Gerar Cadência de E-mails';
+               return;
+           }
+          
+           const produtosServicosFormatado = servicosSelecionados.map(item => `- "${item.trim()}"`).join('\n                    ');
+
+
+           const dadosFormulario = {
+               NOME_DA_SUA_EMPRESA_SATURNO: document.getElementById('nomeSuaEmpresa').value,
+               NOME_EVENTO_ESPECIFICO: document.getElementById('nomeEvento').value,
+               DATA_EVENTO: document.getElementById('dataEvento').value,
+               SEGMENTO_EVENTO: document.getElementById('segmentoEvento').value,
+               DIAS_FALTANDO_PARA_EVENTO: document.getElementById('diasFaltando').value,
+               ESTILO_EMPRESAS_PROSPECTS: document.getElementById('estiloEmpresas').value,
+               TOM_DE_VOZ_CADENCIA: document.getElementById('tomDeVoz').value,
+               PRODUTOS_SERVICOS_SATURNO_OFERECIDOS: produtosServicosFormatado,
+               NOME_REMETENTE_SATURNO: document.getElementById('nomeRemetente').value || "Não informado",
+               CARGO_REMETENTE_SATURNO: document.getElementById('cargoRemetente').value || "Não informado",
+               LINK_PORTFOLIO_SATURNO: document.getElementById('linkPortfolio').value || "Não informado",
+               LINK_LINKEDIN_REMETENTE_SATURNO: document.getElementById('linkLinkedin').value || "Não informado",
+               TELEFONE_REMETENTE_SATURNO: document.getElementById('telefoneRemetente').value || "Não informado",
+               NUMERO_EMAILS_ESCOLHIDO: document.getElementById('numeroEmails').value,
+               TIPO_CTA_ESCOLHIDO: document.getElementById('tipoCTA').value,
+               LINK_CTA_FORNECIDO: document.getElementById('linkCTA').value || "Não informado",
+               NIVEL_PERSONALIZACAO_ESCOLHIDO: document.getElementById('nivelPersonalizacao').value
+           };
+
+
+           const promptTemplate = `
+**Persona do LLM:**
+Você é um Copywriter Estratégico Sênior, especialista em Marketing B2B e Vendas, com profunda experiência na criação de cadências de e-mail de prospecção altamente eficazes para eventos corporativos. Seu objetivo é gerar sequências de e-mail que não apenas informem, mas também persuadam e engajem os prospects, levando-os a uma ação desejada. Você entende as nuances de diferentes segmentos de mercado, estilos de comunicação empresarial e níveis de personalização.
+
+
+**Tarefa Principal:**
+Gerar uma cadência completa de e-mails de prospecção (com ${dadosFormulario.NUMERO_EMAILS_ESCOLHIDO} e-mails) para a empresa "${dadosFormulario.NOME_DA_SUA_EMPRESA_SATURNO}" oferecer seus produtos/serviços a potenciais clientes (expositores, palestrantes, patrocinadores) que participarão do evento "${dadosFormulario.NOME_EVENTO_ESPECIFICO}".
+
+
+**Contexto e Variáveis (NÃO repita os valores aqui, use-os nas instruções abaixo):**
+- Nome da Sua Empresa: ${dadosFormulario.NOME_DA_SUA_EMPRESA_SATURNO}
+- Nome do Evento: ${dadosFormulario.NOME_EVENTO_ESPECIFICO}
+- Data do Evento: ${dadosFormulario.DATA_EVENTO}
+- Segmento do Evento: ${dadosFormulario.SEGMENTO_EVENTO}
+- Dias Faltando: ${dadosFormulario.DIAS_FALTANDO_PARA_EVENTO}
+- Estilo Empresas Prospects: ${dadosFormulario.ESTILO_EMPRESAS_PROSPECTS}
+- Tom de Voz: ${dadosFormulario.TOM_DE_VOZ_CADENCIA}
+- Produtos/Serviços Oferecidos: \n${dadosFormulario.PRODUTOS_SERVICOS_SATURNO_OFERECIDOS}
+- Nome Remetente: ${dadosFormulario.NOME_REMETENTE_SATURNO}
+- Cargo Remetente: ${dadosFormulario.CARGO_REMETENTE_SATURNO}
+- Link Portfólio: ${dadosFormulario.LINK_PORTFOLIO_SATURNO}
+- Link LinkedIn: ${dadosFormulario.LINK_LINKEDIN_REMETENTE_SATURNO}
+- Telefone Remetente: ${dadosFormulario.TELEFONE_REMETENTE_SATURNO}
+- Tipo de CTA: ${dadosFormulario.TIPO_CTA_ESCOLHIDO}
+- Link do CTA: ${dadosFormulario.LINK_CTA_FORNECIDO}
+- Nível de Personalização: ${dadosFormulario.NIVEL_PERSONALIZACAO_ESCOLHIDO}
+
+
+**Instruções de Formato de Saída OBRIGATÓRIAS:**
+Apresente a cadência de forma clara e organizada.
+Inicie a sua resposta EXATAMENTE com a frase: "Aqui está a cadência de e-mails de prospecção sugerida para a \"${dadosFormulario.NOME_DA_SUA_EMPRESA_SATURNO}\" no evento \"${dadosFormulario.NOME_EVENTO_ESPECIFICO}\":"
+NÃO adicione nenhum outro texto ou introdução antes desta frase.
+
+
+Para CADA e-mail da cadência, use EXATAMENTE o seguinte formato estruturado. CADA campo DEVE estar em uma nova linha.
+NÃO adicione linhas em branco extras entre os campos ou entre os blocos de e-mail, a menos que seja intencional dentro do CorpoHTML.
+
+
+EMAIL_START
+Touchpoint: E-mail [Número do E-mail, ex: E-mail 1, E-mail 2]
+Objetivo: [Descreva o objetivo principal deste e-mail específico em uma frase concisa]
+Assunto: [Crie um assunto atraente e relevante com no máximo 70 caracteres, considerando o tom de voz: ${dadosFormulario.TOM_DE_VOZ_CADENCIA}]
+CorpoHTML:
+[Gere o corpo do e-mail AQUI, diretamente em HTML simples e limpo.
+Use tags como <p>parágrafo</p>, <br> para quebra de linha explícita, <strong>negrito</strong>, <em>itálico</em>, <ul><li>item 1</li><li>item 2</li></ul> para listas. O HTML deve ser válido e bem formado.
+**Personalização do Conteúdo (Baseado em '${dadosFormulario.NIVEL_PERSONALIZACAO_ESCOLHIDO}'):**
+- Se '${dadosFormulario.NIVEL_PERSONALIZACAO_ESCOLHIDO}' for 'contato_empresa': Use os placeholders \`[NOME_CONTATO_PROSPECT]\` e \`[NOME_EMPRESA_PROSPECT]\`. Saudação: "Olá, \`[NOME_CONTATO_PROSPECT]\`," ou similar.
+- Se '${dadosFormulario.NIVEL_PERSONALIZACAO_ESCOLHIDO}' for 'empresa_apenas': Use apenas \`[NOME_EMPRESA_PROSPECT]\`. Saudação: "Prezada equipe da \`[NOME_EMPRESA_PROSPECT]\`," ou "À \`[NOME_EMPRESA_PROSPECT]\`,".
+- Se '${dadosFormulario.NIVEL_PERSONALIZACAO_ESCOLHIDO}' for 'contato_apenas': Use apenas \`[NOME_CONTATO_PROSPECT]\`. Saudação: "Olá, \`[NOME_CONTATO_PROSPECT]\`,". Evite mencionar o nome da empresa explicitamente se não for natural.
+- Se '${dadosFormulario.NIVEL_PERSONALIZACAO_ESCOLHIDO}' for 'sem_personalizacao': Não use placeholders de nome/empresa no corpo. Saudação genérica como "Olá," ou "Prezados(as)," ou vá direto ao ponto se o tom permitir.
+Adapte o conteúdo ao segmento do evento ('${dadosFormulario.SEGMENTO_EVENTO}'), estilo das empresas ('${dadosFormulario.ESTILO_EMPRESAS_PROSPECTS}'), e dias faltando ('${dadosFormulario.DIAS_FALTANDO_PARA_EVENTO}').
+Conecte os seguintes produtos/serviços oferecidos pela "${dadosFormulario.NOME_DA_SUA_EMPRESA_SATURNO}" aos desafios do prospect no evento:
+${dadosFormulario.PRODUTOS_SERVICOS_SATURNO_OFERECIDOS}
+Destaque os BENEFÍCIOS.
+**Assinatura:** Construa a assinatura com base nos dados fornecidos.
+- Sempre inclua: "${dadosFormulario.NOME_DA_SUA_EMPRESA_SATURNO}".
+- Se "${dadosFormulario.NOME_REMETENTE_SATURNO}" não for "Não informado", inclua-o.
+- Se "${dadosFormulario.CARGO_REMETENTE_SATURNO}" não for "Não informado" E nome do remetente existir, inclua-o.
+- Se "${dadosFormulario.LINK_PORTFOLIO_SATURNO}" não for "Não informado", inclua-o.
+- Se "${dadosFormulario.LINK_LINKEDIN_REMETENTE_SATURNO}" não for "Não informado", inclua-o.
+- Se "${dadosFormulario.TELEFONE_REMETENTE_SATURNO}" não for "Não informado", inclua-o.
+Formate a assinatura de forma profissional dentro do HTML.
+]
+CTA: [Crie um Call to Action claro e persuasivo alinhado com o Tipo de CTA: '${dadosFormulario.TIPO_CTA_ESCOLHIDO}'. Se um Link do CTA ('${dadosFormulario.LINK_CTA_FORNECIDO}') foi fornecido e não for "Não informado", incorpore-o naturalmente no CTA (ex: como um hiperlink no texto do CTA). Exemplo: "Para ${dadosFormulario.TIPO_CTA_ESCOLHIDO}, [clique aqui](${dadosFormulario.LINK_CTA_FORNECIDO}) ou responda a este e-mail." ou "Gostaria de ${dadosFormulario.TIPO_CTA_ESCOLHIDO}? [Acesse nosso link](${dadosFormulario.LINK_CTA_FORNECIDO})."]
+EMAIL_END
+
+
+Repita o bloco EMAIL_START ... EMAIL_END para cada um dos ${dadosFormulario.NUMERO_EMAILS_ESCOLHIDO} e-mails.
+NÃO adicione nenhum texto ou formatação Markdown fora do campo CorpoHTML ou fora da estrutura definida.
+O último e-mail pode ser um "break-up" amigável.
+Adapte a urgência com base nos ${dadosFormulario.DIAS_FALTANDO_PARA_EVENTO} dias faltando para o evento.
+`;
+
+
+           const payload = {
+               contents: [{
+                   role: "user",
+                   parts: [{ text: promptTemplate }]
+               }],
+               generationConfig: {
+                   // temperature: 0.7,
+                   // maxOutputTokens: 8192, // Gemini Flash tem limite menor, ajuste se usar Pro.
+               }
+           };
+
+
+           try {
+               const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`, {
+                   method: 'POST',
+                   headers: { 'Content-Type': 'application/json' },
+                   body: JSON.stringify(payload)
+               });
+
+
+               if (!response.ok) {
+                   const errorData = await response.json();
+                   console.error('Erro da API:', errorData);
+                   throw new Error(`Erro da API (${response.status}): ${errorData.error?.message || response.statusText}`);
+               }
+
+
+               const result = await response.json();
+              
+               if (result.candidates && result.candidates.length > 0 &&
+                   result.candidates[0].content && result.candidates[0].content.parts &&
+                   result.candidates[0].content.parts.length > 0) {
+                   const textoGerado = result.candidates[0].content.parts[0].text;
+                   renderizarCadencia(textoGerado);
+               } else {
+                   console.error('Resposta inesperada da API:', result);
+                   let detailedError = 'Não foi possível obter o texto da cadência da API. A resposta não contém o conteúdo esperado.';
+                   if (result.promptFeedback && result.promptFeedback.blockReason) {
+                        detailedError = `API bloqueou o prompt: ${result.promptFeedback.blockReason}. Detalhes: ${JSON.stringify(result.promptFeedback.safetyRatings)}`;
+                   } else if (result.candidates && result.candidates.length > 0 && result.candidates[0].finishReason) {
+                       detailedError += ` Motivo da finalização: ${result.candidates[0].finishReason}.`;
+                        if(result.candidates[0].safetyRatings) {
+                           detailedError += ` Avaliações de segurança: ${JSON.stringify(result.candidates[0].safetyRatings)}`;
+                        }
+                   }
+                   throw new Error(detailedError);
+               }
+
+
+           } catch (error) {
+               console.error('Erro ao gerar cadência:', error);
+               errorMessageDiv.textContent = `Ocorreu um erro: ${error.message}. Por favor, tente novamente ou verifique o console para mais detalhes.`;
+               errorMessageDiv.classList.remove('hidden');
+           } finally {
+               loader.classList.add('hidden');
+               btnGerar.disabled = false;
+               btnGerar.textContent = 'Gerar Cadência de E-mails';
+           }
+       });
+   </script>
+</body>
+</html>
