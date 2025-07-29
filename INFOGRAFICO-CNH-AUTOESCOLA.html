@@ -1,0 +1,300 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infográfico: A Nova CNH - Mais Acesso, Menos Custo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F5F5F5;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 350px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+                max-height: 400px;
+            }
+        }
+        .flow-arrow::after {
+            content: '▼';
+            font-size: 2rem;
+            color: #FFB400;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .flow-step {
+            border: 2px solid #00A6ED;
+        }
+    </style>
+</head>
+<body class="text-[#2F2F2F]">
+
+
+    <div class="container mx-auto p-4 md:p-8">
+
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-6xl font-black text-[#00A6ED] mb-2">A REVOLUÇÃO DA CNH</h1>
+            <p class="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">Uma análise sobre o fim da obrigatoriedade das autoescolas e o impacto na democratização do acesso à habilitação no Brasil.</p>
+        </header>
+
+
+        <main class="space-y-12">
+
+
+            <section id="problema-custo" class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center mb-2 text-[#F6511D]">O Custo Exorbitante da Habilitação</h2>
+                <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">O principal obstáculo para obter a CNH é o preço. A maior parte do valor não vai para taxas do governo, mas sim para os pacotes obrigatórios das autoescolas.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="chart-container">
+                        <canvas id="custoCNHChart"></canvas>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <h3 class="text-2xl font-bold mb-4">Divisão de Custos (Média)</h3>
+                        <p class="text-lg text-gray-700 mb-4">Em média, cerca de 85% do valor total para tirar a CNH fica com a autoescola. A proposta de desregulamentação ataca diretamente essa fatia do custo, prometendo uma economia drástica para o cidadão.</p>
+                        <div class="bg-[#00A6ED] text-white p-4 rounded-lg">
+                            <p class="text-xl font-bold">Potencial de Economia: até 80%</p>
+                            <p>O custo para o candidato poderia se resumir às taxas do Detran e ao valor negociado com um instrutor independente.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <section id="impacto-social">
+                <h2 class="text-3xl font-bold text-center mb-8 text-[#7FB800]">As Barreiras Sociais e Seus Efeitos</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white rounded-2xl shadow-lg p-6 text-center">
+                        <p class="text-6xl md:text-7xl font-black text-[#7FB800]">84</p>
+                        <p class="text-2xl font-bold">Milhões</p>
+                        <p class="text-gray-600 mt-2">de brasileiros aptos a dirigir não possuem CNH, a maioria por razões financeiras.</p>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-lg p-6 text-center">
+                        <p class="text-6xl md:text-7xl font-black text-[#F6511D]">18</p>
+                        <p class="text-2xl font-bold">Milhões</p>
+                        <p class="text-gray-600 mt-2">de brasileiros dirigem sem habilitação, criando um grave risco para a segurança viária.</p>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-lg p-6 text-center">
+                        <p class="text-6xl md:text-7xl font-black text-[#FFB400]">🔑</p>
+                        <p class="text-2xl font-bold mt-4">Porta para o Emprego</p>
+                        <p class="text-gray-600 mt-2">A CNH é pré-requisito para inúmeras vagas, e seu alto custo exclui os mais pobres do mercado de trabalho.</p>
+                    </div>
+                </div>
+            </section>
+
+
+            <section id="solucao" class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center mb-8 text-[#00A6ED]">A Proposta: Flexibilização e Autonomia</h2>
+                <p class="text-center text-gray-600 mb-8 max-w-3xl mx-auto">A mudança principal é tornar a autoescola opcional. O candidato ganha liberdade para escolher como se preparar, mantendo a obrigatoriedade dos exames do Detran como filtro de qualidade.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="flex flex-col items-center">
+                        <h3 class="text-2xl font-bold mb-4 text-center">Modelo Atual (Obrigatório)</h3>
+                        <div class="w-full max-w-sm space-y-4 flex flex-col items-center">
+                            <div class="flow-step bg-white rounded-lg p-4 w-full text-center shadow">1. Exames de Saúde</div>
+                            <div class="flow-arrow"></div>
+                            <div class="flow-step bg-white rounded-lg p-4 w-full text-center shadow">2. Curso Teórico (45h em CFC)</div>
+                            <div class="flow-arrow"></div>
+                            <div class="flow-step bg-white rounded-lg p-4 w-full text-center shadow">3. Prova Teórica Detran</div>
+                            <div class="flow-arrow"></div>
+                            <div class="flow-step bg-white rounded-lg p-4 w-full text-center shadow">4. Aulas Práticas (20h em CFC)</div>
+                            <div class="flow-arrow"></div>
+                            <div class="flow-step bg-white rounded-lg p-4 w-full text-center shadow">5. Prova Prática Detran</div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <h3 class="text-2xl font-bold mb-4 text-center">Modelo Proposto (Flexível)</h3>
+                        <div class="w-full max-w-sm space-y-4 flex flex-col items-center">
+                            <div class="flow-step bg-white rounded-lg p-4 w-full text-center shadow">1. Exames de Saúde</div>
+                            <div class="flow-arrow"></div>
+                            <div class="flow-step bg-white rounded-lg p-4 w-full text-center shadow">2. Estudo Teórico (Livre)</div>
+                            <div class="flow-arrow"></div>
+                            <div class="flow-step bg-white rounded-lg p-4 w-full text-center shadow">3. Prova Teórica Detran</div>
+                            <div class="flow-arrow"></div>
+                            <div class="flow-step bg-white rounded-lg p-4 w-full text-center shadow">4. Aulas Práticas (Instrutor Independente)</div>
+                            <div class="flow-arrow"></div>
+                            <div class="flow-step bg-white rounded-lg p-4 w-full text-center shadow">5. Prova Prática Detran</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="custo-comparativo" class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                <h2 class="text-3xl font-bold text-center mb-2 text-[#F6511D]">Comparativo de Custos por Estado</h2>
+                <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">A variação de preços entre estados é grande, mas a estrutura de custo é similar. Veja uma estimativa da diferença que a mudança poderia fazer.</p>
+                <div class="chart-container mx-auto" style="max-width: 800px;">
+                    <canvas id="custoEstadoChart"></canvas>
+                </div>
+            </section>
+
+
+            <section id="riscos-beneficios">
+                <h2 class="text-3xl font-bold text-center mb-8 text-[#FFB400]">Riscos vs. Benefícios</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <h3 class="text-2xl font-bold text-red-500 mb-4 flex items-center"><span>&#x26A0;</span><span class="ml-2">Pontos de Atenção (Riscos)</span></h3>
+                        <ul class="space-y-3 list-disc list-inside text-gray-700">
+                            <li><strong>Segurança Viária:</strong> Risco de precarização da formação se a fiscalização e os exames não forem rigorosos.</li>
+                            <li><strong>Impacto Econômico:</strong> Ameaça ao modelo de negócio de milhares de autoescolas e seus empregos.</li>
+                            <li><strong>Capacidade do Detran:</strong> Desafio operacional de credenciar e fiscalizar milhares de instrutores autônomos.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <h3 class="text-2xl font-bold text-green-500 mb-4 flex items-center"><span>&#x2714;</span><span class="ml-2">Oportunidades (Benefícios)</span></h3>
+                        <ul class="space-y-3 list-disc list-inside text-gray-700">
+                            <li><strong>Democratização:</strong> Torna a CNH acessível para a população de baixa renda, destravando oportunidades.</li>
+                            <li><strong>Redução da Ilegalidade:</strong> Incentiva os mais de 18 milhões de motoristas irregulares a se formalizarem.</li>
+                            <li><strong>Inovação e Concorrência:</strong> Força as autoescolas a competir por qualidade e preço, melhorando o serviço.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+        </main>
+
+
+        <footer class="text-center mt-12 pt-8 border-t border-gray-300">
+            <p class="text-gray-600">Este infográfico é uma representação visual baseada no relatório estratégico sobre a desregulamentação do processo de obtenção da CNH.</p>
+            <p class="text-sm text-gray-500 mt-2">Dados de 2024-2025. Valores são estimativas e podem variar.</p>
+        </footer>
+
+
+    </div>
+
+
+    <script>
+        function wrapLabel(str, maxWidth) {
+            if (str.length <= maxWidth) {
+                return str;
+            }
+            const words = str.split(' ');
+            const lines = [];
+            let currentLine = '';
+            for (const word of words) {
+                if ((currentLine + word).length > maxWidth) {
+                    lines.push(currentLine.trim());
+                    currentLine = '';
+                }
+                currentLine += word + ' ';
+            }
+            lines.push(currentLine.trim());
+            return lines;
+        }
+
+
+        const tooltipTitleCallback = (tooltipItems) => {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+                return label.join(' ');
+            }
+            return label;
+        };
+        
+        const sharedChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        title: tooltipTitleCallback
+                    }
+                }
+            }
+        };
+
+
+        const colors = {
+            blue: '#00A6ED',
+            green: '#7FB800',
+            yellow: '#FFB400',
+            orange: '#F6511D',
+            darkGray: '#2F2F2F',
+            lightGray: '#F5F5F5'
+        };
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const custoCNHData = {
+                labels: ['Custo da Autoescola (Obrigatório)', 'Taxas do Detran (Obrigatório)'],
+                datasets: [{
+                    label: 'Composição do Custo da CNH',
+                    data: [2291, 420], 
+                    backgroundColor: [colors.orange, colors.blue],
+                    borderColor: colors.lightGray,
+                    borderWidth: 4
+                }]
+            };
+            new Chart(document.getElementById('custoCNHChart'), {
+                type: 'doughnut',
+                data: custoCNHData,
+                options: {
+                    ...sharedChartOptions,
+                    plugins: {
+                        ...sharedChartOptions.plugins,
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+
+            const custoEstadoData = {
+                labels: ['São Paulo', 'Rio Grande do Sul'],
+                datasets: [
+                    {
+                        label: 'Custo Atual (Estimativa Média)',
+                        data: [2450, 2711],
+                        backgroundColor: colors.orange,
+                        borderColor: colors.orange,
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Custo Proposto (Estimativa com 80% de Redução)',
+                        data: [2450 * 0.2, 2711 * 0.2],
+                        backgroundColor: colors.green,
+                        borderColor: colors.green,
+                        borderWidth: 1
+                    }
+                ]
+            };
+            new Chart(document.getElementById('custoEstadoChart'), {
+                type: 'bar',
+                data: custoEstadoData,
+                options: {
+                    ...sharedChartOptions,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'R$ ' + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+
+</body>
+</html>
