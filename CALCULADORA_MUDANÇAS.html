@@ -1,0 +1,555 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Orçamento para Mudanças</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .tab-button.active {
+            background-color: #2563eb; /* bg-blue-600 */
+            color: white;
+        }
+        /* Estilos para Impressão */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-summary, #printable-summary * {
+                visibility: visible;
+            }
+            #printable-summary {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white antialiased">
+
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-blue-400">Calculadora de Orçamento para Mudanças</h1>
+            <p class="text-gray-400 mt-2">Uma ferramenta completa para sua empresa e seus clientes.</p>
+        </header>
+
+
+        <!-- Navegação entre painéis -->
+        <div class="flex justify-center space-x-4 mb-8 no-print">
+            <button id="show-calculator-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V4a2 2 0 00-2-2H6zm1 2a1 1 0 000 2h6a1 1 0 100-2H7zM6 7a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>
+                Calculadora
+            </button>
+            <button id="show-admin-btn" class="bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M10 9a3 3 0 100-6 3 3 0 000 6zM10 11a6 6 0 016 6H4a6 6 0 016-6zM16.5 10.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM18 11a4 4 0 10-8 0 4 4 0 008 0z" /></svg>
+                Painel de Configuração
+            </button>
+        </div>
+
+
+        <!-- Painel de Configuração (Admin) -->
+        <div id="admin-panel" class="hidden bg-gray-800 p-6 rounded-2xl shadow-lg">
+            <h2 class="text-2xl font-bold mb-6 text-blue-300 border-b-2 border-blue-400 pb-2">Painel de Configuração da Empresa</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Seção de Preços Base -->
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <h3 class="font-semibold text-lg mb-3">Preços Base</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label for="cost-km" class="block text-sm font-medium text-gray-300">Custo por Quilômetro (R$/KM)</label>
+                            <input type="number" id="cost-km" value="3.50" class="mt-1 block w-full bg-gray-800 border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-white p-2">
+                        </div>
+                        <div>
+                            <label for="cost-m3" class="block text-sm font-medium text-gray-300">Custo por Metro Cúbico (R$/m³)</label>
+                            <input type="number" id="cost-m3" value="150.00" class="mt-1 block w-full bg-gray-800 border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-white p-2">
+                        </div>
+                        <div>
+                            <label for="fixed-fee" class="block text-sm font-medium text-gray-300">Taxa Fixa / Custo Mínimo (R$)</label>
+                            <input type="number" id="fixed-fee" value="500.00" class="mt-1 block w-full bg-gray-800 border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-white p-2">
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Seção de Serviços Adicionais -->
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <h3 class="font-semibold text-lg mb-3">Serviços Adicionais (Preço Fixo)</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label for="service-assembly" class="block text-sm font-medium text-gray-300">Montagem/Desmontagem (R$)</label>
+                            <input type="number" id="service-assembly" value="250.00" class="mt-1 block w-full bg-gray-800 border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-white p-2">
+                        </div>
+                        <div>
+                            <label for="service-packing" class="block text-sm font-medium text-gray-300">Serviço de Embalagem (R$)</label>
+                            <input type="number" id="service-packing" value="400.00" class="mt-1 block w-full bg-gray-800 border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-white p-2">
+                        </div>
+                        <div>
+                            <label for="service-hoisting" class="block text-sm font-medium text-gray-300">Içamento de Móveis (R$)</label>
+                            <input type="number" id="service-hoisting" value="800.00" class="mt-1 block w-full bg-gray-800 border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-white p-2">
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Seção de Fatores de Dificuldade -->
+                <div class="bg-gray-700 p-4 rounded-lg">
+                    <h3 class="font-semibold text-lg mb-3">Fatores de Dificuldade</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label for="cost-stairs" class="block text-sm font-medium text-gray-300">Custo por Andar de Escada (R$)</label>
+                            <input type="number" id="cost-stairs" value="50.00" class="mt-1 block w-full bg-gray-800 border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-white p-2">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Seção de Inventário -->
+                <div class="md:col-span-2 lg:col-span-3 bg-gray-700 p-4 rounded-lg">
+                    <h3 class="font-semibold text-lg mb-3">Inventário de Itens Padrão</h3>
+                    <div id="admin-inventory-list" class="space-y-2 max-h-60 overflow-y-auto pr-2">
+                        <!-- Itens do inventário serão inseridos aqui via JS -->
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-600">
+                        <h4 class="font-semibold mb-2">Adicionar Novo Item</h4>
+                        <div class="flex flex-wrap gap-2">
+                            <input type="text" id="new-item-name" placeholder="Nome do item" class="flex-grow bg-gray-800 border-gray-600 rounded-md p-2 text-white">
+                            <input type="number" id="new-item-m3" placeholder="Volume (m³)" class="w-32 bg-gray-800 border-gray-600 rounded-md p-2 text-white">
+                            <select id="new-item-room" class="bg-gray-800 border-gray-600 rounded-md p-2 text-white">
+                                <option value="sala">Sala</option>
+                                <option value="cozinha">Cozinha</option>
+                                <option value="quarto">Quarto</option>
+                                <option value="escritorio">Escritório</option>
+                                <option value="outros">Outros</option>
+                            </select>
+                            <button id="add-item-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">Adicionar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             <div class="mt-6 text-center">
+                <button id="save-config-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-300">
+                    Salvar Configurações e Voltar para Calculadora
+                </button>
+            </div>
+        </div>
+
+
+        <!-- Painel da Calculadora -->
+        <div id="calculator-panel" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Coluna de Formulários -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Passo 1 e 3 combinados -->
+                <div class="bg-gray-800 p-6 rounded-2xl shadow-lg">
+                    <h2 class="text-xl font-bold mb-4 text-blue-300">1. Detalhes da Mudança e Acesso</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Logística -->
+                        <input type="text" id="origin" placeholder="Endereço de Origem" class="w-full bg-gray-700 border-gray-600 rounded-md p-3 text-white">
+                        <input type="text" id="destination" placeholder="Endereço de Destino" class="w-full bg-gray-700 border-gray-600 rounded-md p-3 text-white">
+                        <input type="number" id="distance" placeholder="Distância (KM)" class="w-full bg-gray-700 border-gray-600 rounded-md p-3 text-white">
+                        <input type="date" id="move-date" class="w-full bg-gray-700 border-gray-600 rounded-md p-3 text-white" style="color-scheme: dark;">
+                        <!-- Acesso Origem -->
+                        <input type="number" id="stairs-origin" placeholder="Nº Andares Escada (Origem)" class="w-full bg-gray-700 border-gray-600 rounded-md p-3 text-white">
+                        <!-- Acesso Destino -->
+                        <input type="number" id="stairs-destination" placeholder="Nº Andares Escada (Destino)" class="w-full bg-gray-700 border-gray-600 rounded-md p-3 text-white">
+                    </div>
+                </div>
+
+
+                <!-- Passo 2: Inventário -->
+                <div class="bg-gray-800 p-6 rounded-2xl shadow-lg">
+                    <div class="flex justify-between items-center mb-4">
+                         <h2 class="text-xl font-bold text-blue-300">2. Inventário de Itens</h2>
+                         <div class="text-right">
+                            <span class="text-gray-400">Volume Total:</span>
+                            <span id="total-volume" class="font-bold text-2xl text-blue-400">0.00 m³</span>
+                        </div>
+                    </div>
+                   
+                    <!-- Abas por Cômodo -->
+                    <div class="mb-4 border-b border-gray-600 no-print">
+                        <nav id="inventory-tabs" class="flex flex-wrap -mb-px" aria-label="Tabs">
+                           <!-- As abas serão geradas aqui via JS -->
+                        </nav>
+                    </div>
+                    <div id="inventory-content" class="max-h-80 overflow-y-auto pr-2">
+                        <!-- O conteúdo das abas será gerado aqui via JS -->
+                    </div>
+                </div>
+
+
+                 <!-- Passo 4: Serviços Adicionais -->
+                <div class="bg-gray-800 p-6 rounded-2xl shadow-lg">
+                     <h2 class="text-xl font-bold mb-4 text-blue-300">3. Serviços Adicionais</h2>
+                     <div id="additional-services" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <!-- Opções de serviços serão inseridas aqui via JS -->
+                     </div>
+                </div>
+
+
+            </div>
+            
+            <!-- Coluna de Resumo do Orçamento -->
+            <div class="lg:col-span-1">
+                <div id="printable-summary" class="sticky top-8 bg-gray-800 p-6 rounded-2xl shadow-lg">
+                    <h2 class="text-2xl font-bold mb-6 text-center text-blue-300">Resumo do Orçamento</h2>
+                    <div class="space-y-3 text-lg">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Custo Base (Taxa Fixa):</span>
+                            <span id="summary-fixed-fee">R$ 0,00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Distância (<span id="summary-distance-km">0</span> KM):</span>
+                            <span id="summary-distance-cost">R$ 0,00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Volume (<span id="summary-volume-m3">0.00</span> m³):</span>
+                            <span id="summary-volume-cost">R$ 0,00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Custo Acesso (Escadas):</span>
+                            <span id="summary-stairs-cost">R$ 0,00</span>
+                        </div>
+                         <div class="flex justify-between">
+                            <span class="text-gray-400">Serviços Adicionais:</span>
+                            <span id="summary-services-cost">R$ 0,00</span>
+                        </div>
+                        <hr class="border-gray-600 my-4">
+                        <div class="flex justify-between items-center text-2xl font-bold text-blue-400">
+                            <span>TOTAL ESTIMADO:</span>
+                            <span id="summary-total-cost">R$ 0,00</span>
+                        </div>
+                    </div>
+
+
+                    <div class="mt-8 space-y-3 no-print">
+                        <button onclick="window.print()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300">
+                            Imprimir / Gerar PDF
+                        </button>
+                        <div class="pt-4">
+                            <p class="text-center text-sm text-gray-400 mb-2">Receba este orçamento por e-mail:</p>
+                             <div class="flex gap-2">
+                                <input type="email" placeholder="Seu melhor e-mail" class="w-full bg-gray-700 border-gray-600 rounded-md p-2 text-white text-sm">
+                                <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-3 rounded-lg text-sm">Enviar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+
+    // --- ESTADO DA APLICAÇÃO ---
+    let config = {
+        costPerKm: 3.50,
+        costPerM3: 150.00,
+        fixedFee: 500.00,
+        costPerStair: 50.00,
+        services: {
+            assembly: { name: 'Montagem/Desmontagem', price: 250.00 },
+            packing: { name: 'Serviço de Embalagem', price: 400.00 },
+            hoisting: { name: 'Içamento de Móveis', price: 800.00 },
+        },
+        inventory: [
+            { id: 1, name: 'Sofá 3 Lugares', m3: 1.5, room: 'sala' },
+            { id: 2, name: 'Rack/Painel TV', m3: 0.8, room: 'sala' },
+            { id: 3, name: 'Mesa de Jantar 6p', m3: 1.2, room: 'sala' },
+            { id: 4, name: 'Cadeira', m3: 0.2, room: 'sala' },
+            { id: 5, name: 'Geladeira Duplex', m3: 1.2, room: 'cozinha' },
+            { id: 6, name: 'Fogão 4 bocas', m3: 0.5, room: 'cozinha' },
+            { id: 7, name: 'Micro-ondas', m3: 0.1, room: 'cozinha' },
+            { id: 8, name: 'Máquina de Lavar', m3: 0.7, room: 'cozinha' },
+            { id: 9, name: 'Cama Queen', m3: 1.8, room: 'quarto' },
+            { id: 10, name: 'Guarda-Roupa 6p', m3: 2.5, room: 'quarto' },
+            { id: 11, name: 'Cômoda', m3: 0.6, room: 'quarto' },
+            { id: 12, name: 'Mesa de Escritório', m3: 0.9, room: 'escritorio' },
+            { id: 13, name: 'Cadeira de Escritório', m3: 0.4, room: 'escritorio' },
+            { id: 14, name: 'Caixa Padrão', m3: 0.1, room: 'outros' },
+        ]
+    };
+
+
+    // --- ELEMENTOS DO DOM ---
+    const calculatorPanel = document.getElementById('calculator-panel');
+    const adminPanel = document.getElementById('admin-panel');
+    const showCalculatorBtn = document.getElementById('show-calculator-btn');
+    const showAdminBtn = document.getElementById('show-admin-btn');
+    const saveConfigBtn = document.getElementById('save-config-btn');
+
+
+    // --- FUNÇÕES DE RENDERIZAÇÃO ---
+    
+    // Formata um número para moeda brasileira
+    const formatCurrency = (value) => `R$ ${value.toFixed(2).replace('.', ',')}`;
+
+
+    // Renderiza o painel de administração com os valores da configuração
+    function renderAdminPanel() {
+        document.getElementById('cost-km').value = config.costPerKm.toFixed(2);
+        document.getElementById('cost-m3').value = config.costPerM3.toFixed(2);
+        document.getElementById('fixed-fee').value = config.fixedFee.toFixed(2);
+        document.getElementById('cost-stairs').value = config.costPerStair.toFixed(2);
+        document.getElementById('service-assembly').value = config.services.assembly.price.toFixed(2);
+        document.getElementById('service-packing').value = config.services.packing.price.toFixed(2);
+        document.getElementById('service-hoisting').value = config.services.hoisting.price.toFixed(2);
+
+
+        const inventoryList = document.getElementById('admin-inventory-list');
+        inventoryList.innerHTML = '';
+        config.inventory.forEach(item => {
+            const itemEl = document.createElement('div');
+            itemEl.className = 'flex items-center gap-2 p-2 bg-gray-800 rounded';
+            itemEl.innerHTML = `
+                <span class="flex-grow text-gray-300">${item.name}</span>
+                <input type="number" value="${item.m3}" data-id="${item.id}" class="w-20 bg-gray-900 border-gray-600 rounded-md p-1 text-white text-center admin-item-m3">
+                <button data-id="${item.id}" class="remove-item-btn text-red-400 hover:text-red-600">&times;</button>
+            `;
+            inventoryList.appendChild(itemEl);
+        });
+    }
+
+
+    // Renderiza a calculadora (inventário e serviços)
+    function renderCalculator() {
+        const rooms = [...new Set(config.inventory.map(item => item.room))];
+        const tabContainer = document.getElementById('inventory-tabs');
+        const contentContainer = document.getElementById('inventory-content');
+        
+        tabContainer.innerHTML = '';
+        contentContainer.innerHTML = '';
+
+
+        rooms.forEach((room, index) => {
+            // Cria a aba
+            const tabButton = document.createElement('a');
+            tabButton.href = '#';
+            tabButton.className = `tab-button shrink-0 border-b-2 font-medium text-sm py-3 px-4 border-transparent text-gray-400 hover:text-gray-200 hover:border-gray-500 ${index === 0 ? 'active' : ''}`;
+            tabButton.textContent = room.charAt(0).toUpperCase() + room.slice(1);
+            tabButton.dataset.tab = room;
+            tabContainer.appendChild(tabButton);
+
+
+            // Cria o conteúdo da aba
+            const tabContent = document.createElement('div');
+            tabContent.id = `content-${room}`;
+            tabContent.className = `tab-content p-2 space-y-3 ${index === 0 ? 'active' : ''}`;
+            
+            const itemsInRoom = config.inventory.filter(item => item.room === room);
+            itemsInRoom.forEach(item => {
+                tabContent.innerHTML += `
+                    <div class="flex items-center justify-between bg-gray-700 p-3 rounded-lg">
+                        <div class="flex items-center">
+                            <input id="item-${item.id}" data-id="${item.id}" type="checkbox" class="h-5 w-5 rounded border-gray-500 bg-gray-800 text-blue-600 focus:ring-blue-500">
+                            <label for="item-${item.id}" class="ml-3 text-gray-300">${item.name} (${item.m3} m³)</label>
+                        </div>
+                        <input type="number" value="1" min="1" data-id="${item.id}" class="w-20 bg-gray-800 border-gray-600 rounded-md p-1 text-white text-center item-quantity">
+                    </div>
+                `;
+            });
+            contentContainer.appendChild(tabContent);
+        });
+
+
+        // Renderiza serviços adicionais
+        const servicesContainer = document.getElementById('additional-services');
+        servicesContainer.innerHTML = '';
+        Object.keys(config.services).forEach(key => {
+            const service = config.services[key];
+            servicesContainer.innerHTML += `
+                <div class="flex items-center bg-gray-700 p-3 rounded-lg">
+                    <input id="service-${key}" data-service="${key}" type="checkbox" class="h-5 w-5 rounded border-gray-500 bg-gray-800 text-blue-600 focus:ring-blue-500 service-checkbox">
+                    <label for="service-${key}" class="ml-3 text-gray-300">${service.name}</label>
+                </div>
+            `;
+        });
+    }
+
+
+
+
+    // --- FUNÇÃO PRINCIPAL DE CÁLCULO ---
+    function calculateQuote() {
+        // 1. Coletar dados do formulário
+        const distance = parseFloat(document.getElementById('distance').value) || 0;
+        const stairsOrigin = parseInt(document.getElementById('stairs-origin').value) || 0;
+        const stairsDestination = parseInt(document.getElementById('stairs-destination').value) || 0;
+
+
+        // 2. Calcular volume total
+        let totalVolume = 0;
+        document.querySelectorAll('#inventory-content input[type="checkbox"]:checked').forEach(checkbox => {
+            const itemId = parseInt(checkbox.dataset.id);
+            const item = config.inventory.find(i => i.id === itemId);
+            const quantity = parseInt(document.querySelector(`.item-quantity[data-id="${itemId}"]`).value) || 1;
+            if (item) {
+                totalVolume += item.m3 * quantity;
+            }
+        });
+        document.getElementById('total-volume').textContent = `${totalVolume.toFixed(2)} m³`;
+
+
+        // 3. Calcular custos parciais
+        const fixedFeeCost = config.fixedFee;
+        const distanceCost = distance * config.costPerKm;
+        const volumeCost = totalVolume * config.costPerM3;
+        const stairsCost = (stairsOrigin + stairsDestination) * config.costPerStair;
+        
+        let servicesCost = 0;
+        document.querySelectorAll('.service-checkbox:checked').forEach(checkbox => {
+            const serviceKey = checkbox.dataset.service;
+            servicesCost += config.services[serviceKey].price;
+        });
+
+
+        // 4. Calcular total
+        const totalCost = fixedFeeCost + distanceCost + volumeCost + stairsCost + servicesCost;
+
+
+        // 5. Atualizar o resumo
+        document.getElementById('summary-fixed-fee').textContent = formatCurrency(fixedFeeCost);
+        document.getElementById('summary-distance-km').textContent = distance;
+        document.getElementById('summary-distance-cost').textContent = formatCurrency(distanceCost);
+        document.getElementById('summary-volume-m3').textContent = totalVolume.toFixed(2);
+        document.getElementById('summary-volume-cost').textContent = formatCurrency(volumeCost);
+        document.getElementById('summary-stairs-cost').textContent = formatCurrency(stairsCost);
+        document.getElementById('summary-services-cost').textContent = formatCurrency(servicesCost);
+        document.getElementById('summary-total-cost').textContent = formatCurrency(totalCost);
+    }
+
+
+    // --- EVENT LISTENERS ---
+
+
+    // Navegação entre painéis
+    showCalculatorBtn.addEventListener('click', () => {
+        calculatorPanel.classList.remove('hidden');
+        adminPanel.classList.add('hidden');
+        showCalculatorBtn.classList.add('bg-blue-600');
+        showCalculatorBtn.classList.remove('bg-gray-700');
+        showAdminBtn.classList.add('bg-gray-700');
+        showAdminBtn.classList.remove('bg-blue-600');
+    });
+
+
+    showAdminBtn.addEventListener('click', () => {
+        calculatorPanel.classList.add('hidden');
+        adminPanel.classList.remove('hidden');
+        showAdminBtn.classList.add('bg-blue-600');
+        showAdminBtn.classList.remove('bg-gray-700');
+        showCalculatorBtn.classList.add('bg-gray-700');
+        showCalculatorBtn.classList.remove('bg-blue-600');
+    });
+    
+    // Salvar configurações do admin
+    saveConfigBtn.addEventListener('click', () => {
+        config.costPerKm = parseFloat(document.getElementById('cost-km').value) || 0;
+        config.costPerM3 = parseFloat(document.getElementById('cost-m3').value) || 0;
+        config.fixedFee = parseFloat(document.getElementById('fixed-fee').value) || 0;
+        config.costPerStair = parseFloat(document.getElementById('cost-stairs').value) || 0;
+        config.services.assembly.price = parseFloat(document.getElementById('service-assembly').value) || 0;
+        config.services.packing.price = parseFloat(document.getElementById('service-packing').value) || 0;
+        config.services.hoisting.price = parseFloat(document.getElementById('service-hoisting').value) || 0;
+
+
+        document.querySelectorAll('.admin-item-m3').forEach(input => {
+            const itemId = parseInt(input.dataset.id);
+            const item = config.inventory.find(i => i.id === itemId);
+            if(item) {
+                item.m3 = parseFloat(input.value) || 0;
+            }
+        });
+
+
+        alert('Configurações salvas!');
+        renderCalculator();
+        calculateQuote();
+        showCalculatorBtn.click();
+    });
+
+
+    // Adicionar novo item no admin
+    document.getElementById('add-item-btn').addEventListener('click', () => {
+        const name = document.getElementById('new-item-name').value;
+        const m3 = parseFloat(document.getElementById('new-item-m3').value);
+        const room = document.getElementById('new-item-room').value;
+
+
+        if (name && m3 > 0 && room) {
+            const newItem = {
+                id: Math.max(...config.inventory.map(i => i.id)) + 1,
+                name: name,
+                m3: m3,
+                room: room
+            };
+            config.inventory.push(newItem);
+            renderAdminPanel();
+            document.getElementById('new-item-name').value = '';
+            document.getElementById('new-item-m3').value = '';
+        } else {
+            alert('Por favor, preencha todos os campos do novo item.');
+        }
+    });
+
+
+    // Remover item do admin
+    document.getElementById('admin-inventory-list').addEventListener('click', e => {
+        if (e.target.classList.contains('remove-item-btn')) {
+            const itemId = parseInt(e.target.dataset.id);
+            config.inventory = config.inventory.filter(item => item.id !== itemId);
+            renderAdminPanel();
+        }
+    });
+
+
+    // Troca de abas do inventário
+    document.getElementById('inventory-tabs').addEventListener('click', e => {
+        e.preventDefault();
+        if (e.target.classList.contains('tab-button')) {
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+
+            e.target.classList.add('active');
+            const tabId = e.target.dataset.tab;
+            document.getElementById(`content-${tabId}`).classList.add('active');
+        }
+    });
+
+
+    // Adicionar listener para recalcular em qualquer mudança
+    calculatorPanel.addEventListener('input', calculateQuote);
+
+
+    // --- INICIALIZAÇÃO ---
+    renderAdminPanel();
+    renderCalculator();
+    calculateQuote();
+    // Inicia na view da calculadora por padrão
+    showCalculatorBtn.click();
+});
+</script>
+
+
+</body>
+</html>
