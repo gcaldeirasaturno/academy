@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SectorAI — Race Smarter. Every Lap.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --orange: #E8632A;
+    --orange-dim: #B84E1E;
+    --bg: #111110;
+    --bg2: #181817;
+    --bg3: #1F1F1D;
+    --border: rgba(255,255,255,0.07);
+    --border-orange: rgba(232,99,42,0.35);
+    --text: #F0EDE8;
+    --text-muted: #7A7870;
+    --text-dim: #4A4844;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'Barlow', sans-serif; font-weight: 300; line-height: 1.6; overflow-x: hidden; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 20px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 0.5px solid var(--border);
+    background: rgba(17,17,16,0.92);
+    backdrop-filter: blur(12px);
+    transition: padding 0.3s;
+  }
+  nav.scrolled { padding: 14px 48px; }
+  .nav-links { display: flex; gap: 36px; }
+  .nav-links a { font-size: 12px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange); border: 0.5px solid var(--border-orange); padding: 8px 18px; border-radius: 2px; text-decoration: none; transition: all 0.2s; }
+  .nav-cta:hover { background: var(--orange); color: #fff; }
+
+  /* HERO */
+  .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 120px 48px 80px; position: relative; overflow: hidden; }
+  .hero-bg { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 60% 50% at 50% 100%, rgba(232,99,42,0.09) 0%, transparent 70%), radial-gradient(ellipse 80% 60% at 50% 110%, rgba(232,99,42,0.04) 0%, transparent 60%); }
+  .hero-grid { position: absolute; inset: 0; pointer-events: none; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 60px 60px; mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 80%); }
+
+  /* Floating particles */
+  .particles { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .particle { position: absolute; width: 2px; height: 2px; border-radius: 50%; background: var(--orange); opacity: 0; animation: floatParticle linear infinite; }
+
+  @keyframes floatParticle {
+    0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.3; }
+    100% { transform: translateY(-100px) translateX(40px); opacity: 0; }
+  }
+
+  .hero-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); margin-bottom: 28px; opacity: 0; animation: fadeUp 0.8s 0.2s forwards; }
+  .hero-logo-center { margin-bottom: 36px; opacity: 0; animation: fadeUp 0.8s 0.35s forwards; }
+  .hero-title { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(64px, 10vw, 130px); font-weight: 800; line-height: 0.92; letter-spacing: -0.01em; text-transform: uppercase; color: var(--text); margin-bottom: 32px; opacity: 0; animation: fadeUp 0.8s 0.5s forwards; }
+  .hero-title em { color: var(--orange); font-style: normal; }
+  .hero-sub { font-size: clamp(16px, 2vw, 20px); font-weight: 300; color: var(--text-muted); max-width: 560px; line-height: 1.7; margin-bottom: 52px; opacity: 0; animation: fadeUp 0.8s 0.7s forwards; }
+  .hero-badges { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 48px; opacity: 0; animation: fadeUp 0.8s 0.9s forwards; }
+  .badge { font-size: 11px; letter-spacing: 0.08em; font-weight: 400; border: 0.5px solid var(--border); padding: 7px 16px; border-radius: 2px; color: var(--text-muted); }
+  .badge-live { border-color: var(--border-orange); color: var(--orange); display: flex; align-items: center; gap: 6px; }
+  .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); animation: pulse 1.8s infinite; }
+  .hero-scroll { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-dim); opacity: 0; animation: fadeUp 0.8s 1.3s forwards; }
+  .scroll-arrow { display: inline-block; animation: bounceDown 2s 2s infinite; }
+
+  /* DATA TICKER */
+  .data-ticker { width: 100%; overflow: hidden; border-top: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border); padding: 10px 0; margin-bottom: 48px; opacity: 0; animation: fadeUp 0.8s 1.1s forwards; position: relative; }
+  .data-ticker::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 80px; background: linear-gradient(to right, var(--bg), transparent); z-index: 2; }
+  .data-ticker::after { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 80px; background: linear-gradient(to left, var(--bg), transparent); z-index: 2; }
+  .ticker-track { display: flex; gap: 48px; width: max-content; animation: tickerScroll 28s linear infinite; }
+  .ticker-item { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 0.1em; color: var(--text-dim); white-space: nowrap; display: flex; align-items: center; gap: 10px; }
+  .ticker-item span { color: var(--orange); }
+  .ticker-sep { color: var(--text-dim); opacity: 0.3; }
+
+  @keyframes tickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+  /* STATS BAR */
+  .stats-bar { border-top: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border); background: var(--bg2); display: grid; grid-template-columns: repeat(4, 1fr); }
+  .stat-item { padding: 36px 40px; border-right: 0.5px solid var(--border); }
+  .stat-item:last-child { border-right: none; }
+  .stat-num { font-family: 'Barlow Condensed', sans-serif; font-size: 48px; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 6px; }
+  .stat-num span { color: var(--orange); }
+  .stat-label { font-size: 12px; color: var(--text-muted); letter-spacing: 0.05em; }
+
+  /* SECTION DIVIDER with animated line */
+  .section-divider { position: relative; height: 1px; background: var(--border); overflow: hidden; }
+  .section-divider-line { position: absolute; top: 0; left: -100%; width: 40%; height: 100%; background: linear-gradient(to right, transparent, var(--orange), transparent); animation: scanLine 4s ease-in-out infinite; }
+  @keyframes scanLine { 0% { left: -40%; } 100% { left: 140%; } }
+
+  /* SECTIONS */
+  section { padding: 100px 48px; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+  .section-label::after { content: ''; flex: 1; max-width: 40px; height: 0.5px; background: var(--orange); opacity: 0.5; }
+  .section-title { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(36px, 5vw, 60px); font-weight: 700; text-transform: uppercase; line-height: 1; letter-spacing: 0.01em; color: var(--text); margin-bottom: 20px; }
+  .section-title em { color: var(--orange); font-style: normal; }
+  .section-body { font-size: 16px; color: var(--text-muted); max-width: 560px; line-height: 1.8; }
+
+  /* PROBLEM */
+  .problem-section { background: var(--bg); }
+  .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; margin-top: 64px; }
+  .problem-visual { position: relative; height: 360px; border: 0.5px solid var(--border); background: var(--bg2); border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .data-stream { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 0; overflow: hidden; }
+  .data-line { font-family: 'Barlow Condensed', sans-serif; font-size: 12px; letter-spacing: 0.05em; color: var(--text-dim); padding: 4px 16px; white-space: nowrap; animation: scrollData 8s linear infinite; }
+  .data-line.highlight { color: var(--orange); }
+  .data-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, var(--bg2) 0%, transparent 25%, transparent 75%, var(--bg2) 100%); }
+  .data-center { position: relative; z-index: 2; text-align: center; }
+  .data-center-num { font-family: 'Barlow Condensed', sans-serif; font-size: 80px; font-weight: 800; color: var(--text); line-height: 1; }
+  .data-center-label { font-size: 12px; color: var(--text-muted); letter-spacing: 0.1em; margin-top: 8px; }
+  .problem-points { display: flex; flex-direction: column; gap: 28px; }
+  .problem-point { padding-left: 20px; border-left: 2px solid var(--border); transition: border-color 0.4s, transform 0.3s; }
+  .problem-point:hover { border-left-color: var(--orange); transform: translateX(4px); }
+  .pp-title { font-size: 16px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+  .pp-body { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+
+  /* SOLUTION */
+  .solution-section { background: var(--bg2); border-top: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border); }
+  .solution-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; margin-top: 64px; }
+  .feature-list { display: flex; flex-direction: column; gap: 0; }
+  .feature-item { display: flex; align-items: flex-start; gap: 20px; padding: 24px 0; border-bottom: 0.5px solid var(--border); transition: background 0.2s; }
+  .feature-item:first-child { border-top: 0.5px solid var(--border); }
+  .feature-num { font-family: 'Barlow Condensed', sans-serif; font-size: 13px; font-weight: 600; color: var(--orange); min-width: 28px; padding-top: 2px; }
+  .feature-title { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .feature-body { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+  /* INSIGHT CARD with scan effect */
+  .insight-card { background: var(--bg3); border: 0.5px solid var(--border); border-radius: 4px; padding: 32px; position: relative; overflow: hidden; }
+  .insight-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--orange); }
+  .insight-scan { position: absolute; top: 0; left: 0; right: 0; height: 100%; pointer-events: none; background: linear-gradient(to bottom, transparent 0%, rgba(232,99,42,0.03) 50%, transparent 100%); animation: cardScan 3s ease-in-out infinite; }
+  @keyframes cardScan { 0%, 100% { transform: translateY(-100%); } 50% { transform: translateY(100%); } }
+
+  .insight-label { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+  .insight-content { margin-bottom: 24px; }
+  .insight-main { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 600; color: var(--text); line-height: 1.2; margin-bottom: 8px; }
+  .insight-main span { color: var(--orange); }
+  .insight-detail { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+  .insight-actions { display: flex; flex-direction: column; gap: 8px; }
+  .insight-action { display: flex; align-items: center; gap: 10px; background: rgba(232,99,42,0.08); border: 0.5px solid var(--border-orange); padding: 10px 14px; border-radius: 2px; animation: actionPulse 4s ease-in-out infinite; }
+  .insight-action:nth-child(2) { animation-delay: 0.6s; }
+  .insight-action:nth-child(3) { animation-delay: 1.2s; }
+  @keyframes actionPulse { 0%, 100% { background: rgba(232,99,42,0.08); } 50% { background: rgba(232,99,42,0.14); } }
+  .action-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); flex-shrink: 0; }
+  .action-text { font-size: 13px; color: var(--text); }
+  .insight-metrics { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border); border: 0.5px solid var(--border); margin-top: 24px; border-radius: 2px; overflow: hidden; }
+  .insight-metric { background: var(--bg2); padding: 14px 12px; text-align: center; }
+  .metric-val { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; font-weight: 700; color: var(--orange); }
+  .metric-lbl { font-size: 10px; color: var(--text-muted); letter-spacing: 0.05em; margin-top: 2px; }
+
+  /* MARKET */
+  .market-section { background: var(--bg); }
+  .market-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 0.5px solid var(--border); margin-top: 64px; border-radius: 4px; overflow: hidden; }
+  .market-card { background: var(--bg2); padding: 36px 32px; transition: background 0.3s; }
+  .market-card:hover { background: var(--bg3); }
+  .market-card-top { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
+  .market-card-num { font-family: 'Barlow Condensed', sans-serif; font-size: 52px; font-weight: 800; color: var(--text); line-height: 1; margin-bottom: 4px; }
+  .market-card-num span { color: var(--orange); }
+  .market-card-label { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+  .market-card-body { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+  .market-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px; }
+  .market-seg { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 4px; padding: 24px; transition: border-color 0.3s; }
+  .market-seg:hover { border-color: var(--border-orange); }
+  .seg-flag { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--orange); margin-bottom: 12px; }
+  .seg-title { font-size: 18px; font-weight: 500; color: var(--text); margin-bottom: 12px; }
+  .seg-items { display: flex; flex-direction: column; gap: 6px; }
+  .seg-item { font-size: 13px; color: var(--text-muted); display: flex; gap: 8px; }
+  .seg-item::before { content: '—'; color: var(--text-dim); flex-shrink: 0; }
+
+  /* LOGO DIVIDER BAND */
+  .logo-band { background: var(--bg2); border-top: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border); padding: 48px; display: flex; align-items: center; justify-content: center; gap: 32px; overflow: hidden; position: relative; }
+  .logo-band::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 0.5px; background: linear-gradient(to right, transparent, var(--border-orange), transparent); }
+  .logo-band-inner { display: flex; align-items: center; gap: 24px; z-index: 1; }
+  .logo-band-line { width: 60px; height: 0.5px; background: var(--border-orange); }
+  .logo-band-text { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); }
+
+  /* ROADMAP */
+  .roadmap-section { background: var(--bg2); border-top: 0.5px solid var(--border); }
+  .roadmap-track { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 64px; border: 0.5px solid var(--border); border-radius: 4px; overflow: hidden; }
+  .roadmap-phase { padding: 32px 28px; border-right: 0.5px solid var(--border); position: relative; transition: background 0.3s; }
+  .roadmap-phase:last-child { border-right: none; }
+  .roadmap-phase:hover { background: var(--bg3); }
+  .roadmap-phase.active { background: var(--bg3); }
+  .roadmap-phase.active::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--orange); animation: phaseGlow 2s ease-in-out infinite; }
+  @keyframes phaseGlow { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+  .phase-tag { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+  .phase-tag.now { color: var(--orange); }
+  .phase-name { font-family: 'Barlow Condensed', sans-serif; font-size: 20px; font-weight: 600; color: var(--text); text-transform: uppercase; margin-bottom: 16px; line-height: 1.1; }
+  .phase-items { display: flex; flex-direction: column; gap: 6px; }
+  .phase-item-r { font-size: 12px; color: var(--text-muted); display: flex; gap: 8px; align-items: flex-start; }
+  .phase-item-r::before { content: '·'; color: var(--orange); flex-shrink: 0; margin-top: 1px; }
+  .phase-arr { position: absolute; right: -8px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; background: var(--bg); border: 0.5px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 8px; color: var(--orange); z-index: 1; }
+
+  /* WHY NOW */
+  .whynow-section { background: var(--bg); }
+  .whynow-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 64px; }
+  .wn-card { border: 0.5px solid var(--border); background: var(--bg2); border-radius: 4px; padding: 32px 28px; transition: border-color 0.3s, transform 0.3s; }
+  .wn-card:hover { border-color: var(--border-orange); transform: translateY(-4px); }
+  .wn-icon { font-size: 28px; margin-bottom: 20px; color: var(--orange); opacity: 0.7; }
+  .wn-title { font-size: 16px; font-weight: 500; color: var(--text); margin-bottom: 10px; }
+  .wn-body { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+  .wn-stat { margin-top: 16px; font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; color: var(--orange); }
+
+  /* CLOSING */
+  .closing-section { background: var(--bg); border-top: 0.5px solid var(--border); text-align: center; padding: 120px 48px; position: relative; overflow: hidden; }
+  .closing-bg { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(232,99,42,0.06) 0%, transparent 70%); animation: closingPulse 4s ease-in-out infinite; }
+  @keyframes closingPulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+  .closing-logo { margin-bottom: 40px; opacity: 0.9; display: inline-block; }
+  .closing-title { font-family: 'Barlow Condensed', sans-serif; font-size: clamp(48px, 7vw, 96px); font-weight: 800; text-transform: uppercase; line-height: 0.95; color: var(--text); margin-bottom: 32px; position: relative; }
+  .closing-title em { color: var(--orange); font-style: normal; }
+  .closing-sub { font-size: 18px; color: var(--text-muted); max-width: 520px; margin: 0 auto 56px; line-height: 1.7; }
+  .cta-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .cta-primary { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; background: var(--orange); color: #fff; border: none; padding: 16px 40px; border-radius: 2px; cursor: pointer; transition: background 0.2s, transform 0.2s; text-decoration: none; }
+  .cta-primary:hover { background: var(--orange-dim); transform: translateY(-2px); }
+  .cta-secondary { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; background: transparent; color: var(--text-muted); border: 0.5px solid var(--border); padding: 16px 40px; border-radius: 2px; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+  .cta-secondary:hover { color: var(--text); border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
+
+  /* FOOTER */
+  footer { border-top: 0.5px solid var(--border); padding: 28px 48px; display: flex; align-items: center; justify-content: space-between; background: var(--bg); }
+  .footer-note { font-size: 11px; color: var(--text-dim); letter-spacing: 0.05em; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  @keyframes scrollData { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+  @keyframes bounceDown { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+  @keyframes counterUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+  .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-left { opacity: 0; transform: translateX(-32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal-left.visible { opacity: 1; transform: translateX(0); }
+  .reveal-right { opacity: 0; transform: translateX(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    section { padding: 72px 24px; }
+    .hero { padding: 100px 24px 64px; }
+    .problem-grid, .solution-grid { grid-template-columns: 1fr; gap: 48px; }
+    .stats-bar { grid-template-columns: repeat(2,1fr); }
+    .market-cards { grid-template-columns: 1fr; }
+    .roadmap-track { grid-template-columns: 1fr 1fr; }
+    .whynow-grid { grid-template-columns: 1fr; }
+    .market-row { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+    .logo-band { padding: 36px 24px; }
+  }
+  @media (max-width: 560px) {
+    .stats-bar { grid-template-columns: 1fr 1fr; }
+    .roadmap-track { grid-template-columns: 1fr; }
+    .stat-item { padding: 24px 20px; }
+    .stat-num { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <svg height="28" viewBox="0 0 172.97 34.49" xmlns="http://www.w3.org/2000/svg" style="display:block;flex-shrink:0"><defs><style>.n1{fill:#ed7024}.n2{fill:#fff}</style></defs><g><path class="n2" d="M.39,30.88h14.71c2.15,0,3.13-1.12,3.13-3.27,0-2.74-2.34-3.22-6.35-4.2l-4.74-1.17c-4.93-1.22-7.13-3.13-7.13-7.47s2.44-6.45,6.99-6.45h14.02v3.32H7.43c-2.39,0-3.32.83-3.32,3.13,0,2.88,2,3.57,4.84,4.3l5.13,1.32c5.23,1.32,8.45,2.25,8.45,7.28,0,4.01-1.47,6.55-6.4,6.55H.39v-3.32Z"/><path class="n2" d="M34.93,34.2c-7.72,0-9.33-5.03-9.33-12.85,0-9.53,3.03-13.34,11.77-13.34,6.89,0,11.77,2.25,11.77,10.06,0,2.98-.93,4.54-3.86,4.54h-15.44c0,4.2.73,8.26,5.96,8.26h12.65v3.32h-13.53ZM43.68,19.3c.98,0,1.17-.73,1.17-1.32v-.2c0-4.89-3.08-6.45-7.43-6.45-5.33,0-7.57,2.05-7.57,7.96h13.83Z"/><path class="n2" d="M63.37,34.2c-8.79,0-10.99-4.93-10.99-12.99s2.2-12.9,10.99-12.9h9.82v3.32h-9.09c-6.45,0-7.43,3.71-7.43,9.58s.98,9.67,7.43,9.67h9.62v3.32h-10.36Z"/><path class="n2" d="M87.74,34.2c-6.45,0-8.26-3.08-8.26-8.3v-14.27h-3.81v-3.32h3.81V0h4.1v8.3h7.23v3.32h-7.23v14.02c0,4.01,1.56,5.23,5.52,5.23h1.71v3.32h-3.08Z"/><path class="n2" d="M118.72,21.15c0,9.82-4.01,13.34-13.29,13.34s-13.29-3.52-13.29-13.34,4.01-13.14,13.29-13.14,13.29,3.37,13.29,13.14ZM105.43,31.17c6.6,0,8.99-2.69,8.99-10.02s-2.39-9.82-8.99-9.82-8.99,2.49-8.99,9.82,2.39,10.02,8.99,10.02Z"/><path class="n2" d="M122.77,17.64c0-6.4,3.13-9.33,9.53-9.33h2.83v3.32h-2.1c-4.49,0-6.16,2.3-6.16,7.03v15.54h-4.1v-16.56Z"/><path class="n1" d="M153.23,8.3c5.13,0,8.01,3.32,8.01,8.21v12.8c0,3.18-1.71,4.89-4.89,4.89h-14.51c-4.64,0-6.4-2.74-6.4-8.11,0-4.88,1.76-8.06,6.4-8.06h11.77v-1.12c0-2.05-1.17-3.13-3.27-3.13h-13.09v-5.47h15.98ZM145.47,23.3c-1.47,0-2.3,1.03-2.3,2.83,0,1.66.68,2.78,2.25,2.78h6.5c1.22,0,1.71-.49,1.71-1.71v-3.91h-8.16Z"/><path class="n1" d="M165.35,5.57V0h7.62v5.57h-7.62ZM165.35,8.3h7.62v25.89h-7.62V8.3Z"/></g></svg>
+  <div class="nav-links">
+    <a href="#problema">Problema</a>
+    <a href="#solucao">Solução</a>
+    <a href="#mercado">Mercado</a>
+    <a href="#roadmap">Roadmap</a>
+  </div>
+  <a href="#contato" class="nav-cta">Saiba mais</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="topo">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="particles" id="particles"></div>
+
+  <p class="hero-eyebrow">Copiloto AI para alta performance</p>
+
+  <div class="hero-logo-center">
+    <svg height="48" viewBox="0 0 172.97 34.49" xmlns="http://www.w3.org/2000/svg" style="display:block"><defs><style>.h1{fill:#ed7024}.h2{fill:#fff}</style></defs><g><path class="h2" d="M.39,30.88h14.71c2.15,0,3.13-1.12,3.13-3.27,0-2.74-2.34-3.22-6.35-4.2l-4.74-1.17c-4.93-1.22-7.13-3.13-7.13-7.47s2.44-6.45,6.99-6.45h14.02v3.32H7.43c-2.39,0-3.32.83-3.32,3.13,0,2.88,2,3.57,4.84,4.3l5.13,1.32c5.23,1.32,8.45,2.25,8.45,7.28,0,4.01-1.47,6.55-6.4,6.55H.39v-3.32Z"/><path class="h2" d="M34.93,34.2c-7.72,0-9.33-5.03-9.33-12.85,0-9.53,3.03-13.34,11.77-13.34,6.89,0,11.77,2.25,11.77,10.06,0,2.98-.93,4.54-3.86,4.54h-15.44c0,4.2.73,8.26,5.96,8.26h12.65v3.32h-13.53ZM43.68,19.3c.98,0,1.17-.73,1.17-1.32v-.2c0-4.89-3.08-6.45-7.43-6.45-5.33,0-7.57,2.05-7.57,7.96h13.83Z"/><path class="h2" d="M63.37,34.2c-8.79,0-10.99-4.93-10.99-12.99s2.2-12.9,10.99-12.9h9.82v3.32h-9.09c-6.45,0-7.43,3.71-7.43,9.58s.98,9.67,7.43,9.67h9.62v3.32h-10.36Z"/><path class="h2" d="M87.74,34.2c-6.45,0-8.26-3.08-8.26-8.3v-14.27h-3.81v-3.32h3.81V0h4.1v8.3h7.23v3.32h-7.23v14.02c0,4.01,1.56,5.23,5.52,5.23h1.71v3.32h-3.08Z"/><path class="h2" d="M118.72,21.15c0,9.82-4.01,13.34-13.29,13.34s-13.29-3.52-13.29-13.34,4.01-13.14,13.29-13.14,13.29,3.37,13.29,13.14ZM105.43,31.17c6.6,0,8.99-2.69,8.99-10.02s-2.39-9.82-8.99-9.82-8.99,2.49-8.99,9.82,2.39,10.02,8.99,10.02Z"/><path class="h2" d="M122.77,17.64c0-6.4,3.13-9.33,9.53-9.33h2.83v3.32h-2.1c-4.49,0-6.16,2.3-6.16,7.03v15.54h-4.1v-16.56Z"/><path class="h1" d="M153.23,8.3c5.13,0,8.01,3.32,8.01,8.21v12.8c0,3.18-1.71,4.89-4.89,4.89h-14.51c-4.64,0-6.4-2.74-6.4-8.11,0-4.88,1.76-8.06,6.4-8.06h11.77v-1.12c0-2.05-1.17-3.13-3.27-3.13h-13.09v-5.47h15.98ZM145.47,23.3c-1.47,0-2.3,1.03-2.3,2.83,0,1.66.68,2.78,2.25,2.78h6.5c1.22,0,1.71-.49,1.71-1.71v-3.91h-8.16Z"/><path class="h1" d="M165.35,5.57V0h7.62v5.57h-7.62ZM165.35,8.3h7.62v25.89h-7.62V8.3Z"/></g></svg>
+  </div>
+
+  <h1 class="hero-title">Clareza<br>no <em>caos.</em></h1>
+  <p class="hero-sub">O automobilismo profissional gera mais dados do que qualquer engenheiro consegue processar em tempo real. A SectorAI transforma essa tempestade em uma única decisão de vitória.</p>
+
+  <div class="hero-badges">
+    <span class="badge-live badge"><span class="live-dot"></span>Em teste — F4 Italiana</span>
+    <span class="badge">Livetiming em tempo real</span>
+    <span class="badge">Dados climáticos + histórico de pista</span>
+    <span class="badge">Análise humana + IA</span>
+  </div>
+
+  <div class="data-ticker">
+    <div class="ticker-track" id="tickerTrack"></div>
+  </div>
+
+  <p class="hero-scroll"><span class="scroll-arrow">↓</span> &nbsp; scroll para explorar</p>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item reveal">
+    <div class="stat-num" data-count="610" data-suffix="+">0</div>
+    <div class="stat-label">equipes pro endereçáveis — EU + BR</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-num" data-prefix="US$" data-count="50" data-suffix="M">US$0</div>
+    <div class="stat-label">TAM total com expansão semipro</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-num" data-count="25" data-suffix="%">0</div>
+    <div class="stat-label">crescimento de pilotos FIA em 2025</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-num" data-count="0" data-suffix="x">0<span>x</span></div>
+    <div class="stat-label">concorrentes com insight prescritivo real</div>
+  </div>
+</div>
+
+<div class="section-divider"><div class="section-divider-line"></div></div>
+
+<!-- PROBLEMA -->
+<section class="problem-section" id="problema">
+  <div class="section-inner">
+    <p class="section-label reveal">O problema</p>
+    <h2 class="section-title reveal">Dados demais.<br><em>Decisões</em> de menos.</h2>
+    <p class="section-body reveal">Cada corrida gera terabytes. Temperatura, atrito, inclinação, vento, desgaste de pneu, telemetria de motor. Os engenheiros têm os dados. Não têm tempo para transformá-los em ação antes que a janela feche.</p>
+    <div class="problem-grid">
+      <div class="problem-visual reveal-left">
+        <div class="data-stream" id="dataStream"></div>
+        <div class="data-overlay"></div>
+        <div class="data-center">
+          <div class="data-center-num">∞</div>
+          <div class="data-center-label">variáveis por volta</div>
+        </div>
+      </div>
+      <div class="problem-points reveal-right">
+        <div class="problem-point">
+          <p class="pp-title">Sobrecarga de informação</p>
+          <p class="pp-body">MoTeC, AiM, Bosch — todas as ferramentas existentes são visualizadoras de dados. Mostram o que aconteceu. Nenhuma diz o que fazer a seguir.</p>
+        </div>
+        <div class="problem-point">
+          <p class="pp-title">A janela fecha em segundos</p>
+          <p class="pp-body">Setup, estratégia de pneu e ajuste de pilotagem precisam ser decididos durante a sessão — não na segunda-feira, quando o engenheiro termina a análise.</p>
+        </div>
+        <div class="problem-point">
+          <p class="pp-title">Dados fragmentados, silos isolados</p>
+          <p class="pp-body">Clima está em um lugar. Telemetria em outro. Histórico de pista, em outro. Nenhuma ferramenta atual cruza essas fontes em uma view acionável e unificada.</p>
+        </div>
+        <div class="problem-point">
+          <p class="pp-title">O achismo ainda existe no topo</p>
+          <p class="pp-body">Mesmo equipes de F4 e F.Regional tomam decisões baseadas em intuição do engenheiro quando o tempo pressiona. Isso custa décimos — e décimos custam pódios.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"><div class="section-divider-line"></div></div>
+
+<!-- SOLUÇÃO -->
+<section class="solution-section" id="solucao">
+  <div class="section-inner">
+    <p class="section-label reveal">A solução</p>
+    <h2 class="section-title reveal">O segundo<br>cérebro do<br><em>piloto.</em></h2>
+    <p class="section-body reveal">A SectorAI não é mais um dashboard. É o copiloto que processa tudo em tempo real e entrega a decisão — antes que a janela feche.</p>
+    <div class="solution-grid" style="margin-top:64px">
+      <div class="feature-list reveal-left">
+        <div class="feature-item">
+          <div class="feature-num">01</div>
+          <div class="feature-content">
+            <p class="feature-title">Livetiming integrado</p>
+            <p class="feature-body">Dados de cronometragem em tempo real via API. Cada setor, cada volta, cada delta — interpretados automaticamente.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-num">02</div>
+          <div class="feature-content">
+            <p class="feature-title">Dados climáticos em tempo real</p>
+            <p class="feature-body">Temperatura, vento e umidade cruzados com histórico de pista para ajuste preditivo de pressão de pneu e setup.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-num">03</div>
+          <div class="feature-content">
+            <p class="feature-title">Histórico de pista</p>
+            <p class="feature-body">Cada traçado tem memória. Setores críticos, padrões de desgaste e janelas de overtaking são parte do contexto de cada análise.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-num">04</div>
+          <div class="feature-content">
+            <p class="feature-title">Análise humana + IA</p>
+            <p class="feature-body">O julgamento do engenheiro entra no sistema. A IA amplifica — não substitui. O produto é a combinação dos dois.</p>
+          </div>
+        </div>
+      </div>
+      <div class="insight-card reveal-right">
+        <div class="insight-scan"></div>
+        <div class="insight-label"><div class="live-dot"></div>Insight ao vivo — Setor 3</div>
+        <div class="insight-content">
+          <p class="insight-main">Perdendo <span>0,18s</span><br>por volta</p>
+          <p class="insight-detail">Subviragem traseira combinada com desgaste assimétrico do pneu direito detectado nas últimas 4 voltas.</p>
+        </div>
+        <div class="insight-actions">
+          <div class="insight-action"><div class="action-dot"></div><p class="action-text">+0,2 bar pneu dianteiro direito</p></div>
+          <div class="insight-action"><div class="action-dot"></div><p class="action-text">Ajuste diferencial: +2 cliques fechado</p></div>
+          <div class="insight-action"><div class="action-dot"></div><p class="action-text">Ponto de frenagem S1: recuar 8m</p></div>
+        </div>
+        <div class="insight-metrics">
+          <div class="insight-metric"><div class="metric-val">0,18s</div><div class="metric-lbl">recuperável / volta</div></div>
+          <div class="insight-metric"><div class="metric-val">5,4s</div><div class="metric-lbl">em 30 voltas</div></div>
+          <div class="insight-metric"><div class="metric-val">P3→P1</div><div class="metric-lbl">impacto projetado</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOGO BAND -->
+<div class="logo-band reveal">
+  <div class="logo-band-inner">
+    <div class="logo-band-line"></div>
+    <svg height="32" viewBox="0 0 172.97 34.49" xmlns="http://www.w3.org/2000/svg" style="display:block"><defs><style>.lb1{fill:#ed7024}.lb2{fill:rgba(240,237,232,0.25)}</style></defs><g><path class="lb2" d="M.39,30.88h14.71c2.15,0,3.13-1.12,3.13-3.27,0-2.74-2.34-3.22-6.35-4.2l-4.74-1.17c-4.93-1.22-7.13-3.13-7.13-7.47s2.44-6.45,6.99-6.45h14.02v3.32H7.43c-2.39,0-3.32.83-3.32,3.13,0,2.88,2,3.57,4.84,4.3l5.13,1.32c5.23,1.32,8.45,2.25,8.45,7.28,0,4.01-1.47,6.55-6.4,6.55H.39v-3.32Z"/><path class="lb2" d="M34.93,34.2c-7.72,0-9.33-5.03-9.33-12.85,0-9.53,3.03-13.34,11.77-13.34,6.89,0,11.77,2.25,11.77,10.06,0,2.98-.93,4.54-3.86,4.54h-15.44c0,4.2.73,8.26,5.96,8.26h12.65v3.32h-13.53ZM43.68,19.3c.98,0,1.17-.73,1.17-1.32v-.2c0-4.89-3.08-6.45-7.43-6.45-5.33,0-7.57,2.05-7.57,7.96h13.83Z"/><path class="lb2" d="M63.37,34.2c-8.79,0-10.99-4.93-10.99-12.99s2.2-12.9,10.99-12.9h9.82v3.32h-9.09c-6.45,0-7.43,3.71-7.43,9.58s.98,9.67,7.43,9.67h9.62v3.32h-10.36Z"/><path class="lb2" d="M87.74,34.2c-6.45,0-8.26-3.08-8.26-8.3v-14.27h-3.81v-3.32h3.81V0h4.1v8.3h7.23v3.32h-7.23v14.02c0,4.01,1.56,5.23,5.52,5.23h1.71v3.32h-3.08Z"/><path class="lb2" d="M118.72,21.15c0,9.82-4.01,13.34-13.29,13.34s-13.29-3.52-13.29-13.34,4.01-13.14,13.29-13.14,13.29,3.37,13.29,13.14ZM105.43,31.17c6.6,0,8.99-2.69,8.99-10.02s-2.39-9.82-8.99-9.82-8.99,2.49-8.99,9.82,2.39,10.02,8.99,10.02Z"/><path class="lb2" d="M122.77,17.64c0-6.4,3.13-9.33,9.53-9.33h2.83v3.32h-2.1c-4.49,0-6.16,2.3-6.16,7.03v15.54h-4.1v-16.56Z"/><path class="lb1" d="M153.23,8.3c5.13,0,8.01,3.32,8.01,8.21v12.8c0,3.18-1.71,4.89-4.89,4.89h-14.51c-4.64,0-6.4-2.74-6.4-8.11,0-4.88,1.76-8.06,6.4-8.06h11.77v-1.12c0-2.05-1.17-3.13-3.27-3.13h-13.09v-5.47h15.98ZM145.47,23.3c-1.47,0-2.3,1.03-2.3,2.83,0,1.66.68,2.78,2.25,2.78h6.5c1.22,0,1.71-.49,1.71-1.71v-3.91h-8.16Z"/><path class="lb1" d="M165.35,5.57V0h7.62v5.57h-7.62ZM165.35,8.3h7.62v25.89h-7.62V8.3Z"/></g></svg>
+    <div class="logo-band-line"></div>
+  </div>
+</div>
+
+<div class="section-divider"><div class="section-divider-line"></div></div>
+
+<!-- MERCADO -->
+<section class="market-section" id="mercado">
+  <div class="section-inner">
+    <p class="section-label reveal">Mercado</p>
+    <h2 class="section-title reveal">Entrada pelo<br><em>topo.</em> Escala<br>pelo volume.</h2>
+    <p class="section-body reveal">Atacamos primeiro o segmento com maior disposição a pagar, menor churn e maior credibilidade. O TAM conservador é US$6M. Com expansão semipro, chegamos a US$50M.</p>
+    <div class="market-cards reveal">
+      <div class="market-card">
+        <div class="market-card-top">TAM — segmento pro</div>
+        <div class="market-card-num">US$<span>6M</span></div>
+        <div class="market-card-label">por ano / Brasil + Europa</div>
+        <div class="market-card-body">610–1.071 equipes profissionais endereçáveis. Ticket médio €3K–15K/ano por equipe. Churn baixo, contratos anuais.</div>
+      </div>
+      <div class="market-card" style="border-top:2px solid var(--orange)">
+        <div class="market-card-top" style="color:var(--orange)">TAM total — com semipro</div>
+        <div class="market-card-num">US$<span>50M</span></div>
+        <div class="market-card-label">horizonte 5–8 anos</div>
+        <div class="market-card-body">Expansão para semiprofissionais, gentleman drivers e academias — mercado 8–10x maior em contas, abordado após validação pro.</div>
+      </div>
+      <div class="market-card">
+        <div class="market-card-top">SOM — Ano 1–3</div>
+        <div class="market-card-num">US$<span>1M</span></div>
+        <div class="market-card-label">captura realista</div>
+        <div class="market-card-body">Beachhead F4 Italiana + kart elite Europa. 30–60 contas pagantes, €300–600K ARR. Atingível com time comercial enxuto.</div>
+      </div>
+    </div>
+    <div class="market-row reveal">
+      <div class="market-seg">
+        <div class="seg-flag">Beachhead — Europa</div>
+        <div class="seg-title">F4 Italiana + kart elite</div>
+        <div class="seg-items">
+          <div class="seg-item">Em teste ativo na F4 Italiana</div>
+          <div class="seg-item">F.Regional, GT World Challenge, TCR</div>
+          <div class="seg-item">Itália, França, Reino Unido</div>
+          <div class="seg-item">Ticket: €3K–15K / equipe / ano</div>
+        </div>
+      </div>
+      <div class="market-seg">
+        <div class="seg-flag">Validação — Brasil</div>
+        <div class="seg-title">Stock Car + Porsche Cup</div>
+        <div class="seg-items">
+          <div class="seg-item">Mercado de prova de conceito</div>
+          <div class="seg-item">Stock Car, Porsche Cup, Kart elite</div>
+          <div class="seg-item">Custo de aquisição muito menor</div>
+          <div class="seg-item">Ticket: R$9,6K–60K / equipe / ano</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"><div class="section-divider-line"></div></div>
+
+<!-- ROADMAP -->
+<section class="roadmap-section" id="roadmap">
+  <div class="section-inner">
+    <p class="section-label reveal">Roadmap</p>
+    <h2 class="section-title reveal">Do teste ao<br><em>líder</em> de mercado.</h2>
+    <p class="section-body reveal">Quatro fases. Do beachhead na F4 ao maior mercado adjacente da Europa.</p>
+    <div class="roadmap-track reveal">
+      <div class="roadmap-phase active">
+        <div class="phase-tag now">Agora</div>
+        <div class="phase-name">F4<br>Italiana</div>
+        <div class="phase-items">
+          <div class="phase-item-r">Testes ativos em andamento</div>
+          <div class="phase-item-r">3–5 equipes piloto</div>
+          <div class="phase-item-r">Construção de cases reais</div>
+          <div class="phase-item-r">Integração AiM + MoTeC</div>
+        </div>
+        <div class="phase-arr">›</div>
+      </div>
+      <div class="roadmap-phase">
+        <div class="phase-tag">Meses 12–30</div>
+        <div class="phase-name">Beachhead<br>Europa</div>
+        <div class="phase-items">
+          <div class="phase-item-r">Itália + Reino Unido</div>
+          <div class="phase-item-r">30–60 contas pagas</div>
+          <div class="phase-item-r">€300–600K ARR</div>
+          <div class="phase-item-r">F.Regional + kart elite</div>
+        </div>
+        <div class="phase-arr">›</div>
+      </div>
+      <div class="roadmap-phase">
+        <div class="phase-tag">Meses 30–48</div>
+        <div class="phase-name">Expansão<br>EU</div>
+        <div class="phase-items">
+          <div class="phase-item-r">GT, TCR, Porsche Cup EU</div>
+          <div class="phase-item-r">100–200 contas</div>
+          <div class="phase-item-r">€1–2M ARR</div>
+          <div class="phase-item-r">Parceria OEM / API</div>
+        </div>
+        <div class="phase-arr">›</div>
+      </div>
+      <div class="roadmap-phase">
+        <div class="phase-tag">Meses 48–72</div>
+        <div class="phase-name">Downmarket<br>+ Scale</div>
+        <div class="phase-items">
+          <div class="phase-item-r">Semipro + academias</div>
+          <div class="phase-item-r">1.000+ contas</div>
+          <div class="phase-item-r">Modelo freemium → pro</div>
+          <div class="phase-item-r">TAM US$22–82M</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"><div class="section-divider-line"></div></div>
+
+<!-- WHY NOW -->
+<section class="whynow-section">
+  <div class="section-inner">
+    <p class="section-label reveal">Por que agora</p>
+    <h2 class="section-title reveal">O mercado<br>está <em>pronto.</em></h2>
+    <div class="whynow-grid">
+      <div class="wn-card reveal">
+        <div class="wn-icon">◈</div>
+        <div class="wn-title">Cultura de dados instalada</div>
+        <div class="wn-body">O automobilismo profissional já compra telemetria, cronometragem e software de análise. Não precisamos educar o mercado sobre o valor dos dados — só sobre por que nossa camada de IA é superior.</div>
+        <div class="wn-stat">Zero</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:4px">ferramentas com insight prescritivo real</div>
+      </div>
+      <div class="wn-card reveal">
+        <div class="wn-icon">◉</div>
+        <div class="wn-title">Crescimento acelerado do kart</div>
+        <div class="wn-body">A FIA registrou 1.217 pilotos em eventos internacionais em 2025 — crescimento de 25% sobre 2024 — e lançou o Global Karting Plan com meta de dobrar a base. A nossa base de clientes cresce organicamente.</div>
+        <div class="wn-stat">+25%</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:4px">pilotos FIA em 2025 vs 2024</div>
+      </div>
+      <div class="wn-card reveal">
+        <div class="wn-icon">◎</div>
+        <div class="wn-title">White space real no mercado</div>
+        <div class="wn-body">Race Studio, MoTeC i2 e Bosch Suite são visualizadores — não interpretadores. Nenhum entrega setup + pilotagem + estratégia de pneu em uma única view acionável. Esse é o nosso espaço.</div>
+        <div class="wn-stat">2026</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:4px">janela aberta, sem concorrente direto</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="closing-section" id="contato">
+  <div class="closing-bg"></div>
+  <div class="closing-logo reveal">
+    <svg height="52" viewBox="0 0 172.97 34.49" xmlns="http://www.w3.org/2000/svg" style="display:block"><defs><style>.c1{fill:#ed7024}.c2{fill:#fff}</style></defs><g><path class="c2" d="M.39,30.88h14.71c2.15,0,3.13-1.12,3.13-3.27,0-2.74-2.34-3.22-6.35-4.2l-4.74-1.17c-4.93-1.22-7.13-3.13-7.13-7.47s2.44-6.45,6.99-6.45h14.02v3.32H7.43c-2.39,0-3.32.83-3.32,3.13,0,2.88,2,3.57,4.84,4.3l5.13,1.32c5.23,1.32,8.45,2.25,8.45,7.28,0,4.01-1.47,6.55-6.4,6.55H.39v-3.32Z"/><path class="c2" d="M34.93,34.2c-7.72,0-9.33-5.03-9.33-12.85,0-9.53,3.03-13.34,11.77-13.34,6.89,0,11.77,2.25,11.77,10.06,0,2.98-.93,4.54-3.86,4.54h-15.44c0,4.2.73,8.26,5.96,8.26h12.65v3.32h-13.53ZM43.68,19.3c.98,0,1.17-.73,1.17-1.32v-.2c0-4.89-3.08-6.45-7.43-6.45-5.33,0-7.57,2.05-7.57,7.96h13.83Z"/><path class="c2" d="M63.37,34.2c-8.79,0-10.99-4.93-10.99-12.99s2.2-12.9,10.99-12.9h9.82v3.32h-9.09c-6.45,0-7.43,3.71-7.43,9.58s.98,9.67,7.43,9.67h9.62v3.32h-10.36Z"/><path class="c2" d="M87.74,34.2c-6.45,0-8.26-3.08-8.26-8.3v-14.27h-3.81v-3.32h3.81V0h4.1v8.3h7.23v3.32h-7.23v14.02c0,4.01,1.56,5.23,5.52,5.23h1.71v3.32h-3.08Z"/><path class="c2" d="M118.72,21.15c0,9.82-4.01,13.34-13.29,13.34s-13.29-3.52-13.29-13.34,4.01-13.14,13.29-13.14,13.29,3.37,13.29,13.14ZM105.43,31.17c6.6,0,8.99-2.69,8.99-10.02s-2.39-9.82-8.99-9.82-8.99,2.49-8.99,9.82,2.39,10.02,8.99,10.02Z"/><path class="c2" d="M122.77,17.64c0-6.4,3.13-9.33,9.53-9.33h2.83v3.32h-2.1c-4.49,0-6.16,2.3-6.16,7.03v15.54h-4.1v-16.56Z"/><path class="c1" d="M153.23,8.3c5.13,0,8.01,3.32,8.01,8.21v12.8c0,3.18-1.71,4.89-4.89,4.89h-14.51c-4.64,0-6.4-2.74-6.4-8.11,0-4.88,1.76-8.06,6.4-8.06h11.77v-1.12c0-2.05-1.17-3.13-3.27-3.13h-13.09v-5.47h15.98ZM145.47,23.3c-1.47,0-2.3,1.03-2.3,2.83,0,1.66.68,2.78,2.25,2.78h6.5c1.22,0,1.71-.49,1.71-1.71v-3.91h-8.16Z"/><path class="c1" d="M165.35,5.57V0h7.62v5.57h-7.62ZM165.35,8.3h7.62v25.89h-7.62V8.3Z"/></g></svg>
+  </div>
+  <h2 class="closing-title reveal">Pare de<br>adivinhar.<br><em>Comece a vencer.</em></h2>
+  <p class="closing-sub reveal">O atalho definitivo para o pódio. Em desenvolvimento, em teste, e já mudando como equipes de F4 tomam decisões.</p>
+  <div class="cta-row reveal">
+    <a href="#" class="cta-primary">Solicitar acesso</a>
+    <a href="#" class="cta-secondary">Ver demo</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <svg height="20" viewBox="0 0 172.97 34.49" xmlns="http://www.w3.org/2000/svg" style="display:block;opacity:0.4"><defs><style>.f1{fill:#ed7024}.f2{fill:#fff}</style></defs><g><path class="f2" d="M.39,30.88h14.71c2.15,0,3.13-1.12,3.13-3.27,0-2.74-2.34-3.22-6.35-4.2l-4.74-1.17c-4.93-1.22-7.13-3.13-7.13-7.47s2.44-6.45,6.99-6.45h14.02v3.32H7.43c-2.39,0-3.32.83-3.32,3.13,0,2.88,2,3.57,4.84,4.3l5.13,1.32c5.23,1.32,8.45,2.25,8.45,7.28,0,4.01-1.47,6.55-6.4,6.55H.39v-3.32Z"/><path class="f2" d="M34.93,34.2c-7.72,0-9.33-5.03-9.33-12.85,0-9.53,3.03-13.34,11.77-13.34,6.89,0,11.77,2.25,11.77,10.06,0,2.98-.93,4.54-3.86,4.54h-15.44c0,4.2.73,8.26,5.96,8.26h12.65v3.32h-13.53ZM43.68,19.3c.98,0,1.17-.73,1.17-1.32v-.2c0-4.89-3.08-6.45-7.43-6.45-5.33,0-7.57,2.05-7.57,7.96h13.83Z"/><path class="f2" d="M63.37,34.2c-8.79,0-10.99-4.93-10.99-12.99s2.2-12.9,10.99-12.9h9.82v3.32h-9.09c-6.45,0-7.43,3.71-7.43,9.58s.98,9.67,7.43,9.67h9.62v3.32h-10.36Z"/><path class="f2" d="M87.74,34.2c-6.45,0-8.26-3.08-8.26-8.3v-14.27h-3.81v-3.32h3.81V0h4.1v8.3h7.23v3.32h-7.23v14.02c0,4.01,1.56,5.23,5.52,5.23h1.71v3.32h-3.08Z"/><path class="f2" d="M118.72,21.15c0,9.82-4.01,13.34-13.29,13.34s-13.29-3.52-13.29-13.34,4.01-13.14,13.29-13.14,13.29,3.37,13.29,13.14ZM105.43,31.17c6.6,0,8.99-2.69,8.99-10.02s-2.39-9.82-8.99-9.82-8.99,2.49-8.99,9.82,2.39,10.02,8.99,10.02Z"/><path class="f2" d="M122.77,17.64c0-6.4,3.13-9.33,9.53-9.33h2.83v3.32h-2.1c-4.49,0-6.16,2.3-6.16,7.03v15.54h-4.1v-16.56Z"/><path class="f1" d="M153.23,8.3c5.13,0,8.01,3.32,8.01,8.21v12.8c0,3.18-1.71,4.89-4.89,4.89h-14.51c-4.64,0-6.4-2.74-6.4-8.11,0-4.88,1.76-8.06,6.4-8.06h11.77v-1.12c0-2.05-1.17-3.13-3.27-3.13h-13.09v-5.47h15.98ZM145.47,23.3c-1.47,0-2.3,1.03-2.3,2.83,0,1.66.68,2.78,2.25,2.78h6.5c1.22,0,1.71-.49,1.71-1.71v-3.91h-8.16Z"/><path class="f1" d="M165.35,5.57V0h7.62v5.57h-7.62ZM165.35,8.3h7.62v25.89h-7.62V8.3Z"/></g></svg>
+  <div class="footer-note">Confidencial — Junho 2026 — Uso restrito</div>
+</footer>
+
+<script>
+  // NAV shrink on scroll
+  window.addEventListener('scroll', () => {
+    document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // PARTICLES
+  const pContainer = document.getElementById('particles');
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.cssText = `left:${Math.random()*100}%;animation-duration:${8+Math.random()*14}s;animation-delay:${Math.random()*10}s;width:${1+Math.random()*2}px;height:${1+Math.random()*2}px;`;
+    pContainer.appendChild(p);
+  }
+
+  // DATA TICKER
+  const tickerItems = [
+    {label:'LAP 14', val:'32.847s'}, {label:'TYRE TEMP FL', val:'94°C'},
+    {label:'WIND', val:'12 km/h'}, {label:'DELTA', val:'+0.18s'},
+    {label:'TRACK TEMP', val:'41°C'}, {label:'BRAKE FRONT', val:'438°C'},
+    {label:'LATERAL G', val:'3.2g'}, {label:'SECTOR 3', val:'UNDERSTEER'},
+    {label:'GAP P2', val:'1.203s'}, {label:'THROTTLE', val:'97%'},
+    {label:'TYRE PRESS FL', val:'1.84 bar'}, {label:'RPM', val:'8.840'},
+    {label:'LAP 15', val:'32.621s'}, {label:'FUEL FLOW', val:'89 L/h'},
+  ];
+  const track = document.getElementById('tickerTrack');
+  if (track) {
+    [...tickerItems, ...tickerItems].forEach((item, i) => {
+      const el = document.createElement('div');
+      el.className = 'ticker-item';
+      el.innerHTML = `${item.label} <span>${item.val}</span>`;
+      if (i < tickerItems.length - 1 || i === tickerItems.length * 2 - 1) {
+        const sep = document.createElement('span');
+        sep.className = 'ticker-sep';
+        sep.textContent = ' ·';
+        el.appendChild(sep);
+      }
+      track.appendChild(el);
+    });
+  }
+
+  // DATA STREAM
+  const dataLines = [
+    'LAP 14 · S1 32.847 · S2 41.203 · S3 28.991',
+    'TYRE TEMP FL 94°C FR 102°C RL 88°C RR 107°C',
+    'WIND 12km/h · DIR 247° · HUMIDITY 68%',
+    'BRAKE TEMP FRONT 438°C · REAR 312°C',
+    'DELTA +0.18s · GAP P2 1.203s',
+    'ENGINE RPM 8.840 · THROTTLE 97% · BRAKE 0%',
+    'LATERAL G 3.2 · LONGITUDINAL G -4.1',
+    'FUEL LOAD 42.3kg · FUEL FLOW 89L/h',
+    'SECTOR 3 UNDERSTEER DETECTED · REAR WEAR +12%',
+    'LAP 15 · S1 32.621 · S2 40.988 · S3 28.872',
+    'TYRE PRESS FL 1.84bar FR 1.79bar RL 1.91bar RR 1.86bar',
+    'AMBIENT TEMP 28°C · TRACK TEMP 41°C',
+    'SUSPENSION TRAVEL FL 22mm FR 19mm',
+    'STEERING ANGLE 4.2° · SPEED 187km/h',
+    'DRS ACTIVATED · STRAIGHT SPEED 231km/h',
+  ];
+  const stream = document.getElementById('dataStream');
+  if (stream) {
+    [...dataLines, ...dataLines].forEach((line, i) => {
+      const el = document.createElement('div');
+      el.className = 'data-line' + (i % 7 === 3 ? ' highlight' : '');
+      el.textContent = line;
+      stream.appendChild(el);
+    });
+  }
+
+  // COUNTER ANIMATION
+  function animateCounter(el) {
+    const target = parseInt(el.dataset.count);
+    const prefix = el.dataset.prefix || '';
+    const suffix = el.dataset.suffix || '';
+    const duration = 1400;
+    const start = performance.now();
+    const update = (now) => {
+      const progress = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const val = Math.round(ease * target);
+      el.innerHTML = `${prefix}${val}<span>${suffix}</span>`;
+      if (progress < 1) requestAnimationFrame(update);
+    };
+    requestAnimationFrame(update);
+  }
+
+  // INTERSECTION OBSERVER
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        if (entry.target.dataset.count !== undefined) {
+          animateCounter(entry.target);
+        }
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
+  document.querySelectorAll('.stat-num[data-count]').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
