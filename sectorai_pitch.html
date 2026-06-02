@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SectorAI — Race Smarter. Every Lap.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --orange: #E8632A;
+    --orange-dim: #B84E1E;
+    --bg: #111110;
+    --bg2: #181817;
+    --bg3: #1F1F1D;
+    --border: rgba(255,255,255,0.07);
+    --border-orange: rgba(232,99,42,0.35);
+    --text: #F0EDE8;
+    --text-muted: #7A7870;
+    --text-dim: #4A4844;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 20px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 0.5px solid var(--border);
+    background: rgba(17,17,16,0.92);
+    backdrop-filter: blur(12px);
+  }
+  .nav-logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; font-size: 20px;
+    letter-spacing: 0.05em;
+    color: var(--text);
+  }
+  .nav-logo span { color: var(--orange); }
+  .nav-links { display: flex; gap: 36px; }
+  .nav-links a {
+    font-size: 12px; font-weight: 400; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-muted);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--orange);
+    border: 0.5px solid var(--border-orange);
+    padding: 8px 18px; border-radius: 2px;
+    text-decoration: none; transition: all 0.2s;
+  }
+  .nav-cta:hover { background: var(--orange); color: #fff; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 120px 48px 80px;
+    position: relative; overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 100%, rgba(232,99,42,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 80% 60% at 50% 110%, rgba(232,99,42,0.04) 0%, transparent 60%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 80%);
+  }
+  .hero-eyebrow {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--orange);
+    margin-bottom: 28px;
+    opacity: 0; animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(64px, 10vw, 130px);
+    font-weight: 800;
+    line-height: 0.92;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    color: var(--text);
+    margin-bottom: 32px;
+    opacity: 0; animation: fadeUp 0.8s 0.4s forwards;
+  }
+  .hero-title em { color: var(--orange); font-style: normal; }
+  .hero-sub {
+    font-size: clamp(16px, 2vw, 20px);
+    font-weight: 300; color: var(--text-muted);
+    max-width: 560px; line-height: 1.7;
+    margin-bottom: 52px;
+    opacity: 0; animation: fadeUp 0.8s 0.6s forwards;
+  }
+  .hero-badges {
+    display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+    margin-bottom: 64px;
+    opacity: 0; animation: fadeUp 0.8s 0.8s forwards;
+  }
+  .badge {
+    font-size: 11px; letter-spacing: 0.08em; font-weight: 400;
+    border: 0.5px solid var(--border);
+    padding: 7px 16px; border-radius: 2px;
+    color: var(--text-muted);
+  }
+  .badge-live {
+    border-color: var(--border-orange); color: var(--orange);
+    display: flex; align-items: center; gap: 6px;
+  }
+  .live-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--orange);
+    animation: pulse 1.8s infinite;
+  }
+  .hero-scroll {
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--text-dim);
+    opacity: 0; animation: fadeUp 0.8s 1.2s forwards;
+  }
+
+  /* STATS BAR */
+  .stats-bar {
+    border-top: 0.5px solid var(--border);
+    border-bottom: 0.5px solid var(--border);
+    background: var(--bg2);
+    display: grid; grid-template-columns: repeat(4, 1fr);
+  }
+  .stat-item {
+    padding: 36px 40px;
+    border-right: 0.5px solid var(--border);
+  }
+  .stat-item:last-child { border-right: none; }
+  .stat-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 48px; font-weight: 700;
+    color: var(--text); line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-num span { color: var(--orange); }
+  .stat-label { font-size: 12px; color: var(--text-muted); letter-spacing: 0.05em; }
+
+  /* SECTIONS */
+  section { padding: 100px 48px; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+
+  .section-label {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--orange);
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label::after {
+    content: ''; flex: 1; max-width: 40px;
+    height: 0.5px; background: var(--orange); opacity: 0.5;
+  }
+  .section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 700; text-transform: uppercase;
+    line-height: 1; letter-spacing: 0.01em;
+    color: var(--text); margin-bottom: 20px;
+  }
+  .section-title em { color: var(--orange); font-style: normal; }
+  .section-body {
+    font-size: 16px; color: var(--text-muted);
+    max-width: 560px; line-height: 1.8;
+  }
+
+  /* PROBLEM */
+  .problem-section { background: var(--bg); }
+  .problem-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+    align-items: center; margin-top: 64px;
+  }
+  .problem-visual {
+    position: relative; height: 360px;
+    border: 0.5px solid var(--border);
+    background: var(--bg2);
+    border-radius: 4px; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .data-stream {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; gap: 0;
+    overflow: hidden;
+  }
+  .data-line {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px; letter-spacing: 0.05em;
+    color: var(--text-dim);
+    padding: 4px 16px;
+    white-space: nowrap;
+    animation: scrollData 8s linear infinite;
+  }
+  .data-line.highlight { color: var(--orange); }
+  .data-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, var(--bg2) 0%, transparent 25%, transparent 75%, var(--bg2) 100%);
+  }
+  .data-center {
+    position: relative; z-index: 2;
+    text-align: center;
+  }
+  .data-center-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 80px; font-weight: 800;
+    color: var(--text); line-height: 1;
+  }
+  .data-center-label { font-size: 12px; color: var(--text-muted); letter-spacing: 0.1em; margin-top: 8px; }
+
+  .problem-points { display: flex; flex-direction: column; gap: 28px; }
+  .problem-point {
+    padding-left: 20px;
+    border-left: 2px solid var(--border);
+    transition: border-color 0.3s;
+  }
+  .problem-point:hover { border-left-color: var(--orange); }
+  .pp-title { font-size: 16px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+  .pp-body { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+
+  /* SOLUTION */
+  .solution-section { background: var(--bg2); border-top: 0.5px solid var(--border); border-bottom: 0.5px solid var(--border); }
+  .solution-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+    align-items: center; margin-top: 64px;
+  }
+  .feature-list { display: flex; flex-direction: column; gap: 0; }
+  .feature-item {
+    display: flex; align-items: flex-start; gap: 20px;
+    padding: 24px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .feature-item:first-child { border-top: 0.5px solid var(--border); }
+  .feature-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px; font-weight: 600;
+    color: var(--orange); min-width: 28px;
+    padding-top: 2px;
+  }
+  .feature-content {}
+  .feature-title { font-size: 15px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .feature-body { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+  .insight-card {
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    border-radius: 4px; padding: 32px;
+    position: relative; overflow: hidden;
+  }
+  .insight-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: var(--orange);
+  }
+  .insight-label {
+    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--orange); margin-bottom: 20px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .insight-content { margin-bottom: 24px; }
+  .insight-main {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px; font-weight: 600;
+    color: var(--text); line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .insight-main span { color: var(--orange); }
+  .insight-detail { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+  .insight-actions { display: flex; flex-direction: column; gap: 8px; }
+  .insight-action {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(232,99,42,0.08);
+    border: 0.5px solid var(--border-orange);
+    padding: 10px 14px; border-radius: 2px;
+  }
+  .action-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--orange); flex-shrink: 0; }
+  .action-text { font-size: 13px; color: var(--text); }
+  .insight-metrics {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 1px; background: var(--border);
+    border: 0.5px solid var(--border);
+    margin-top: 24px; border-radius: 2px; overflow: hidden;
+  }
+  .insight-metric {
+    background: var(--bg2); padding: 14px 12px; text-align: center;
+  }
+  .metric-val {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px; font-weight: 700;
+    color: var(--orange);
+  }
+  .metric-lbl { font-size: 10px; color: var(--text-muted); letter-spacing: 0.05em; margin-top: 2px; }
+
+  /* MARKET */
+  .market-section { background: var(--bg); }
+  .market-cards {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--border);
+    border: 0.5px solid var(--border);
+    margin-top: 64px; border-radius: 4px; overflow: hidden;
+  }
+  .market-card { background: var(--bg2); padding: 36px 32px; }
+  .market-card-top {
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 12px;
+  }
+  .market-card-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 52px; font-weight: 800;
+    color: var(--text); line-height: 1;
+    margin-bottom: 4px;
+  }
+  .market-card-num span { color: var(--orange); }
+  .market-card-label { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+  .market-card-body { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+  .market-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 24px; margin-top: 24px;
+  }
+  .market-seg {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 4px; padding: 24px;
+  }
+  .seg-flag {
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--orange); margin-bottom: 12px;
+  }
+  .seg-title { font-size: 18px; font-weight: 500; color: var(--text); margin-bottom: 12px; }
+  .seg-items { display: flex; flex-direction: column; gap: 6px; }
+  .seg-item { font-size: 13px; color: var(--text-muted); display: flex; gap: 8px; }
+  .seg-item::before { content: '—'; color: var(--text-dim); flex-shrink: 0; }
+
+  /* ROADMAP */
+  .roadmap-section { background: var(--bg2); border-top: 0.5px solid var(--border); }
+  .roadmap-track {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 0; margin-top: 64px;
+    border: 0.5px solid var(--border); border-radius: 4px; overflow: hidden;
+  }
+  .roadmap-phase {
+    padding: 32px 28px;
+    border-right: 0.5px solid var(--border);
+    position: relative;
+  }
+  .roadmap-phase:last-child { border-right: none; }
+  .roadmap-phase.active { background: var(--bg3); }
+  .roadmap-phase.active::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: var(--orange);
+  }
+  .phase-tag {
+    font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-muted); margin-bottom: 8px;
+  }
+  .phase-tag.now { color: var(--orange); }
+  .phase-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px; font-weight: 600;
+    color: var(--text); text-transform: uppercase;
+    margin-bottom: 16px; line-height: 1.1;
+  }
+  .phase-items { display: flex; flex-direction: column; gap: 6px; }
+  .phase-item-r { font-size: 12px; color: var(--text-muted); display: flex; gap: 8px; align-items: flex-start; }
+  .phase-item-r::before { content: '·'; color: var(--orange); flex-shrink: 0; margin-top: 1px; }
+  .phase-arr {
+    position: absolute; right: -8px; top: 50%;
+    transform: translateY(-50%);
+    width: 16px; height: 16px;
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8px; color: var(--orange); z-index: 1;
+  }
+
+  /* WHY NOW */
+  .whynow-section { background: var(--bg); }
+  .whynow-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 24px; margin-top: 64px;
+  }
+  .wn-card {
+    border: 0.5px solid var(--border);
+    background: var(--bg2); border-radius: 4px;
+    padding: 32px 28px;
+    transition: border-color 0.3s;
+  }
+  .wn-card:hover { border-color: var(--border-orange); }
+  .wn-icon {
+    font-size: 28px; margin-bottom: 20px;
+    filter: grayscale(1);
+  }
+  .wn-title { font-size: 16px; font-weight: 500; color: var(--text); margin-bottom: 10px; }
+  .wn-body { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+  .wn-stat {
+    margin-top: 16px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 28px; font-weight: 700; color: var(--orange);
+  }
+
+  /* CLOSING */
+  .closing-section {
+    background: var(--bg);
+    border-top: 0.5px solid var(--border);
+    text-align: center; padding: 120px 48px;
+  }
+  .closing-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(48px, 7vw, 96px);
+    font-weight: 800; text-transform: uppercase;
+    line-height: 0.95; color: var(--text);
+    margin-bottom: 32px;
+  }
+  .closing-title em { color: var(--orange); font-style: normal; }
+  .closing-sub {
+    font-size: 18px; color: var(--text-muted); max-width: 520px;
+    margin: 0 auto 56px; line-height: 1.7;
+  }
+  .cta-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .cta-primary {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--orange); color: #fff;
+    border: none; padding: 16px 40px; border-radius: 2px;
+    cursor: pointer; transition: background 0.2s;
+    text-decoration: none;
+  }
+  .cta-primary:hover { background: var(--orange-dim); }
+  .cta-secondary {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px; font-weight: 500; letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: transparent; color: var(--text-muted);
+    border: 0.5px solid var(--border);
+    padding: 16px 40px; border-radius: 2px;
+    cursor: pointer; transition: all 0.2s;
+    text-decoration: none;
+  }
+  .cta-secondary:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+
+  /* FOOTER */
+  footer {
+    border-top: 0.5px solid var(--border);
+    padding: 28px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg);
+  }
+  .footer-logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px; font-weight: 700; color: var(--text-muted);
+    letter-spacing: 0.05em;
+  }
+  .footer-logo span { color: var(--orange); }
+  .footer-note { font-size: 11px; color: var(--text-dim); letter-spacing: 0.05em; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  @keyframes scrollData {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-50%); }
+  }
+
+  .reveal {
+    opacity: 0; transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    section { padding: 72px 24px; }
+    .hero { padding: 100px 24px 64px; }
+    .problem-grid, .solution-grid { grid-template-columns: 1fr; gap: 48px; }
+    .stats-bar { grid-template-columns: repeat(2,1fr); }
+    .market-cards { grid-template-columns: 1fr; }
+    .roadmap-track { grid-template-columns: 1fr 1fr; }
+    .whynow-grid { grid-template-columns: 1fr; }
+    .market-row { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+  }
+  @media (max-width: 560px) {
+    .stats-bar { grid-template-columns: 1fr 1fr; }
+    .roadmap-track { grid-template-columns: 1fr; }
+    .stat-item { padding: 24px 20px; }
+    .stat-num { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <img src="data:image/png;base64,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" alt="SectorAI" style="height: 28px; width: auto;" />
+  <div class="nav-links">
+    <a href="#problema">Problema</a>
+    <a href="#solucao">Solução</a>
+    <a href="#mercado">Mercado</a>
+    <a href="#roadmap">Roadmap</a>
+  </div>
+  <a href="#contato" class="nav-cta">Saiba mais</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="topo">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <p class="hero-eyebrow">Copiloto AI para alta performance</p>
+  <h1 class="hero-title">Clareza<br>no <em>caos.</em></h1>
+  <p class="hero-sub">O automobilismo profissional gera mais dados do que qualquer engenheiro consegue processar em tempo real. A SectorAI transforma essa tempestade em uma única decisão de vitória.</p>
+  <div class="hero-badges">
+    <span class="badge-live badge"><span class="live-dot"></span>Em teste — F4 Italiana</span>
+    <span class="badge">Livetiming em tempo real</span>
+    <span class="badge">Dados climáticos + histórico de pista</span>
+    <span class="badge">Análise humana + IA</span>
+  </div>
+  <p class="hero-scroll">↓ &nbsp; scroll para explorar</p>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item reveal">
+    <div class="stat-num">610<span>+</span></div>
+    <div class="stat-label">equipes pro endereçáveis — EU + BR</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-num">US$<span>50M</span></div>
+    <div class="stat-label">TAM total com expansão semipro</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-num">25<span>%</span></div>
+    <div class="stat-label">crescimento de pilotos FIA em 2025</div>
+  </div>
+  <div class="stat-item reveal">
+    <div class="stat-num">0<span>x</span></div>
+    <div class="stat-label">concorrentes com insight prescritivo real</div>
+  </div>
+</div>
+
+<!-- PROBLEMA -->
+<section class="problem-section" id="problema">
+  <div class="section-inner">
+    <p class="section-label reveal">O problema</p>
+    <h2 class="section-title reveal">Dados demais.<br><em>Decisões</em> de menos.</h2>
+    <p class="section-body reveal">Cada corrida gera terabytes. Temperatura, atrito, inclinação, vento, desgaste de pneu, telemetria de motor. Os engenheiros têm os dados. Não têm tempo para transformá-los em ação antes que a janela feche.</p>
+
+    <div class="problem-grid">
+      <div class="problem-visual reveal">
+        <div class="data-stream" id="dataStream"></div>
+        <div class="data-overlay"></div>
+        <div class="data-center">
+          <div class="data-center-num">∞</div>
+          <div class="data-center-label">variáveis por volta</div>
+        </div>
+      </div>
+
+      <div class="problem-points reveal">
+        <div class="problem-point">
+          <p class="pp-title">Sobrecarga de informação</p>
+          <p class="pp-body">MoTeC, AiM, Bosch — todas as ferramentas existentes são visualizadoras de dados. Mostram o que aconteceu. Nenhuma diz o que fazer a seguir.</p>
+        </div>
+        <div class="problem-point">
+          <p class="pp-title">A janela fecha em segundos</p>
+          <p class="pp-body">Setup, estratégia de pneu e ajuste de pilotagem precisam ser decididos durante a sessão — não na segunda-feira, quando o engenheiro termina a análise.</p>
+        </div>
+        <div class="problem-point">
+          <p class="pp-title">Dados fragmentados, silos isolados</p>
+          <p class="pp-body">Clima está em um lugar. Telemetria em outro. Histórico de pista, em outro. Nenhuma ferramenta atual cruza essas fontes em uma view acionável e unificada.</p>
+        </div>
+        <div class="problem-point">
+          <p class="pp-title">O achismo ainda existe no topo</p>
+          <p class="pp-body">Mesmo equipes de F4 e F.Regional tomam decisões baseadas em intuição do engenheiro quando o tempo pressiona. Isso custa décimos — e décimos custam pódios.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUÇÃO -->
+<section class="solution-section" id="solucao">
+  <div class="section-inner">
+    <p class="section-label reveal">A solução</p>
+    <h2 class="section-title reveal">O segundo<br>cérebro do<br><em>piloto.</em></h2>
+    <p class="section-body reveal">A SectorAI não é mais um dashboard. É o copiloto que processa tudo em tempo real e entrega a decisão — antes que a janela feche.</p>
+
+    <div class="solution-grid" style="margin-top: 64px;">
+      <div class="feature-list reveal">
+        <div class="feature-item">
+          <div class="feature-num">01</div>
+          <div class="feature-content">
+            <p class="feature-title">Livetiming integrado</p>
+            <p class="feature-body">Dados de cronometragem em tempo real via API. Cada setor, cada volta, cada delta — interpretados automaticamente.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-num">02</div>
+          <div class="feature-content">
+            <p class="feature-title">Dados climáticos em tempo real</p>
+            <p class="feature-body">Temperatura, vento e umidade cruzados com histórico de pista para ajuste preditivo de pressão de pneu e setup.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-num">03</div>
+          <div class="feature-content">
+            <p class="feature-title">Histórico de pista</p>
+            <p class="feature-body">Cada traçado tem memória. Setores críticos, padrões de desgaste e janelas de overtaking são parte do contexto de cada análise.</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-num">04</div>
+          <div class="feature-content">
+            <p class="feature-title">Análise humana + IA</p>
+            <p class="feature-body">O julgamento do engenheiro entra no sistema. A IA amplifica — não substitui. O produto é a combinação dos dois.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="insight-card reveal">
+        <div class="insight-label">
+          <div class="live-dot"></div>
+          Insight ao vivo — Setor 3
+        </div>
+        <div class="insight-content">
+          <p class="insight-main">Perdendo <span>0,18s</span><br>por volta</p>
+          <p class="insight-detail">Subviragem traseira combinada com desgaste assimétrico do pneu direito detectado nas últimas 4 voltas.</p>
+        </div>
+        <div class="insight-actions">
+          <div class="insight-action">
+            <div class="action-dot"></div>
+            <p class="action-text">+0,2 bar pneu dianteiro direito</p>
+          </div>
+          <div class="insight-action">
+            <div class="action-dot"></div>
+            <p class="action-text">Ajuste diferencial: +2 cliques fechado</p>
+          </div>
+          <div class="insight-action">
+            <div class="action-dot"></div>
+            <p class="action-text">Ponto de frenagem S1: recuar 8m</p>
+          </div>
+        </div>
+        <div class="insight-metrics">
+          <div class="insight-metric">
+            <div class="metric-val">0,18s</div>
+            <div class="metric-lbl">recuperável / volta</div>
+          </div>
+          <div class="insight-metric">
+            <div class="metric-val">5,4s</div>
+            <div class="metric-lbl">em 30 voltas</div>
+          </div>
+          <div class="insight-metric">
+            <div class="metric-val">P3→P1</div>
+            <div class="metric-lbl">impacto projetado</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MERCADO -->
+<section class="market-section" id="mercado">
+  <div class="section-inner">
+    <p class="section-label reveal">Mercado</p>
+    <h2 class="section-title reveal">Entrada pelo<br><em>topo.</em> Escala<br>pelo volume.</h2>
+    <p class="section-body reveal">Atacamos primeiro o segmento com maior disposição a pagar, menor churn e maior credibilidade. O TAM conservador é US$6M. Com expansão semipro, chegamos a US$50M.</p>
+
+    <div class="market-cards reveal">
+      <div class="market-card">
+        <div class="market-card-top">TAM — segmento pro</div>
+        <div class="market-card-num">US$<span>6M</span></div>
+        <div class="market-card-label">por ano / Brasil + Europa</div>
+        <div class="market-card-body">610–1.071 equipes profissionais endereçáveis. Ticket médio €3K–15K/ano por equipe. Churn baixo, contratos anuais.</div>
+      </div>
+      <div class="market-card" style="border-top: 2px solid var(--orange);">
+        <div class="market-card-top" style="color: var(--orange);">TAM total — com semipro</div>
+        <div class="market-card-num">US$<span>50M</span></div>
+        <div class="market-card-label">horizonte 5–8 anos</div>
+        <div class="market-card-body">Expansão para semiprofissionais, gentleman drivers e academias — mercado 8–10x maior em contas, abordado após validação pro.</div>
+      </div>
+      <div class="market-card">
+        <div class="market-card-top">SOM — Ano 1–3</div>
+        <div class="market-card-num">US$<span>1M</span></div>
+        <div class="market-card-label">captura realista</div>
+        <div class="market-card-body">Beachhead F4 Italiana + kart elite Europa. 30–60 contas pagantes, €300–600K ARR. Atingível com time comercial enxuto.</div>
+      </div>
+    </div>
+
+    <div class="market-row reveal">
+      <div class="market-seg">
+        <div class="seg-flag">Beachhead — Europa</div>
+        <div class="seg-title">F4 Italiana + kart elite</div>
+        <div class="seg-items">
+          <div class="seg-item">Em teste ativo na F4 Italiana</div>
+          <div class="seg-item">F.Regional, GT World Challenge, TCR</div>
+          <div class="seg-item">Itália, França, Reino Unido</div>
+          <div class="seg-item">Ticket: €3K–15K / equipe / ano</div>
+        </div>
+      </div>
+      <div class="market-seg">
+        <div class="seg-flag">Validação — Brasil</div>
+        <div class="seg-title">Stock Car + Porsche Cup</div>
+        <div class="seg-items">
+          <div class="seg-item">Mercado de prova de conceito</div>
+          <div class="seg-item">Stock Car, Porsche Cup, Kart elite</div>
+          <div class="seg-item">Custo de aquisição muito menor</div>
+          <div class="seg-item">Ticket: R$9,6K–60K / equipe / ano</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section class="roadmap-section" id="roadmap">
+  <div class="section-inner">
+    <p class="section-label reveal">Roadmap</p>
+    <h2 class="section-title reveal">Do teste ao<br><em>líder</em> de mercado.</h2>
+    <p class="section-body reveal">Quatro fases. Do beachhead na F4 ao maior mercado adjacente da Europa.</p>
+
+    <div class="roadmap-track reveal">
+      <div class="roadmap-phase active">
+        <div class="phase-tag now">Agora</div>
+        <div class="phase-name">F4<br>Italiana</div>
+        <div class="phase-items">
+          <div class="phase-item-r">Testes ativos em andamento</div>
+          <div class="phase-item-r">3–5 equipes piloto</div>
+          <div class="phase-item-r">Construção de cases reais</div>
+          <div class="phase-item-r">Integração AiM + MoTeC</div>
+        </div>
+        <div class="phase-arr">›</div>
+      </div>
+      <div class="roadmap-phase">
+        <div class="phase-tag">Meses 12–30</div>
+        <div class="phase-name">Beachhead<br>Europa</div>
+        <div class="phase-items">
+          <div class="phase-item-r">Itália + Reino Unido</div>
+          <div class="phase-item-r">30–60 contas pagas</div>
+          <div class="phase-item-r">€300–600K ARR</div>
+          <div class="phase-item-r">F.Regional + kart elite</div>
+        </div>
+        <div class="phase-arr">›</div>
+      </div>
+      <div class="roadmap-phase">
+        <div class="phase-tag">Meses 30–48</div>
+        <div class="phase-name">Expansão<br>EU</div>
+        <div class="phase-items">
+          <div class="phase-item-r">GT, TCR, Porsche Cup EU</div>
+          <div class="phase-item-r">100–200 contas</div>
+          <div class="phase-item-r">€1–2M ARR</div>
+          <div class="phase-item-r">Parceria OEM / API</div>
+        </div>
+        <div class="phase-arr">›</div>
+      </div>
+      <div class="roadmap-phase">
+        <div class="phase-tag">Meses 48–72</div>
+        <div class="phase-name">Downmarket<br>+ Scale</div>
+        <div class="phase-items">
+          <div class="phase-item-r">Semipro + academias</div>
+          <div class="phase-item-r">1.000+ contas</div>
+          <div class="phase-item-r">Modelo freemium → pro</div>
+          <div class="phase-item-r">TAM US$22–82M</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY NOW -->
+<section class="whynow-section">
+  <div class="section-inner">
+    <p class="section-label reveal">Por que agora</p>
+    <h2 class="section-title reveal">O mercado<br>está <em>pronto.</em></h2>
+
+    <div class="whynow-grid">
+      <div class="wn-card reveal">
+        <div class="wn-icon">◈</div>
+        <div class="wn-title">Cultura de dados instalada</div>
+        <div class="wn-body">O automobilismo profissional já compra telemetria, cronometragem e software de análise. Não precisamos educar o mercado sobre o valor dos dados — só sobre por que nossa camada de IA é superior.</div>
+        <div class="wn-stat">Zero</div>
+        <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">ferramentas com insight prescritivo real</div>
+      </div>
+      <div class="wn-card reveal">
+        <div class="wn-icon">◉</div>
+        <div class="wn-title">Crescimento acelerado do kart</div>
+        <div class="wn-body">A FIA registrou 1.217 pilotos em eventos internacionais em 2025 — crescimento de 25% sobre 2024 — e lançou o Global Karting Plan com meta de dobrar a base. A nossa base de clientes cresce organicamente.</div>
+        <div class="wn-stat">+25%</div>
+        <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">pilotos FIA em 2025 vs 2024</div>
+      </div>
+      <div class="wn-card reveal">
+        <div class="wn-icon">◎</div>
+        <div class="wn-title">White space real no mercado</div>
+        <div class="wn-body">Race Studio, MoTeC i2 e Bosch Suite são visualizadores — não interpretadores. Nenhum entrega setup + pilotagem + estratégia de pneu em uma única view acionável. Esse é o nosso espaço.</div>
+        <div class="wn-stat">2026</div>
+        <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">janela aberta, sem concorrente direto</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="closing-section" id="contato">
+  <p class="section-label reveal" style="justify-content: center;">SectorAI</p>
+  <h2 class="closing-title reveal">Pare de<br>adivinhar.<br><em>Comece a vencer.</em></h2>
+  <p class="closing-sub reveal">O atalho definitivo para o pódio. Em desenvolvimento, em teste, e já mudando como equipes de F4 tomam decisões.</p>
+  <div class="cta-row reveal">
+    <a href="#" class="cta-primary">Solicitar acesso</a>
+    <a href="#" class="cta-secondary">Ver demo</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">sector<span>ai</span></div>
+  <div class="footer-note">Confidencial — Junho 2026 — Uso restrito</div>
+</footer>
+
+<script>
+  const dataLines = [
+    "LAP 14 · S1 32.847 · S2 41.203 · S3 28.991",
+    "TYRE TEMP FL 94°C FR 102°C RL 88°C RR 107°C",
+    "WIND 12km/h · DIR 247° · HUMIDITY 68%",
+    "BRAKE TEMP FRONT 438°C · REAR 312°C",
+    "DELTA +0.18s · GAP P2 1.203s",
+    "ENGINE RPM 8.840 · THROTTLE 97% · BRAKE 0%",
+    "LATERAL G 3.2 · LONGITUDINAL G -4.1",
+    "FUEL LOAD 42.3kg · FUEL FLOW 89L/h",
+    "SECTOR 3 UNDERSTEER DETECTED · REAR WEAR +12%",
+    "LAP 15 · S1 32.621 · S2 40.988 · S3 28.872",
+    "TYRE PRESS FL 1.84bar FR 1.79bar RL 1.91bar RR 1.86bar",
+    "AMBIENT TEMP 28°C · TRACK TEMP 41°C",
+    "SUSPENSION TRAVEL FL 22mm FR 19mm",
+    "STEERING ANGLE 4.2° · SPEED 187km/h",
+    "DRS ACTIVATED · STRAIGHT SPEED 231km/h",
+  ];
+
+  const stream = document.getElementById('dataStream');
+  if (stream) {
+    const doubled = [...dataLines, ...dataLines];
+    doubled.forEach((line, i) => {
+      const el = document.createElement('div');
+      el.className = 'data-line' + (i % 7 === 3 ? ' highlight' : '');
+      el.textContent = line;
+      stream.appendChild(el);
+    });
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
