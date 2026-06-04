@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instituto Pedro Lima</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g:#019541; --gd:#016e30; --gl:#e6f5ec;
+  --y:#ffcd01; --o:#e85a2a;
+  --off:#f8f7f3; --borda:#e2e0d8;
+  --txt:#181815; --muted:#6b6b65; --branco:#ffffff;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--branco);color:var(--txt);line-height:1.6;overflow-x:hidden}
+
+/* ─── ANIMAÇÕES ─── */
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(1,149,65,.4)}70%{box-shadow:0 0 0 12px rgba(1,149,65,0)}}
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes drawLine{from{stroke-dashoffset:1000}to{stroke-dashoffset:0}}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes spinSlow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .75s cubic-bezier(.22,1,.36,1),transform .75s cubic-bezier(.22,1,.36,1)}
+.reveal.on{opacity:1;transform:translateY(0)}
+.reveal-l{opacity:0;transform:translateX(-32px);transition:opacity .75s cubic-bezier(.22,1,.36,1),transform .75s cubic-bezier(.22,1,.36,1)}
+.reveal-l.on{opacity:1;transform:translateX(0)}
+.reveal-r{opacity:0;transform:translateX(32px);transition:opacity .75s cubic-bezier(.22,1,.36,1),transform .75s cubic-bezier(.22,1,.36,1)}
+.reveal-r.on{opacity:1;transform:translateX(0)}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}.d5{transition-delay:.4s}
+
+/* ─── NAV ─── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(255,255,255,.96);backdrop-filter:blur(14px);border-bottom:1px solid transparent;padding:0 6%;height:66px;display:flex;align-items:center;justify-content:space-between;transition:border-color .3s,box-shadow .3s}
+nav.scrolled{border-bottom-color:var(--borda);box-shadow:0 2px 20px rgba(0,0,0,.06)}
+.nav-logo svg{height:30px;width:auto;display:block}
+.nav-links{display:flex;gap:2rem;list-style:none;align-items:center}
+.nav-links a{text-decoration:none;font-size:.82rem;font-weight:500;color:var(--muted);transition:color .2s}
+.nav-links a:hover{color:var(--g)}
+.nav-cta{background:var(--g)!important;color:#fff!important;padding:.44rem 1.2rem;border-radius:50px;font-size:.79rem!important;transition:background .2s,transform .15s!important}
+.nav-cta:hover{background:var(--gd)!important;transform:translateY(-1px)!important}
+
+/* ─── HERO ─── */
+#hero{min-height:100vh;background:var(--branco);display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:120px 8% 90px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.hero-bg svg{position:absolute;right:-60px;top:50%;transform:translateY(-50%);width:55%;opacity:.06}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:.6rem;background:var(--gl);color:var(--gd);font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:.38rem .95rem;border-radius:50px;margin-bottom:2rem;animation:fadeUp .6s .1s both}
+.hero-eyebrow span{width:6px;height:6px;background:var(--g);border-radius:50%;flex-shrink:0;animation:pulse 2.5s infinite}
+.hero-h1{font-family:'Playfair Display',serif;font-size:clamp(3rem,5.5vw,5rem);line-height:1.05;color:var(--txt);max-width:820px;margin-bottom:1.8rem;animation:fadeUp .7s .2s both}
+.hero-h1 em{font-style:italic;color:var(--g)}
+.hero-p{font-size:1.08rem;color:var(--muted);max-width:560px;line-height:1.8;margin-bottom:2.8rem;animation:fadeUp .7s .32s both}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;animation:fadeUp .7s .42s both}
+.hero-tags{position:absolute;bottom:48px;right:8%;display:flex;gap:.8rem;flex-wrap:wrap;animation:fadeUp .7s .55s both}
+.hero-tag-item{background:var(--off);border:1px solid var(--borda);border-radius:50px;padding:.3rem .85rem;font-size:.72rem;font-weight:600;color:var(--muted);letter-spacing:.02em}
+
+/* BTNS */
+.btn-p{background:var(--g);color:#fff;padding:.82rem 1.8rem;border-radius:50px;font-size:.88rem;font-weight:600;text-decoration:none;transition:background .2s,transform .15s;display:inline-block}
+.btn-p:hover{background:var(--gd);transform:translateY(-2px)}
+.btn-s{background:transparent;color:var(--g);padding:.82rem 1.8rem;border-radius:50px;font-size:.88rem;font-weight:600;text-decoration:none;border:2px solid var(--g);transition:background .2s,transform .15s;display:inline-block}
+.btn-s:hover{background:var(--gl);transform:translateY(-2px)}
+
+/* MARQUEE */
+.marquee-wrap{background:var(--g);padding:.75rem 0;overflow:hidden;flex-shrink:0}
+.marquee-track{display:flex;white-space:nowrap;animation:marquee 30s linear infinite}
+.marquee-track span{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.85);padding:0 2.2rem}
+.marquee-track .dot{color:var(--y);padding:0;font-size:.9rem;opacity:1}
+
+/* SEÇÕES */
+section{padding:100px 8%}
+.stag{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--g);display:block;margin-bottom:.8rem}
+.sh{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,3vw,2.7rem);line-height:1.13;color:var(--txt);margin-bottom:1rem}
+.sh em{font-style:italic;color:var(--g)}
+.sdesc{font-size:.98rem;color:var(--muted);max-width:580px;line-height:1.82}
+.stripe{height:5px;background:linear-gradient(90deg,var(--g),var(--y),var(--o))}
+
+/* ─── MANIFESTO ─── */
+#manifesto{background:var(--off);display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center;padding:100px 8%}
+.manifesto-quote{font-family:'Playfair Display',serif;font-size:clamp(1.45rem,2.2vw,1.9rem);font-style:italic;line-height:1.5;color:var(--txt);border-left:4px solid var(--g);padding-left:2rem;margin-bottom:2rem}
+.manifesto-sub{font-size:.95rem;color:var(--muted);line-height:1.82;margin-bottom:2rem}
+.valores-grid{display:flex;flex-direction:column;gap:.75rem}
+.valor{display:flex;align-items:flex-start;gap:.9rem;background:var(--branco);border:1px solid var(--borda);border-radius:14px;padding:1rem 1.2rem;transition:border-color .2s,transform .2s}
+.valor:hover{border-color:var(--g);transform:translateX(4px)}
+.valor-icon{width:38px;height:38px;min-width:38px;background:var(--gl);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.valor h4{font-size:.86rem;font-weight:700;color:var(--txt);margin-bottom:.15rem}
+.valor p{font-size:.78rem;color:var(--muted);line-height:1.55}
+.manifesto-right{display:flex;flex-direction:column;gap:1.2rem}
+.mnum{background:var(--branco);border:1px solid var(--borda);border-radius:18px;padding:1.8rem}
+.mnum .n{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:700;color:var(--g);line-height:1;display:block;margin-bottom:.4rem}
+.mnum p{font-size:.83rem;color:var(--muted);line-height:1.65}
+.mnum-row{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+
+/* ─── PROJETOS ─── */
+#projetos{background:var(--branco)}
+.proj-intro{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:end;margin-bottom:4rem}
+.proj-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+
+/* card de projeto */
+.pcard{border-radius:22px;overflow:hidden;border:1px solid var(--borda);background:var(--branco);transition:transform .3s,box-shadow .3s;display:flex;flex-direction:column;cursor:default}
+.pcard:hover{transform:translateY(-6px);box-shadow:0 20px 56px rgba(1,149,65,.1)}
+.pcard-vis{width:100%;height:230px;display:block;flex-shrink:0;position:relative;overflow:hidden}
+.pcard-vis svg{width:100%;height:100%;display:block}
+.pcard-body{padding:1.8rem;flex:1;display:flex;flex-direction:column}
+.pcard-tag{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g);margin-bottom:.5rem;display:block}
+.pcard-title{font-family:'Playfair Display',serif;font-size:1.22rem;font-weight:700;color:var(--txt);margin-bottom:.6rem}
+.pcard-desc{font-size:.84rem;color:var(--muted);line-height:1.72;flex:1}
+.pcard-pills{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:1.2rem}
+.pill{font-size:.67rem;font-weight:600;padding:.24rem .7rem;border-radius:50px;background:var(--gl);color:var(--gd);border:1px solid rgba(1,149,65,.14)}
+.pill.o{background:#fdeee8;color:#892c0f;border-color:rgba(232,90,42,.15)}
+.pill.y{background:#fffbdf;color:#7a5d00;border-color:rgba(255,205,1,.25)}
+
+/* card horizontal */
+.pcard-h{grid-column:span 2;display:grid;grid-template-columns:1fr 1fr;border-radius:22px;overflow:hidden;border:1px solid var(--borda);transition:transform .3s,box-shadow .3s;cursor:default}
+.pcard-h:hover{transform:translateY(-5px);box-shadow:0 20px 56px rgba(1,149,65,.1)}
+.pcard-h .pcard-vis{height:100%;min-height:280px}
+.pcard-h .pcard-body{padding:2.4rem;justify-content:center}
+.pcard-h .pcard-title{font-size:1.4rem}
+
+/* ─── EMBAIXADOR ─── */
+#embaixador{background:var(--off);display:grid;grid-template-columns:5fr 7fr;gap:5rem;align-items:center;padding:100px 8%}
+.emb-vis{position:relative}
+.emb-card{background:var(--branco);border:1px solid var(--borda);border-radius:22px;overflow:hidden;box-shadow:0 16px 56px rgba(0,0,0,.08)}
+.emb-card svg{width:100%;height:auto;display:block}
+.emb-badge{position:absolute;bottom:-16px;right:-16px;background:var(--y);border-radius:16px;padding:1rem 1.4rem;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.emb-badge strong{font-size:1.6rem;font-weight:800;color:var(--txt);display:block;line-height:1}
+.emb-badge span{font-size:.7rem;font-weight:700;color:rgba(24,24,21,.6);text-transform:uppercase;letter-spacing:.06em}
+.emb-content{display:flex;flex-direction:column;gap:1.4rem}
+.emb-intro p{font-size:.96rem;color:var(--muted);line-height:1.82;margin-top:.8rem}
+.acard{background:var(--branco);border:1px solid var(--borda);border-radius:14px;padding:1.2rem 1.4rem;transition:border-color .2s}
+.acard:hover{border-color:var(--g)}
+.acard h4{font-size:.84rem;font-weight:700;color:var(--txt);margin-bottom:.3rem}
+.acard p{font-size:.8rem;color:var(--muted);line-height:1.62}
+
+/* ─── NÚMEROS / IMPACTO ─── */
+#numeros{background:var(--g);padding:90px 8%}
+.num-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;margin-top:3rem}
+.ncard{border-left:3px solid rgba(255,255,255,.2);padding-left:1.5rem}
+.ncard .n{font-family:'Playfair Display',serif;font-size:2.9rem;font-weight:700;color:var(--y);display:block;line-height:1;margin-bottom:.35rem}
+.ncard p{font-size:.78rem;color:rgba(255,255,255,.75);text-transform:uppercase;letter-spacing:.06em;font-weight:500}
+.num-bottom{margin-top:4rem;padding-top:3rem;border-top:1px solid rgba(255,255,255,.14);display:flex;align-items:center;gap:1.8rem;flex-wrap:wrap}
+.ods-label{font-size:.78rem;color:rgba(255,255,255,.55);font-weight:600;white-space:nowrap}
+.ods-pills{display:flex;gap:.6rem;flex-wrap:wrap}
+.ods{background:rgba(255,255,255,.11);border:1px solid rgba(255,255,255,.18);color:#fff;font-size:.71rem;font-weight:600;padding:.3rem .8rem;border-radius:50px}
+
+/* ─── PROPÓSITO ─── */
+#proposito{background:var(--branco)}
+.prop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-top:3.5rem}
+.propcard{background:var(--off);border:1px solid var(--borda);border-radius:20px;padding:2rem;transition:transform .3s,border-color .2s}
+.propcard:hover{transform:translateY(-5px);border-color:var(--g)}
+.propcard-icon{width:50px;height:50px;border-radius:14px;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:1.1rem}
+.propcard h3{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--txt);margin-bottom:.55rem}
+.propcard p{font-size:.83rem;color:var(--muted);line-height:1.72}
+
+/* ─── APOIE ─── */
+#apoie{background:var(--off);padding:100px 8%}
+.apoie-wrap{display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center}
+.apoie-cards{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2rem}
+.apoie-card{background:var(--branco);border:1px solid var(--borda);border-radius:18px;padding:1.6rem;transition:border-color .2s,transform .2s}
+.apoie-card:hover{border-color:var(--g);transform:translateY(-3px)}
+.apoie-card .ac-icon{width:44px;height:44px;border-radius:12px;background:var(--gl);display:flex;align-items:center;justify-content:center;font-size:1.1rem;margin-bottom:.9rem}
+.apoie-card h4{font-size:.88rem;font-weight:700;color:var(--txt);margin-bottom:.3rem}
+.apoie-card p{font-size:.79rem;color:var(--muted);line-height:1.62}
+.apoie-right{display:flex;flex-direction:column;gap:1rem}
+.apoie-quote{font-family:'Playfair Display',serif;font-size:1.4rem;font-style:italic;line-height:1.5;color:var(--txt);border-left:4px solid var(--y);padding-left:1.6rem;margin-bottom:.5rem}
+.apoie-sub{font-size:.9rem;color:var(--muted);line-height:1.8}
+.apoie-lie{background:var(--gl);border:1px solid rgba(1,149,65,.18);border-radius:12px;padding:1rem 1.2rem;font-size:.82rem;color:var(--gd);line-height:1.65}
+.apoie-lie strong{font-weight:700}
+
+/* ─── CONTATO ─── */
+#contato{background:var(--branco);padding:100px 8%;text-align:center}
+.contato-inner{max-width:620px;margin:0 auto}
+.cbtns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin:2.5rem 0 2.8rem}
+.redes{display:flex;gap:.75rem;justify-content:center}
+.rede{display:flex;align-items:center;gap:.45rem;font-size:.79rem;font-weight:600;color:var(--muted);text-decoration:none;padding:.52rem 1.1rem;border-radius:50px;border:1px solid var(--borda);transition:color .2s,border-color .2s,transform .15s}
+.rede:hover{color:var(--g);border-color:var(--g);transform:translateY(-2px)}
+
+/* ─── FOOTER ─── */
+footer{background:var(--off);border-top:1px solid var(--borda);padding:2.5rem 8%;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+footer p{font-size:.74rem;color:var(--muted)}
+.footer-logo svg{height:22px;display:block}
+
+/* ─── RESP ─── */
+@media(max-width:960px){
+  #hero{padding:110px 6% 80px}
+  .hero-h1{font-size:clamp(2.4rem,6vw,3.5rem)}
+  #manifesto,#embaixador,.apoie-wrap{grid-template-columns:1fr;gap:3rem}
+  .proj-grid,.pcard-h,.prop-grid,.apoie-cards{grid-template-columns:1fr}
+  .pcard-h{grid-column:span 1}
+  .proj-intro{grid-template-columns:1fr;gap:1.5rem}
+  .num-grid{grid-template-columns:1fr 1fr}
+  nav .nav-links{display:none}
+  .mnum-row{grid-template-columns:1fr 1fr}
+  .hero-tags{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="mainnav">
+  <a href="#" class="nav-logo">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 535.44 105.3">
+      <defs><style>.L1{fill:#019541}.L2{fill:#ffcd01}</style></defs>
+      <path class="L1" d="M442.88,64.5c-1.95,5.74-3.72,11.57-5.5,17.41-1.1,3.19-1.78,6.49-3.47,9.04-.08.04-.13,0-.16-.11-.04-.31-.04-.61.02-.99.19-1.69,1.05-5.52,2.22-9.4.67-2.26,1.37-4.51,2.06-6.77,1.42-5.79,5.88-14.51.13-17.21-2.92-1.39-8.2-1.24-9.43-3.79-2.94-7.1,14.69-21.74,19.57-26.08,6.49-5.31,13.38-10.67,21-14.4,7.07-3.33,14.86-3.93,22.11-6.52C496.96,3.86,502.58.39,508.41,0c10.33-.01-.89,9.69-4.08,12.07-14.65,12.28-30.8,23.01-46.47,34.05-7.63,5.74-10.16,14.53-12.75,23.55-2.66,8.44-5.77,16.8-8.44,25.23-.87,2.75-3.58,9.98-4.09,10.33-.23.24-.25-.21-.04-1.28.14-.71.37-1.69.7-2.85,3.69-13.14,9.17-26.03,12.21-39.32.62-3.14.34-3.98-.59-2.17-.73,1.46-1.21,2.79-1.89,4.69l-.07.19ZM432.39,54.44c4.24.1,8.47-.94,12.3-2.96.18-.09.35-.2.52-.32.76-.55,1.46-1.19,2.16-1.81.5-.46.93-.92,1.4-1.34,1.26-1.1,5.33-6.34,6.43-7.66.43-.71,2.98-2.59,2.9-.94-.11.6-4.13,4.75-4.46,5.28-1.85,3.03.64,1.85,2.14.78,18.54-11.83,36.31-25.14,52.55-39.94,2.21-2.32-2.24-2.02-3.49-1.79-6.98,1.26-12.83,5.41-18.97,8.7-12.92,7.33-26.08,15.16-37.91,24.09-.22,0-.2-.24.06-.61,2.28-2.62,5.19-4.83,8.06-6.82,7.55-5.12,15.44-9.49,23.05-14.47.64-.63.28-1.28-.41-1.47-5.59-1.61-15.42,6.36-20.29,9.34-9.09,6.67-17.54,14.25-24.71,22.96-1.44,2.08-3.37,4.08-4.09,6.54-.18,1.43,1.32,2.43,2.62,2.43h.13Z"/>
+      <path class="L2" d="M477.24,64.62c-1.98,1.97-3.87,7.74-7.45,5.9-1.12-.68-1.56-2.4-2.56-2.79-1.25-.47-2.56.39-3.71.85-1.92.9-3.86,1.07-5.2,2.54-3.26,5.46-5.14,11.73-8.12,17.41-1.1,2.51-2.87,5.77,1.9,4.15,3.5-1.16,8.5-4,11.79-5.8,1.77-1.01,2.94-1.42,4.76-2,3.01-.92,5.86-2.57,8.94-3.44,5.54-1.51,10.96-3.91,16.7-4.63,1.52-.36,5.54.33,2.25,1.86-6.53,1.22-12.57,3.28-18.72,5.67-6.39,2.08-12.64,4.95-18.73,7.89-3.83,2.16-7.09,4.8-11.56,5.71-1.38.29-2.61.26-3.15-.53-.56-.75-.24-2.3.22-3.28,1.07-2.26,2.12-4.45,3.35-6.74,2.87-6.42,6.01-12.8,8.99-19.2,5-11.21,9.74-22.17,13.37-33.82,1.14-2.34.85-9.73,4.04-9.73.59,0,1.52.66,1.71,1.11.26.53.17,1.04-.01,1.65-.93,2.83-2.29,5.58-3.12,8.41-2.06,6.54-5.06,12.89-7.77,19.23-.56,1.89-6.85,11.58-1.33,9.75,1.77-.78,3.2-2.16,4.03-3.63.9-1.55,2.42-5.22,4.61-3.35,1.16,1.05.51,2.6.49,4.17.31,3.81,4.59-3.14,5.82-3.19,2.39-1.59,4.73,2.08,6.94.03,2-1.53,3.18-4.42,5.67-5.05,3.06.04,1.34,5.74,5.28,3.05,1.53-.96,3.19-1.65,4.89-.87,1.13.47,2.23,1.25,3.51,1.19,2.87-.3,5.1-3.33,8.21-3.21,8.5-.09,5.53,9.03,19.28,4.67.86-.22,2.03-.71,2.79-.22.62,1.04-1.35,2.22-2.21,2.68-4.5,2.33-9.55,2.1-14.04-.08-2.37-.87-3.65,1.39-4.76,3.16-1.67,2.41-4.24,4.84-7.39,4.39-2.75-.43-5.51-2.52-5.84-5.04-.31-1.32.28-3.28-.96-4.18-3.88-1.15-4.95,5.14-8.21,5.89-.92.23-1.89-.28-2.09-1.23-.34-1.13.53-3.97-.27-4.59-.61-.34-1.31.66-1.68,1.09-1.73,1.85-2.65,9.64-6.33,7.74-1.37-.89-.66-4.12-2.1-4.74-.83-.2-1.56.47-2.09,1.03l-.13.15Z"/>
+      <path class="L1" d="M0,30.97h2.57v59.92H0V30.97Z"/><path class="L1" d="M13.83,54.24c0-14.93,8.89-24.46,24.92-24.46s24.92,9.53,24.92,24.46v36.65h-2.57v-36.65c0-13.56-7.88-22.17-22.36-22.17s-22.36,8.61-22.36,22.17v36.65h-2.57v-36.65Z"/><path class="L1" d="M71.64,74.49h2.57c.27,9.71,7.7,15.3,18.97,15.3s18.97-5.77,18.97-15.3c0-10.08-9.16-11.27-18.6-12.64-9.99-1.47-20.34-2.93-20.34-14.93,0-10.26,7.97-17.13,20.06-17.13s19.79,6.6,20.07,16.58h-2.57c-.27-9.16-7.24-14.29-17.5-14.29s-17.5,5.31-17.5,14.84c0,10.08,9.16,11.27,18.6,12.64,9.99,1.47,20.34,2.93,20.34,14.93,0,10.81-8.52,17.59-21.53,17.59s-21.26-6.6-21.53-17.59Z"/><path class="L1" d="M141.26,33.26h-22.26v-2.29h47.18v2.29h-22.36v57.63h-2.57v-57.63Z"/><path class="L1" d="M175.16,30.97h2.57v59.92h-2.57V30.97Z"/><path class="L1" d="M208.96,33.26h-22.26v-2.29h47.18v2.29h-22.36v57.63h-2.57v-57.63Z"/><path class="L1" d="M241.11,67.62V30.97h2.57v36.65c0,13.56,7.88,22.17,22.36,22.17s22.17-8.8,22.17-22.17V30.97h2.47v36.65c0,14.93-8.8,24.46-24.65,24.46s-24.92-9.53-24.92-24.46Z"/><path class="L1" d="M320.09,33.26h-22.26v-2.29h47.18v2.29h-22.36v57.63h-2.57v-57.63Z"/><path class="L1" d="M345.09,60.93c0-17.96,13.19-31.15,31.88-31.15s31.88,13.19,31.88,31.15-13.19,31.15-31.88,31.15-31.88-13.19-31.88-31.15ZM406.3,60.93c0-16.58-12.09-28.86-29.32-28.86s-29.32,12.28-29.32,28.86,12.09,28.86,29.32,28.86,29.32-12.28,29.32-28.86Z"/>
+    </svg>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#manifesto">O Instituto</a></li>
+    <li><a href="#projetos">Projetos</a></li>
+    <li><a href="#embaixador">Embaixador</a></li>
+    <li><a href="#proposito">Propósito</a></li>
+    <li><a href="#apoie" class="nav-cta">Apoie</a></li>
+  </ul>
+</nav>
+
+<!-- HERO — sem imagem, tipografia forte + SVG abstrato de fundo -->
+<section id="hero">
+  <div class="hero-bg">
+    <svg viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="300" cy="300" r="280" stroke="#019541" stroke-width="1.5"/>
+      <circle cx="300" cy="300" r="220" stroke="#019541" stroke-width="1"/>
+      <circle cx="300" cy="300" r="160" stroke="#019541" stroke-width=".8"/>
+      <circle cx="300" cy="300" r="100" stroke="#ffcd01" stroke-width=".8"/>
+      <line x1="20" y1="300" x2="580" y2="300" stroke="#019541" stroke-width=".5"/>
+      <line x1="300" y1="20" x2="300" y2="580" stroke="#019541" stroke-width=".5"/>
+      <line x1="100" y1="100" x2="500" y2="500" stroke="#019541" stroke-width=".4"/>
+      <line x1="500" y1="100" x2="100" y2="500" stroke="#019541" stroke-width=".4"/>
+      <circle cx="300" cy="300" r="6" fill="#019541"/>
+      <circle cx="300" cy="20" r="4" fill="#ffcd01"/>
+      <circle cx="300" cy="580" r="4" fill="#ffcd01"/>
+      <circle cx="20" cy="300" r="4" fill="#ffcd01"/>
+      <circle cx="580" cy="300" r="4" fill="#ffcd01"/>
+    </svg>
+  </div>
+  <div class="hero-eyebrow"><span></span> Associação Civil Sem Fins Lucrativos · Brasil & Europa</div>
+  <h1 class="hero-h1">Transformando o automobilismo<br>brasileiro com <em>educação,<br>dados e propósito.</em></h1>
+  <p class="hero-p">O Instituto Pedro Lima une alta performance, tecnologia de ponta e impacto social — construindo o caminho que levará o Brasil de volta ao topo do automobilismo mundial. Uma organização diferente, para um esporte que merece mais.</p>
+  <div class="hero-btns">
+    <a href="#projetos" class="btn-p">Conheça nossos projetos</a>
+    <a href="#apoie" class="btn-s">Como apoiar</a>
+  </div>
+  <div class="hero-tags">
+    <span class="hero-tag-item">Educação STEM</span>
+    <span class="hero-tag-item">Sector AI</span>
+    <span class="hero-tag-item">F4 Italiana</span>
+    <span class="hero-tag-item">Agenda ONU 2030</span>
+    <span class="hero-tag-item">Lei de Incentivo ao Esporte</span>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track" id="mtrack">
+    <span>Educação pelo Esporte</span><span class="dot"> ✦ </span>
+    <span>Tecnologia de Alta Performance</span><span class="dot"> ✦ </span>
+    <span>Impacto Social Mensurável</span><span class="dot"> ✦ </span>
+    <span>Conteúdo de Referência</span><span class="dot"> ✦ </span>
+    <span>Transparência Total</span><span class="dot"> ✦ </span>
+    <span>Agenda ONU 2030</span><span class="dot"> ✦ </span>
+    <span>Democratizando o Automobilismo</span><span class="dot"> ✦ </span>
+    <span>Educação pelo Esporte</span><span class="dot"> ✦ </span>
+    <span>Tecnologia de Alta Performance</span><span class="dot"> ✦ </span>
+    <span>Impacto Social Mensurável</span><span class="dot"> ✦ </span>
+    <span>Conteúdo de Referência</span><span class="dot"> ✦ </span>
+    <span>Transparência Total</span><span class="dot"> ✦ </span>
+    <span>Agenda ONU 2030</span><span class="dot"> ✦ </span>
+    <span>Democratizando o Automobilismo</span><span class="dot"> ✦ </span>
+  </div>
+</div>
+
+<!-- MANIFESTO -->
+<section id="manifesto">
+  <div class="reveal-l">
+    <span class="stag">Quem somos</span>
+    <p class="manifesto-quote">"Somos um hub de conteúdo e tecnologia que conecta empresas e atletas, impulsionando o automobilismo brasileiro desde a base."</p>
+    <p class="manifesto-sub">Diferente dos institutos tradicionais, não apenas contemplamos o esporte — nós o transformamos. Unimos a narrativa de alta performance de Pedro Lima com educação STEM, inteligência artificial e produção de conteúdo para criar um legado real e duradouro para o automobilismo brasileiro. Cada projeto nasce de uma necessidade genuína do esporte e entrega impacto auditável para a sociedade e para as empresas parceiras.</p>
+    <div class="valores-grid">
+      <div class="valor reveal d1">
+        <div class="valor-icon">⚖️</div>
+        <div>
+          <h4>Ética, Transparência e Independência</h4>
+          <p>Associação civil apartidária com governança aberta. Relatórios auditáveis (CVM 193) e total conformidade com a Lei de Incentivo ao Esporte.</p>
+        </div>
+      </div>
+      <div class="valor reveal d2">
+        <div class="valor-icon">🌱</div>
+        <div>
+          <h4>Inclusivo por princípio</h4>
+          <p>Respeito absoluto à diversidade. Democratizar o acesso ao automobilismo — independente de gênero, origem ou renda — é parte central da nossa existência.</p>
+        </div>
+      </div>
+      <div class="valor reveal d3">
+        <div class="valor-icon">🎯</div>
+        <div>
+          <h4>Eficiência com propósito</h4>
+          <p>Cada recurso serve diretamente aos objetivos institucionais. Prontos para parcerias com entes públicos e privados com total transparência.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="manifesto-right reveal-r">
+    <div class="mnum-row">
+      <div class="mnum">
+        <span class="n" data-target="6">0</span>
+        <p>Projetos planejados que atuam em educação, conteúdo e tecnologia de forma integrada</p>
+      </div>
+      <div class="mnum">
+        <span class="n" data-target="5">0</span>
+        <p>Objetivos de Desenvolvimento Sustentável da ONU atendidos e auditáveis pelas empresas parceiras</p>
+      </div>
+    </div>
+    <div class="mnum">
+      <span class="n">2026–27</span>
+      <p>Horizonte de execução dos projetos — construindo agora a estrutura que colocará o Brasil novamente no topo do automobilismo mundial</p>
+    </div>
+    <div class="mnum" style="background:var(--g);border-color:var(--g)">
+      <span class="n" style="color:var(--y)">F4 🇮🇹</span>
+      <p style="color:rgba(255,255,255,.8)">Pedro Lima compete na Fórmula 4 Italiana enquanto o Instituto valida a tecnologia Sector AI sob pressão máxima de pista — o laboratório mais exigente do mundo</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROJETOS -->
+<section id="projetos">
+  <div class="proj-intro">
+    <div class="reveal-l">
+      <span class="stag">Projetos 2026–2027</span>
+      <h2 class="sh">Iniciativas que vão <em>mudar o jogo</em></h2>
+    </div>
+    <p class="sdesc reveal-r">Cada projeto nasce de uma lacuna real do automobilismo brasileiro — e foi desenhado para entregar impacto em educação, visibilidade e inovação tecnológica de forma simultânea.</p>
+  </div>
+  <div class="proj-grid">
+
+    <!-- LABORATÓRIO SOBRE RODAS -->
+    <div class="pcard reveal d1">
+      <div class="pcard-vis">
+        <svg viewBox="0 0 600 230" xmlns="http://www.w3.org/2000/svg">
+          <rect width="600" height="230" fill="#f0f9f4"/>
+          <!-- pista / track abstrata -->
+          <ellipse cx="300" cy="160" rx="240" ry="60" fill="none" stroke="#c8e8d4" stroke-width="28"/>
+          <ellipse cx="300" cy="160" rx="240" ry="60" fill="none" stroke="#e6f5ec" stroke-width="2" stroke-dasharray="18 8"/>
+          <!-- kart simples -->
+          <g transform="translate(180,130)">
+            <rect x="0" y="8" width="52" height="20" rx="5" fill="#019541"/>
+            <rect x="4" y="4" width="30" height="14" rx="3" fill="#017a35"/>
+            <circle cx="10" cy="30" r="7" fill="#181815"/>
+            <circle cx="10" cy="30" r="3.5" fill="#555"/>
+            <circle cx="42" cy="30" r="7" fill="#181815"/>
+            <circle cx="42" cy="30" r="3.5" fill="#555"/>
+            <!-- capacete do piloto -->
+            <ellipse cx="20" cy="6" rx="9" ry="7" fill="#ffcd01"/>
+            <rect x="13" y="8" width="14" height="4" rx="1" fill="rgba(0,0,0,.2)"/>
+          </g>
+          <!-- estudante com tablet -->
+          <g transform="translate(370,70)">
+            <circle cx="20" cy="0" r="14" fill="#c8e8d4"/>
+            <rect x="6" y="16" width="28" height="36" rx="4" fill="#019541" opacity=".8"/>
+            <!-- tablet -->
+            <rect x="-8" y="28" width="22" height="16" rx="2" fill="#fff" stroke="#019541" stroke-width="1.5"/>
+            <rect x="-6" y="30" width="18" height="10" rx="1" fill="#e6f5ec"/>
+            <!-- linhas de dado no tablet -->
+            <line x1="-4" y1="33" x2="12" y2="33" stroke="#019541" stroke-width="1"/>
+            <line x1="-4" y1="36" x2="8" y2="36" stroke="#019541" stroke-width="1"/>
+          </g>
+          <!-- fórmulas matemáticas flutuando -->
+          <text x="60" y="60" font-family="Inter,sans-serif" font-size="11" fill="#019541" opacity=".55">F = m·a</text>
+          <text x="460" y="50" font-family="Inter,sans-serif" font-size="11" fill="#019541" opacity=".55">v² = v₀² + 2aΔx</text>
+          <text x="80" y="110" font-family="Inter,sans-serif" font-size="10" fill="#019541" opacity=".4">ΔKE = W</text>
+          <!-- seta de direção -->
+          <path d="M240 145 L300 130 L360 145" fill="none" stroke="#ffcd01" stroke-width="2" stroke-dasharray="6 4"/>
+          <!-- título flutuante -->
+          <rect x="20" y="15" width="160" height="28" rx="6" fill="white" opacity=".9"/>
+          <text x="30" y="34" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#019541">Laboratório sobre Rodas</text>
+        </svg>
+      </div>
+      <div class="pcard-body">
+        <span class="pcard-tag">Educação · STEM · Fomento à Base</span>
+        <h3 class="pcard-title">Laboratório sobre Rodas</h3>
+        <p class="pcard-desc">O kartismo como sala de aula. Jovens da rede pública aprenderão física, mecânica e matemática aplicada diretamente na pista — com o kart como laboratório vivo. A metodologia STEM transforma a corrida em conhecimento e o conhecimento em oportunidade real de vida. Pedro Lima atua como embaixador e mentor, demonstrando que o caminho da alta performance começa na educação.</p>
+        <div class="pcard-pills">
+          <span class="pill">Metodologia STEM</span>
+          <span class="pill">Rede Pública</span>
+          <span class="pill y">ODS 4 — Educação</span>
+          <span class="pill o">Previsão 2026</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENGENHARIA DELAS -->
+    <div class="pcard reveal d2">
+      <div class="pcard-vis">
+        <svg viewBox="0 0 600 230" xmlns="http://www.w3.org/2000/svg">
+          <rect width="600" height="230" fill="#fef9ed"/>
+          <!-- tela de telemetria estilizada -->
+          <rect x="140" y="30" width="320" height="170" rx="12" fill="white" stroke="#e2e0d8" stroke-width="1.5"/>
+          <!-- header da tela -->
+          <rect x="140" y="30" width="320" height="34" rx="12" fill="#019541"/>
+          <rect x="140" y="52" width="320" height="12" fill="#019541"/>
+          <circle cx="162" cy="47" r="5" fill="rgba(255,255,255,.3)"/>
+          <circle cx="178" cy="47" r="5" fill="rgba(255,255,255,.3)"/>
+          <circle cx="194" cy="47" r="5" fill="rgba(255,255,255,.3)"/>
+          <text x="215" y="51" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="white">Sector AI · Telemetria</text>
+          <!-- gráfico de velocidade -->
+          <polyline points="160,160 190,130 220,145 255,100 285,115 315,90 345,108 375,85 405,95 435,75 460,88" fill="none" stroke="#019541" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="160,160 190,130 220,145 255,100 285,115 315,90 345,108 375,85 405,95 435,75 460,88" fill="url(#chartFill)" opacity=".25"/>
+          <defs>
+            <linearGradient id="chartFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#019541"/>
+              <stop offset="100%" stop-color="transparent"/>
+            </linearGradient>
+          </defs>
+          <!-- linha amarela -->
+          <polyline points="160,155 190,140 220,150 255,120 285,130 315,110 345,125 375,105 405,115 435,95 460,108" fill="none" stroke="#ffcd01" stroke-width="1.5" stroke-dasharray="5 3"/>
+          <!-- eixos -->
+          <line x1="160" y1="75" x2="160" y2="170" stroke="#e2e0d8" stroke-width="1"/>
+          <line x1="160" y1="170" x2="465" y2="170" stroke="#e2e0d8" stroke-width="1"/>
+          <!-- labels -->
+          <text x="148" y="79" font-family="Inter,sans-serif" font-size="8" fill="#aaa" text-anchor="end">280</text>
+          <text x="148" y="112" font-family="Inter,sans-serif" font-size="8" fill="#aaa" text-anchor="end">180</text>
+          <text x="148" y="145" font-family="Inter,sans-serif" font-size="8" fill="#aaa" text-anchor="end">80</text>
+          <!-- badges flutuantes -->
+          <rect x="20" y="80" width="100" height="22" rx="6" fill="#019541"/>
+          <text x="30" y="95" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="white">Engenharia Delas</text>
+          <rect x="490" y="170" width="90" height="22" rx="6" fill="#ffcd01"/>
+          <text x="500" y="185" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="#181815">13–17 anos</text>
+          <!-- ícone feminino sutil -->
+          <circle cx="540" cy="50" r="18" fill="#fffbdf" stroke="#ffcd01" stroke-width="1.5"/>
+          <circle cx="540" cy="44" r="7" fill="#ffcd01" opacity=".6"/>
+          <path d="M530 62 Q540 56 550 62" fill="#ffcd01" opacity=".5"/>
+        </svg>
+      </div>
+      <div class="pcard-body">
+        <span class="pcard-tag">Inclusão · Dados · Liderança Feminina</span>
+        <h3 class="pcard-title">Engenharia Delas</h3>
+        <p class="pcard-desc">Meninas de 13 a 17 anos da rede pública que nunca imaginaram uma carreira em tecnologia descobrirão, através da mecânica de pista e da análise de dados de telemetria, que esse é exatamente o lugar delas. O programa usará o Sector AI como ferramenta pedagógica — formando a próxima geração de engenheiras, analistas e líderes do setor automobilístico brasileiro.</p>
+        <div class="pcard-pills">
+          <span class="pill">Rede Pública · 13–17 anos</span>
+          <span class="pill o">Sector AI</span>
+          <span class="pill y">ODS 5 — Igualdade de Gênero</span>
+          <span class="pill o">Previsão 2026</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTOR AI — horizontal -->
+    <div class="pcard-h reveal d1">
+      <div class="pcard-vis">
+        <svg viewBox="0 0 300 280" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+          <rect width="300" height="280" fill="#0d1a10"/>
+          <!-- grid de fundo -->
+          <defs>
+            <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+              <path d="M 24 0 L 0 0 0 24" fill="none" stroke="rgba(1,149,65,.18)" stroke-width=".5"/>
+            </pattern>
+          </defs>
+          <rect width="300" height="280" fill="url(#grid)"/>
+          <!-- círculo central pulsante -->
+          <circle cx="150" cy="140" r="70" fill="none" stroke="rgba(1,149,65,.15)" stroke-width="40"/>
+          <circle cx="150" cy="140" r="50" fill="none" stroke="rgba(1,149,65,.25)" stroke-width="20"/>
+          <circle cx="150" cy="140" r="30" fill="rgba(1,149,65,.3)"/>
+          <circle cx="150" cy="140" r="16" fill="#019541"/>
+          <!-- letras AI -->
+          <text x="143" y="146" font-family="Inter,sans-serif" font-size="11" font-weight="800" fill="white">AI</text>
+          <!-- linhas de dados radiando -->
+          <line x1="150" y1="70" x2="150" y2="30" stroke="#019541" stroke-width="1.5" opacity=".7"/>
+          <circle cx="150" cy="28" r="3" fill="#ffcd01"/>
+          <line x1="150" y1="210" x2="150" y2="250" stroke="#019541" stroke-width="1.5" opacity=".7"/>
+          <circle cx="150" cy="252" r="3" fill="#ffcd01"/>
+          <line x1="80" y1="140" x2="30" y2="140" stroke="#019541" stroke-width="1.5" opacity=".7"/>
+          <circle cx="28" cy="140" r="3" fill="#ffcd01"/>
+          <line x1="220" y1="140" x2="270" y2="140" stroke="#019541" stroke-width="1.5" opacity=".7"/>
+          <circle cx="272" cy="140" r="3" fill="#ffcd01"/>
+          <!-- diagonais -->
+          <line x1="100" y1="90" x2="64" y2="54" stroke="#019541" stroke-width="1" opacity=".4"/>
+          <line x1="200" y1="90" x2="236" y2="54" stroke="#019541" stroke-width="1" opacity=".4"/>
+          <line x1="100" y1="190" x2="64" y2="226" stroke="#019541" stroke-width="1" opacity=".4"/>
+          <line x1="200" y1="190" x2="236" y2="226" stroke="#019541" stroke-width="1" opacity=".4"/>
+          <!-- label -->
+          <rect x="60" y="10" width="180" height="26" rx="6" fill="rgba(1,149,65,.9)"/>
+          <text x="150" y="28" font-family="Inter,sans-serif" font-size="11" font-weight="800" fill="white" text-anchor="middle">sector ai</text>
+          <!-- telemetria no canto -->
+          <text x="12" y="270" font-family="Inter,sans-serif" font-size="8" fill="rgba(255,255,255,.35)">v=238km/h · brake=92% · g=2.1</text>
+        </svg>
+      </div>
+      <div class="pcard-body">
+        <span class="pcard-tag">Tecnologia · IA · Alta Performance · Previsão 2027</span>
+        <h3 class="pcard-title">Sector AI</h3>
+        <p class="pcard-desc">Um software preditivo com inteligência artificial que lê telemetria em tempo real, analisa a biometria do piloto e sugere ajustes de setup com precisão de engenharia de pista. Desenvolvido com o Instituto como laboratório vivo e validado sob pressão real na Fórmula 4 Italiana com Pedro Lima. O Sector AI democratiza para pilotos de kart em todo o Brasil a mesma tecnologia usada na Europa — tornando a ciência da vitória acessível a todos.</p>
+        <div class="pcard-pills">
+          <span class="pill">Telemetria com IA</span>
+          <span class="pill">Biometria</span>
+          <span class="pill">Setup Preditivo</span>
+          <span class="pill o">Validado na F4 Italiana</span>
+          <span class="pill y">Lançamento 2027</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SÉRIE DOCUMENTAL -->
+    <div class="pcard reveal d2">
+      <div class="pcard-vis">
+        <svg viewBox="0 0 600 230" xmlns="http://www.w3.org/2000/svg">
+          <rect width="600" height="230" fill="#1a1a16"/>
+          <!-- moldura de câmera / frame -->
+          <rect x="60" y="25" width="480" height="180" rx="4" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="1.5"/>
+          <!-- faixas laterais tipo cinemascope -->
+          <rect x="60" y="25" width="480" height="28" fill="rgba(0,0,0,.6)"/>
+          <rect x="60" y="177" width="480" height="28" fill="rgba(0,0,0,.6)"/>
+          <!-- pista estilizada em perspectiva -->
+          <path d="M300 177 L140 177 L60 100 L300 100 Z" fill="rgba(30,60,35,.8)"/>
+          <path d="M300 177 L460 177 L540 100 L300 100 Z" fill="rgba(30,60,35,.6)"/>
+          <!-- linhas da pista -->
+          <line x1="300" y1="100" x2="300" y2="177" stroke="white" stroke-width="2" stroke-dasharray="10 8"/>
+          <path d="M300 177 L160 177" stroke="#ffcd01" stroke-width="2.5" opacity=".8"/>
+          <path d="M300 177 L440 177" stroke="#ffcd01" stroke-width="2.5" opacity=".8"/>
+          <!-- sol / luz no fundo -->
+          <circle cx="300" cy="98" r="22" fill="rgba(255,205,1,.2)"/>
+          <circle cx="300" cy="98" r="12" fill="rgba(255,205,1,.4)"/>
+          <!-- carro em movimento com blur -->
+          <g transform="translate(255,140)">
+            <rect x="0" y="0" width="90" height="24" rx="5" fill="#e85a2a" opacity=".9"/>
+            <rect x="6" y="-8" width="55" height="12" rx="3" fill="#c04020" opacity=".9"/>
+            <ellipse cx="18" cy="26" rx="10" ry="4" fill="#181815"/>
+            <ellipse cx="72" cy="26" rx="10" ry="4" fill="#181815"/>
+            <rect x="-20" y="6" width="22" height="10" rx="2" fill="#e85a2a" opacity=".4"/>
+          </g>
+          <!-- indicador de gravação -->
+          <circle cx="520" cy="45" r="5" fill="#e85a2a"/>
+          <text x="530" y="49" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="rgba(255,255,255,.7)">REC</text>
+          <!-- legenda / subtítulo estilizado -->
+          <rect x="110" y="148" width="240" height="20" rx="3" fill="rgba(0,0,0,.7)"/>
+          <text x="230" y="162" font-family="Inter,sans-serif" font-size="9" fill="white" text-anchor="middle">Bastidores do Automobilismo Brasileiro</text>
+          <!-- logo/título no topo -->
+          <text x="300" y="45" font-family="Playfair Display,serif" font-size="13" font-style="italic" fill="rgba(255,255,255,.6)" text-anchor="middle">uma série documental</text>
+        </svg>
+      </div>
+      <div class="pcard-body">
+        <span class="pcard-tag">Conteúdo · Audiovisual · Entretenimento · Previsão 2026</span>
+        <h3 class="pcard-title">Série Documental</h3>
+        <p class="pcard-desc">Uma série que desvenda os bastidores reais do automobilismo — a transição do kart para os monopostos, os bastidores financeiros e técnicos do esporte motor, e a jornada humana por trás de cada décimo de segundo conquistado em pista. Linguagem cinematográfica adaptada para as plataformas digitais, com potencial de licenciamento para TV esportiva e streaming.</p>
+        <div class="pcard-pills">
+          <span class="pill">Documentário</span>
+          <span class="pill">TV e Streaming</span>
+          <span class="pill o">Naming Rights</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PODCAST -->
+    <div class="pcard reveal d3">
+      <div class="pcard-vis">
+        <svg viewBox="0 0 600 230" xmlns="http://www.w3.org/2000/svg">
+          <rect width="600" height="230" fill="#f8f7f3"/>
+          <!-- mesa de estúdio simplificada -->
+          <rect x="100" y="140" width="400" height="12" rx="4" fill="#e2e0d8"/>
+          <!-- microfone esquerdo -->
+          <g transform="translate(195,50)">
+            <rect x="17" y="60" width="6" height="40" fill="#bbb"/>
+            <rect x="0" y="100" width="40" height="4" rx="2" fill="#bbb"/>
+            <rect x="8" y="0" width="24" height="56" rx="12" fill="#019541"/>
+            <rect x="12" y="8" width="16" height="4" rx="1" fill="rgba(255,255,255,.3)"/>
+            <rect x="12" y="17" width="16" height="4" rx="1" fill="rgba(255,255,255,.3)"/>
+            <rect x="12" y="26" width="16" height="4" rx="1" fill="rgba(255,255,255,.3)"/>
+            <rect x="12" y="35" width="16" height="4" rx="1" fill="rgba(255,255,255,.3)"/>
+          </g>
+          <!-- microfone direito -->
+          <g transform="translate(365,50)">
+            <rect x="17" y="60" width="6" height="40" fill="#bbb"/>
+            <rect x="0" y="100" width="40" height="4" rx="2" fill="#bbb"/>
+            <rect x="8" y="0" width="24" height="56" rx="12" fill="#181815"/>
+            <rect x="12" y="8" width="16" height="4" rx="1" fill="rgba(255,255,255,.15)"/>
+            <rect x="12" y="17" width="16" height="4" rx="1" fill="rgba(255,255,255,.15)"/>
+            <rect x="12" y="26" width="16" height="4" rx="1" fill="rgba(255,255,255,.15)"/>
+            <rect x="12" y="35" width="16" height="4" rx="1" fill="rgba(255,255,255,.15)"/>
+          </g>
+          <!-- ondas sonoras animadas -->
+          <g opacity=".6">
+            <rect x="270" y="70" width="4" height="20" rx="2" fill="#019541"><animate attributeName="height" values="20;40;20" dur="1.2s" repeatCount="indefinite"/><animate attributeName="y" values="70;60;70" dur="1.2s" repeatCount="indefinite"/></rect>
+            <rect x="280" y="60" width="4" height="40" rx="2" fill="#019541"><animate attributeName="height" values="40;60;40" dur=".9s" repeatCount="indefinite"/><animate attributeName="y" values="60;50;60" dur=".9s" repeatCount="indefinite"/></rect>
+            <rect x="290" y="75" width="4" height="15" rx="2" fill="#019541"><animate attributeName="height" values="15;30;15" dur="1.5s" repeatCount="indefinite"/><animate attributeName="y" values="75;65;75" dur="1.5s" repeatCount="indefinite"/></rect>
+            <rect x="300" y="58" width="4" height="45" rx="2" fill="#ffcd01"><animate attributeName="height" values="45;65;45" dur=".8s" repeatCount="indefinite"/><animate attributeName="y" values="58;48;58" dur=".8s" repeatCount="indefinite"/></rect>
+            <rect x="310" y="70" width="4" height="22" rx="2" fill="#019541"><animate attributeName="height" values="22;42;22" dur="1.1s" repeatCount="indefinite"/><animate attributeName="y" values="70;60;70" dur="1.1s" repeatCount="indefinite"/></rect>
+            <rect x="320" y="64" width="4" height="35" rx="2" fill="#019541"><animate attributeName="height" values="35;55;35" dur="1.3s" repeatCount="indefinite"/><animate attributeName="y" values="64;54;64" dur="1.3s" repeatCount="indefinite"/></rect>
+          </g>
+          <!-- badge ao vivo -->
+          <rect x="260" y="175" width="80" height="22" rx="6" fill="#e85a2a"/>
+          <circle cx="274" cy="186" r="4" fill="white" opacity=".9"/>
+          <text x="282" y="190" font-family="Inter,sans-serif" font-size="9" font-weight="700" fill="white">AO VIVO</text>
+          <!-- nome do programa -->
+          <text x="300" y="32" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#019541" text-anchor="middle">Podcast Instituto</text>
+          <text x="300" y="46" font-family="Playfair Display,serif" font-size="10" font-style="italic" fill="#6b6b65" text-anchor="middle">A Ciência da Vitória</text>
+        </svg>
+      </div>
+      <div class="pcard-body">
+        <span class="pcard-tag">Podcast · Conteúdo Técnico · Autoridade · Previsão 2026</span>
+        <h3 class="pcard-title">Podcast Instituto</h3>
+        <p class="pcard-desc">A Ciência da Vitória em formato de conversa. Diferente dos podcasts de entretenimento, o foco é como dados, psicologia e engenharia transformam talento em resultados. Alan Hellmeister analisa a telemetria do Pedro ao vivo. Chefes de equipe revelam os bastidores técnicos. CEOs exploram a conexão entre gestão corporativa e gestão de uma equipe de corrida de alto nível.</p>
+        <div class="pcard-pills">
+          <span class="pill">Telemetria ao Vivo</span>
+          <span class="pill">Liderança & Gestão</span>
+          <span class="pill o">Naming Rights</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAINEL DE LENDAS -->
+    <div class="pcard reveal d4">
+      <div class="pcard-vis">
+        <svg viewBox="0 0 600 230" xmlns="http://www.w3.org/2000/svg">
+          <rect width="600" height="230" fill="#f0f9f4"/>
+          <!-- troféu central estilizado -->
+          <g transform="translate(250,20)">
+            <path d="M50 0 L90 0 Q100 40 80 60 L60 80 L40 80 Q20 60 0 40 Q10 0 50 0 Z" fill="none" stroke="#019541" stroke-width="2" opacity=".4"/>
+            <path d="M50 0 L80 0 Q90 35 72 55 L60 70 L40 70 Q28 55 10 35 Q20 0 50 0 Z" fill="#e6f5ec"/>
+            <!-- estrela -->
+            <polygon points="50,25 55,40 70,40 58,50 63,65 50,55 37,65 42,50 30,40 45,40" fill="#ffcd01" opacity=".8"/>
+            <!-- base -->
+            <rect x="35" y="80" width="30" height="8" rx="2" fill="#019541" opacity=".5"/>
+            <rect x="28" y="88" width="44" height="6" rx="2" fill="#019541" opacity=".4"/>
+          </g>
+          <!-- avatares de lendas -->
+          <g transform="translate(80,60)">
+            <circle cx="0" cy="0" r="32" fill="#e6f5ec" stroke="#019541" stroke-width="2"/>
+            <circle cx="0" cy="-10" r="14" fill="#c8e8d4"/>
+            <path d="M-24 28 Q0 16 24 28" fill="#c8e8d4"/>
+            <text x="0" y="55" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#019541" text-anchor="middle">Lendas BR</text>
+          </g>
+          <g transform="translate(460,70)">
+            <circle cx="0" cy="0" r="28" fill="#fffbdf" stroke="#ffcd01" stroke-width="2"/>
+            <circle cx="0" cy="-9" r="12" fill="#ffe88a"/>
+            <path d="M-20 24 Q0 14 20 24" fill="#ffe88a"/>
+            <text x="0" y="48" font-family="Inter,sans-serif" font-size="9" font-weight="600" fill="#7a5d00" text-anchor="middle">Ícones F1</text>
+          </g>
+          <!-- linha conectando -->
+          <line x1="115" y1="120" x2="250" y2="90" stroke="#019541" stroke-width="1" stroke-dasharray="6 4" opacity=".4"/>
+          <line x1="350" y1="90" x2="435" y2="115" stroke="#019541" stroke-width="1" stroke-dasharray="6 4" opacity=".4"/>
+          <!-- título -->
+          <text x="300" y="185" font-family="Playfair Display,serif" font-size="16" font-style="italic" font-weight="700" fill="#019541" text-anchor="middle">Painel de Lendas</text>
+          <text x="300" y="203" font-family="Inter,sans-serif" font-size="9" fill="#6b6b65" text-anchor="middle">O passado iluminando o futuro do automobilismo brasileiro</text>
+        </svg>
+      </div>
+      <div class="pcard-body">
+        <span class="pcard-tag">Conteúdo · Legado · Autoridade · Previsão 2026</span>
+        <h3 class="pcard-title">Painel de Lendas</h3>
+        <p class="pcard-desc">Entrevistas com os maiores nomes do automobilismo brasileiro e mundial — ícones que viveram a glória da Fórmula 1 e conhecem cada detalhe do caminho. O Painel de Lendas chancela a missão do Instituto, cria autoridade de marca para os parceiros e inspira a nova geração que sonha com a Europa. Um acervo histórico que nunca envelhece.</p>
+        <div class="pcard-pills">
+          <span class="pill">Ícones do Automobilismo</span>
+          <span class="pill">YouTube</span>
+          <span class="pill y">Legado & Autoridade</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- fim proj-grid -->
+</section>
+
+<!-- EMBAIXADOR -->
+<section id="embaixador">
+  <div class="emb-vis reveal-l">
+    <div class="emb-card">
+      <svg viewBox="0 0 400 460" xmlns="http://www.w3.org/2000/svg">
+        <rect width="400" height="460" fill="#0d1a10"/>
+        <!-- pista de fundo -->
+        <defs>
+          <pattern id="pgrid" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(1,149,65,.12)" stroke-width=".5"/>
+          </pattern>
+        </defs>
+        <rect width="400" height="460" fill="url(#pgrid)"/>
+        <!-- pista oval estilizada -->
+        <ellipse cx="200" cy="300" rx="160" ry="100" fill="none" stroke="rgba(1,149,65,.2)" stroke-width="30"/>
+        <ellipse cx="200" cy="300" rx="160" ry="100" fill="none" stroke="rgba(255,205,1,.1)" stroke-width="2" stroke-dasharray="15 8"/>
+        <!-- silhueta do piloto — capacete e macacão simplificados -->
+        <g transform="translate(200,200)">
+          <!-- corpo/macacão -->
+          <path d="M-50 260 L-55 120 Q-50 60 0 50 Q50 60 55 120 L50 260 Z" fill="#019541" opacity=".9"/>
+          <!-- número no peito -->
+          <text x="0" y="180" font-family="Inter,sans-serif" font-size="28" font-weight="900" fill="rgba(255,255,255,.15)" text-anchor="middle">#53</text>
+          <!-- HANS / pescoço -->
+          <rect x="-18" y="42" width="36" height="16" rx="4" fill="#333"/>
+          <!-- capacete -->
+          <ellipse cx="0" cy="28" rx="36" ry="32" fill="#e85a2a"/>
+          <ellipse cx="0" cy="18" rx="28" ry="20" fill="#c04020"/>
+          <!-- viseira -->
+          <path d="M-26 30 Q0 22 26 30 Q20 46 0 48 Q-20 46 -26 30 Z" fill="rgba(180,220,255,.6)"/>
+          <!-- reflexo viseira -->
+          <path d="M-18 32 Q-8 26 4 30" fill="none" stroke="white" stroke-width="1.5" opacity=".4"/>
+          <!-- halo na parte de cima do capacete -->
+          <path d="M-36 22 Q0 10 36 22" fill="none" stroke="rgba(255,205,1,.5)" stroke-width="3"/>
+          <!-- braços -->
+          <path d="M-50 100 L-80 160 L-65 165 L-38 110 Z" fill="#019541" opacity=".85"/>
+          <path d="M50 100 L80 160 L65 165 L38 110 Z" fill="#019541" opacity=".85"/>
+          <!-- luvas -->
+          <ellipse cx="-73" cy="168" rx="12" ry="9" fill="#333"/>
+          <ellipse cx="73" cy="168" rx="12" ry="9" fill="#333"/>
+          <!-- volante -->
+          <circle cx="-40" cy="185" r="20" fill="none" stroke="#555" stroke-width="3"/>
+          <circle cx="-40" cy="185" r="6" fill="#333"/>
+          <line x1="-40" y1="165" x2="-40" y2="175" stroke="#555" stroke-width="3"/>
+          <line x1="-40" y1="195" x2="-40" y2="205" stroke="#555" stroke-width="3"/>
+          <line x1="-60" y1="185" x2="-50" y2="185" stroke="#555" stroke-width="3"/>
+          <line x1="-30" y1="185" x2="-20" y2="185" stroke="#555" stroke-width="3"/>
+        </g>
+        <!-- bandeira do brasil sutil no topo -->
+        <rect x="170" y="18" width="60" height="36" rx="4" fill="rgba(255,255,255,.05)" stroke="rgba(255,255,255,.1)" stroke-width="1"/>
+        <text x="200" y="42" font-size="22" text-anchor="middle">🇧🇷</text>
+        <!-- nome em luz no rodapé -->
+        <rect x="0" y="420" width="400" height="40" fill="rgba(1,149,65,.85)"/>
+        <text x="200" y="446" font-family="Playfair Display,serif" font-size="15" font-style="italic" font-weight="700" fill="white" text-anchor="middle">Pedro Lima · Embaixador</text>
+      </svg>
+    </div>
+    <div class="emb-badge">
+      <strong>#53</strong>
+      <span>F4 Italiana · 2025</span>
+    </div>
+  </div>
+  <div class="emb-content reveal-r">
+    <div class="emb-intro">
+      <span class="stag">Embaixador</span>
+      <h2 class="sh">Pedro Lima — <em>body, brain & soul</em></h2>
+      <p>Pedro Lima é o rosto e a prova viva de que o Brasil tem o talento, a inteligência e a determinação para voltar ao topo do automobilismo mundial. Mas o Instituto vai além do piloto: Pedro é o ponto de partida de um movimento que transforma o esporte a partir de dentro — com educação, dados e propósito.</p>
+    </div>
+    <div class="atleta-cards" style="display:flex;flex-direction:column;gap:.9rem">
+      <div class="acard reveal d1">
+        <h4>Body — O piloto, a marca, a performance</h4>
+        <p>Competindo na Fórmula 4 Italiana em 2025, Pedro traz a credibilidade de quem vive o que o Instituto prega. Seu número #53 já é uma referência — e sua trajetória, o conteúdo mais autêntico que o Instituto pode produzir.</p>
+      </div>
+      <div class="acard reveal d2">
+        <h4>Brain — Dados, IA e engenharia de pista</h4>
+        <p>Como piloto oficial de testes do Sector AI, Pedro transforma cada volta em dado. As academias da F1 buscam atletas que traduzem telemetria em performance. Pedro já percorre esse caminho — e o Instituto documenta cada passo.</p>
+      </div>
+      <div class="acard reveal d3">
+        <h4>Soul — Mentor, referência e legado</h4>
+        <p>Ao liderar o Laboratório sobre Rodas e o Engenharia Delas como embaixador, Pedro não é apenas inspiração — é presença real. Jovens da periferia aprenderão com quem está vivendo o sonho que eles perseguem.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NÚMEROS -->
+<section id="numeros">
+  <div class="reveal">
+    <span class="stag" style="color:rgba(255,255,255,.55)">Impacto planejado</span>
+    <h2 class="sh" style="color:#fff;max-width:520px">Resultados que vão <em style="color:var(--y)">além da pista</em></h2>
+  </div>
+  <div class="num-grid">
+    <div class="ncard reveal d1">
+      <span class="n" data-target="6">0</span>
+      <p>Projetos integrados em educação, conteúdo e tecnologia</p>
+    </div>
+    <div class="ncard reveal d2">
+      <span class="n" data-target="5">0</span>
+      <p>ODS da ONU cumpridos e auditáveis pelos parceiros</p>
+    </div>
+    <div class="ncard reveal d3">
+      <span class="n">F4 🇮🇹</span>
+      <p>Validação real em campeonato europeu de alto nível</p>
+    </div>
+    <div class="ncard reveal d4">
+      <span class="n">2%</span>
+      <p>Dedução de IR disponível via Lei de Incentivo ao Esporte</p>
+    </div>
+  </div>
+  <div class="num-bottom reveal">
+    <span class="ods-label">ODS Atendidos:</span>
+    <div class="ods-pills">
+      <span class="ods">ODS 4 — Educação de Qualidade</span>
+      <span class="ods">ODS 5 — Igualdade de Gênero</span>
+      <span class="ods">ODS 8 — Trabalho Decente</span>
+      <span class="ods">ODS 10 — Redução das Desigualdades</span>
+      <span class="ods">ODS 17 — Parcerias</span>
+    </div>
+  </div>
+</section>
+
+<!-- PROPÓSITO -->
+<section id="proposito">
+  <div style="text-align:center;max-width:640px;margin:0 auto" class="reveal">
+    <span class="stag">Por que existimos</span>
+    <h2 class="sh">Um instituto diferente, <em>para um automobilismo diferente</em></h2>
+    <p class="sdesc" style="margin:0 auto">O Brasil formou os maiores pilotos da história da Fórmula 1. Não existe motivo para não formar o próximo. O Instituto Pedro Lima existe para garantir que o talento brasileiro encontre o caminho, a tecnologia e o apoio que merece — do kartódromo público às pistas da Europa.</p>
+  </div>
+  <div class="prop-grid">
+    <div class="propcard reveal d1">
+      <div class="propcard-icon">🎬</div>
+      <h3>Conteúdo com Substância</h3>
+      <p>Documentários, séries, podcast e conteúdo digital que vão além do entretenimento — educam, posicionam marcas e constroem a narrativa real do automobilismo brasileiro para o mundo.</p>
+    </div>
+    <div class="propcard reveal d2">
+      <div class="propcard-icon">🤖</div>
+      <h3>Tecnologia Acessível</h3>
+      <p>O Sector AI democratizará a inteligência artificial para pilotos de todos os níveis. A mesma tecnologia testada na F4 Italiana chegará ao kartódromo da esquina — nivelando o campo de jogo do automobilismo nacional.</p>
+    </div>
+    <div class="propcard reveal d3">
+      <div class="propcard-icon">📚</div>
+      <h3>Educação pelo Esporte</h3>
+      <p>Física, matemática e engenharia ensinadas dentro de um kart. O esporte como metodologia — não como recompensa. Jovens da rede pública descobrirão a STEM na prática, com impacto auditável e real.</p>
+    </div>
+    <div class="propcard reveal d1">
+      <div class="propcard-icon">🌍</div>
+      <h3>Impacto Social Mensurável</h3>
+      <p>Relatórios auditáveis pela CVM 193. Conformidade total com a Agenda 2030 da ONU. As empresas parceiras terão acesso a dados reais de impacto — não apenas ao logotipo num macacão.</p>
+    </div>
+    <div class="propcard reveal d2">
+      <div class="propcard-icon">🤝</div>
+      <h3>Governança Aberta</h3>
+      <p>Associação civil sem fins lucrativos, apartidária e independente. Transparência total de estatutos, balanços e prestação de contas. Prontos para parcerias com entes públicos e privados.</p>
+    </div>
+    <div class="propcard reveal d3">
+      <div class="propcard-icon">🏁</div>
+      <h3>Rota Completa para a Europa</h3>
+      <p>Com Pedro Lima competindo na F4 Italiana e o Instituto estruturando a base no Brasil, criamos o pipeline completo: da criança no kartódromo público ao piloto nas melhores equipes do mundo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- APOIE — SEM MENCIONAR MONETIZAÇÃO DIRETAMENTE -->
+<section id="apoie">
+  <div class="apoie-wrap">
+    <div class="reveal-l">
+      <span class="stag">Como apoiar</span>
+      <h2 class="sh">Faça parte desta <em>história</em></h2>
+      <p class="sdesc" style="margin-bottom:1.5rem">O Instituto Pedro Lima está aberto a parcerias que façam sentido — empresas, marcas e organizações que queiram associar seu nome ao automobilismo, à educação e ao impacto social de forma genuína e auditável.</p>
+      <div class="apoie-lie">
+        <strong>Lei de Incentivo ao Esporte —</strong> empresas em Lucro Real podem destinar até 2% do Imposto de Renda para o Instituto, transformando tributo em legado esportivo e educacional. Um benefício fiscal que vira propósito.
+      </div>
+      <div class="apoie-cards">
+        <div class="apoie-card">
+          <div class="ac-icon">🏎️</div>
+          <h4>Apoio aos Projetos</h4>
+          <p>Associe sua marca a um projeto específico — educação, tecnologia ou conteúdo — e tenha presença direta na narrativa do automobilismo brasileiro.</p>
+        </div>
+        <div class="apoie-card">
+          <div class="ac-icon">🎙️</div>
+          <h4>Naming Rights</h4>
+          <p>Dê seu nome a um programa, série ou episódio. Uma forma elegante de construir autoridade junto a um público qualificado e engajado.</p>
+        </div>
+        <div class="apoie-card">
+          <div class="ac-icon">🌱</div>
+          <h4>Metas ESG</h4>
+          <p>Os projetos do Instituto entregam impacto auditável alinhado à Agenda 2030 da ONU — ideal para empresas que precisam comprovar metas ESG reais.</p>
+        </div>
+        <div class="apoie-card">
+          <div class="ac-icon">🤝</div>
+          <h4>Parceria Estratégica</h4>
+          <p>Além do patrocínio, buscamos parceiros que queiram construir junto — tecnologia, distribuição de conteúdo, infraestrutura ou expertise.</p>
+        </div>
+      </div>
+    </div>
+    <div class="apoie-right reveal-r">
+      <p class="apoie-quote">"O Brasil formou Senna, Piquet e Barrichello. Agora é hora de construir a estrutura que formará os próximos."</p>
+      <p class="apoie-sub">Investir no Instituto Pedro Lima não é só patrocinar um piloto. É construir junto um legado que transformará o automobilismo brasileiro — com educação acessível, tecnologia de ponta e conteúdo de referência que colocará o Brasil novamente no mapa do automobilismo mundial.</p>
+      <div style="background:var(--branco);border:1px solid var(--borda);border-radius:16px;padding:1.6rem;margin-top:.5rem">
+        <div style="font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--g);margin-bottom:1rem">Transparência garantida</div>
+        <div style="display:flex;flex-direction:column;gap:.6rem">
+          <div style="display:flex;align-items:center;gap:.7rem;font-size:.82rem;color:var(--muted)"><span style="width:8px;height:8px;background:var(--g);border-radius:50%;flex-shrink:0"></span>Relatórios auditáveis (CVM 193)</div>
+          <div style="display:flex;align-items:center;gap:.7rem;font-size:.82rem;color:var(--muted)"><span style="width:8px;height:8px;background:var(--g);border-radius:50%;flex-shrink:0"></span>Conformidade total com a Agenda ONU 2030</div>
+          <div style="display:flex;align-items:center;gap:.7rem;font-size:.82rem;color:var(--muted)"><span style="width:8px;height:8px;background:var(--g);border-radius:50%;flex-shrink:0"></span>Estatutos e balanços públicos</div>
+          <div style="display:flex;align-items:center;gap:.7rem;font-size:.82rem;color:var(--muted)"><span style="width:8px;height:8px;background:var(--g);border-radius:50%;flex-shrink:0"></span>Associação civil sem fins lucrativos</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTATO -->
+<section id="contato">
+  <div class="contato-inner">
+    <span class="stag" style="display:block;text-align:center">Vamos conversar</span>
+    <h2 class="sh reveal" style="text-align:center">Juntos, vamos levar o Brasil<br><em>de volta ao topo.</em></h2>
+    <p class="sdesc reveal" style="text-align:center;margin:0 auto">Seja um parceiro, apoiador ou colaborador — o Instituto Pedro Lima tem um lugar para quem acredita que o automobilismo brasileiro pode ser muito mais do que já foi.</p>
+    <div class="cbtns reveal">
+      <a href="mailto:contato@institutopedrolima.com.br" class="btn-p">Entrar em contato</a>
+      <a href="#projetos" class="btn-s">Ver os projetos</a>
+    </div>
+    <div class="redes reveal">
+      <a href="#" class="rede">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58A2.78 2.78 0 0 0 3.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02"/></svg>
+        YouTube
+      </a>
+      <a href="#" class="rede">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        Instagram
+      </a>
+      <a href="#" class="rede">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        LinkedIn
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="stripe"></div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 535.44 105.3">
+      <defs><style>.F1{fill:#019541}.F2{fill:#ffcd01}</style></defs>
+      <path class="F1" d="M442.88,64.5c-1.95,5.74-3.72,11.57-5.5,17.41-1.1,3.19-1.78,6.49-3.47,9.04-.08.04-.13,0-.16-.11-.04-.31-.04-.61.02-.99.19-1.69,1.05-5.52,2.22-9.4.67-2.26,1.37-4.51,2.06-6.77,1.42-5.79,5.88-14.51.13-17.21-2.92-1.39-8.2-1.24-9.43-3.79-2.94-7.1,14.69-21.74,19.57-26.08,6.49-5.31,13.38-10.67,21-14.4,7.07-3.33,14.86-3.93,22.11-6.52C496.96,3.86,502.58.39,508.41,0c10.33-.01-.89,9.69-4.08,12.07-14.65,12.28-30.8,23.01-46.47,34.05-7.63,5.74-10.16,14.53-12.75,23.55-2.66,8.44-5.77,16.8-8.44,25.23-.87,2.75-3.58,9.98-4.09,10.33-.23.24-.25-.21-.04-1.28.14-.71.37-1.69.7-2.85,3.69-13.14,9.17-26.03,12.21-39.32.62-3.14.34-3.98-.59-2.17-.73,1.46-1.21,2.79-1.89,4.69l-.07.19ZM432.39,54.44c4.24.1,8.47-.94,12.3-2.96.18-.09.35-.2.52-.32.76-.55,1.46-1.19,2.16-1.81.5-.46.93-.92,1.4-1.34,1.26-1.1,5.33-6.34,6.43-7.66.43-.71,2.98-2.59,2.9-.94-.11.6-4.13,4.75-4.46,5.28-1.85,3.03.64,1.85,2.14.78,18.54-11.83,36.31-25.14,52.55-39.94,2.21-2.32-2.24-2.02-3.49-1.79-6.98,1.26-12.83,5.41-18.97,8.7-12.92,7.33-26.08,15.16-37.91,24.09-.22,0-.2-.24.06-.61,2.28-2.62,5.19-4.83,8.06-6.82,7.55-5.12,15.44-9.49,23.05-14.47.64-.63.28-1.28-.41-1.47-5.59-1.61-15.42,6.36-20.29,9.34-9.09,6.67-17.54,14.25-24.71,22.96-1.44,2.08-3.37,4.08-4.09,6.54-.18,1.43,1.32,2.43,2.62,2.43h.13Z"/>
+      <path class="F2" d="M477.24,64.62c-1.98,1.97-3.87,7.74-7.45,5.9-1.12-.68-1.56-2.4-2.56-2.79-1.25-.47-2.56.39-3.71.85-1.92.9-3.86,1.07-5.2,2.54-3.26,5.46-5.14,11.73-8.12,17.41-1.1,2.51-2.87,5.77,1.9,4.15,3.5-1.16,8.5-4,11.79-5.8,1.77-1.01,2.94-1.42,4.76-2,3.01-.92,5.86-2.57,8.94-3.44,5.54-1.51,10.96-3.91,16.7-4.63,1.52-.36,5.54.33,2.25,1.86-6.53,1.22-12.57,3.28-18.72,5.67-6.39,2.08-12.64,4.95-18.73,7.89-3.83,2.16-7.09,4.8-11.56,5.71-1.38.29-2.61.26-3.15-.53-.56-.75-.24-2.3.22-3.28,1.07-2.26,2.12-4.45,3.35-6.74,2.87-6.42,6.01-12.8,8.99-19.2,5-11.21,9.74-22.17,13.37-33.82,1.14-2.34.85-9.73,4.04-9.73.59,0,1.52.66,1.71,1.11.26.53.17,1.04-.01,1.65-.93,2.83-2.29,5.58-3.12,8.41-2.06,6.54-5.06,12.89-7.77,19.23-.56,1.89-6.85,11.58-1.33,9.75,1.77-.78,3.2-2.16,4.03-3.63.9-1.55,2.42-5.22,4.61-3.35,1.16,1.05.51,2.6.49,4.17.31,3.81,4.59-3.14,5.82-3.19,2.39-1.59,4.73,2.08,6.94.03,2-1.53,3.18-4.42,5.67-5.05,3.06.04,1.34,5.74,5.28,3.05,1.53-.96,3.19-1.65,4.89-.87,1.13.47,2.23,1.25,3.51,1.19,2.87-.3,5.1-3.33,8.21-3.21,8.5-.09,5.53,9.03,19.28,4.67.86-.22,2.03-.71,2.79-.22.62,1.04-1.35,2.22-2.21,2.68-4.5,2.33-9.55,2.1-14.04-.08-2.37-.87-3.65,1.39-4.76,3.16-1.67,2.41-4.24,4.84-7.39,4.39-2.75-.43-5.51-2.52-5.84-5.04-.31-1.32.28-3.28-.96-4.18-3.88-1.15-4.95,5.14-8.21,5.89-.92.23-1.89-.28-2.09-1.23-.34-1.13.53-3.97-.27-4.59-.61-.34-1.31.66-1.68,1.09-1.73,1.85-2.65,9.64-6.33,7.74-1.37-.89-.66-4.12-2.1-4.74-.83-.2-1.56.47-2.09,1.03l-.13.15Z"/>
+      <path class="F1" d="M0,30.97h2.57v59.92H0V30.97Z"/><path class="F1" d="M13.83,54.24c0-14.93,8.89-24.46,24.92-24.46s24.92,9.53,24.92,24.46v36.65h-2.57v-36.65c0-13.56-7.88-22.17-22.36-22.17s-22.36,8.61-22.36,22.17v36.65h-2.57v-36.65Z"/><path class="F1" d="M71.64,74.49h2.57c.27,9.71,7.7,15.3,18.97,15.3s18.97-5.77,18.97-15.3c0-10.08-9.16-11.27-18.6-12.64-9.99-1.47-20.34-2.93-20.34-14.93,0-10.26,7.97-17.13,20.06-17.13s19.79,6.6,20.07,16.58h-2.57c-.27-9.16-7.24-14.29-17.5-14.29s-17.5,5.31-17.5,14.84c0,10.08,9.16,11.27,18.6,12.64,9.99,1.47,20.34,2.93,20.34,14.93,0,10.81-8.52,17.59-21.53,17.59s-21.26-6.6-21.53-17.59Z"/><path class="F1" d="M141.26,33.26h-22.26v-2.29h47.18v2.29h-22.36v57.63h-2.57v-57.63Z"/><path class="F1" d="M175.16,30.97h2.57v59.92h-2.57V30.97Z"/><path class="F1" d="M208.96,33.26h-22.26v-2.29h47.18v2.29h-22.36v57.63h-2.57v-57.63Z"/><path class="F1" d="M241.11,67.62V30.97h2.57v36.65c0,13.56,7.88,22.17,22.36,22.17s22.17-8.8,22.17-22.17V30.97h2.47v36.65c0,14.93-8.8,24.46-24.65,24.46s-24.92-9.53-24.92-24.46Z"/><path class="F1" d="M320.09,33.26h-22.26v-2.29h47.18v2.29h-22.36v57.63h-2.57v-57.63Z"/><path class="F1" d="M345.09,60.93c0-17.96,13.19-31.15,31.88-31.15s31.88,13.19,31.88,31.15-13.19,31.15-31.88,31.15-31.88-13.19-31.88-31.15ZM406.3,60.93c0-16.58-12.09-28.86-29.32-28.86s-29.32,12.28-29.32,28.86,12.09,28.86,29.32,28.86,29.32-12.28,29.32-28.86Z"/>
+    </svg>
+  </div>
+  <p>© 2025 Instituto Pedro Lima — Associação Civil Sem Fins Lucrativos</p>
+  <p style="font-size:.68rem">Habilitado à Lei de Incentivo ao Esporte · Conformidade CVM 193 · Agenda ONU 2030</p>
+</footer>
+
+<script>
+// NAV scroll
+const nav = document.getElementById('mainnav');
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 40), {passive:true});
+
+// Scroll reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('on');
+      e.target.querySelectorAll('[data-target]').forEach(animCounter);
+    }
+  });
+}, {threshold: 0.13});
+document.querySelectorAll('.reveal,.reveal-l,.reveal-r').forEach(el => obs.observe(el));
+
+// Counter animation
+function animCounter(el) {
+  if (el._done) return; el._done = true;
+  const t = parseInt(el.dataset.target); if (isNaN(t)) return;
+  let c = 0, step = Math.max(1, Math.ceil(t/24));
+  const iv = setInterval(() => {
+    c = Math.min(c + step, t);
+    el.textContent = c;
+    if (c >= t) clearInterval(iv);
+  }, 45);
+}
+
+// Parallax hero SVG muito suave
+const heroBgSvg = document.querySelector('.hero-bg svg');
+if (heroBgSvg) {
+  window.addEventListener('scroll', () => {
+    heroBgSvg.style.transform = `translateY(calc(-50% + ${scrollY * 0.08}px))`;
+  }, {passive:true});
+}
+</script>
+</body>
+</html>
